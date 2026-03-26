@@ -2,7 +2,7 @@
 .brand-page {
     padding-top: calc(var(--topbar-height) + 60px);
     padding-bottom: 100px;
-    background: url('../assets/images/hero-forest.png') no-repeat center center fixed;
+    background: url('../assets/images/hero-forest.webp') no-repeat center center fixed;
     background-size: cover;
     position: relative;
 }
