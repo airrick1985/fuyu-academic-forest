@@ -4,7 +4,8 @@
   "description": "富宇學森 The Academic Forest",
   "main": "index.html",
   "scripts": {
-    "dev": "npx serve ."
+    "dev": "npx serve .",
+    "deploy": "git add . && git commit -m \"更新網站內容\" && git push origin main"
   },
   "author": "",
   "license": "ISC"
