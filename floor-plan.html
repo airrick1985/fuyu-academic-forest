@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/topbar.css">
     <link rel="stylesheet" href="css/floor-plan.css">
+    <!-- 加入 Pannellum 360 全景套件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 </head>
 
 <body class="floor-plan-page">
@@ -53,6 +56,16 @@
                     <a href="#plan-A6" class="fp-nav-link" data-target="plan-A6">A6</a>
                     <a href="#plan-A7" class="fp-nav-link" data-target="plan-A7">A7</a>
                     <a href="#plan-A8" class="fp-nav-link" data-target="plan-A8">A8</a>
+                </div>
+
+                <div class="fp-nav-divider"></div>
+
+                <!-- 樓層環景 (360) -->
+                <div class="fp-nav-group">
+                    <span class="fp-nav-group-label">樓層環景</span>
+                    <a href="#" class="fp-nav-link pano-link" data-src="assets/images/layout/low.webp">2-6F</a>
+                    <a href="#" class="fp-nav-link pano-link" data-src="assets/images/layout/midum.webp">7-11F</a>
+                    <a href="#" class="fp-nav-link pano-link" data-src="assets/images/layout/high.webp">12-14F</a>
                 </div>
 
                 <div class="fp-nav-divider"></div>
@@ -161,10 +174,50 @@
     <!-- 燈箱 (Lightbox) -->
     <div class="fp-lightbox" id="fpLightbox">
         <button class="fp-lightbox-close" id="fpLightboxClose" title="關閉">✕</button>
-        <img src="" alt="" id="fpLightboxImg" draggable="false">
+
+        <!-- 丈量工具列 -->
+        <div class="fp-measure-tools" id="fpMeasureTools">
+            <button class="fp-measure-toggle" id="btnMeasureToggle">📏 開啟丈量</button>
+            <div class="fp-measure-panel" id="measurePanel" style="display: none;">
+                <div class="fp-measure-row">
+                    <label>模式:</label>
+                    <div class="fp-measure-btn-group">
+                        <button id="btnMeasureModeCalibrate" class="active">尺寸校準</button>
+                        <button id="btnMeasureModeDistance">測量距離</button>
+                        <button id="btnMeasureModeArea">測量面積</button>
+                    </div>
+                </div>
+                <div class="fp-measure-row" id="measureCalibrateInputRow">
+                    <label>設定參照直線距離 (cm):</label>
+                    <input type="number" id="inputMeasureCm" value="120" min="1" step="1" style="width: 70px;">
+                </div>
+                <div class="fp-measure-row">
+                    <button id="btnMeasureClear" class="fp-measure-clear-btn">重劃 / 全部清除</button>
+                </div>
+                <div class="fp-measure-result" id="measureResultText">請在圖上點兩點進行校準</div>
+            </div>
+        </div>
+
+        <div class="fp-lightbox-content" id="fpLightboxContent">
+            <img src="" alt="" id="fpLightboxImg" draggable="false">
+            <canvas id="fpMeasureCanvas"></canvas>
+            <div id="fpMeasureButtonsContainer"></div>
+            <button id="btnFloatingFinish" class="fp-floating-btn">✔ 完成此區塊</button>
+        </div>
+
         <div class="fp-lightbox-hint">滾輪縮放 · 拖曳移動 · ESC 關閉</div>
         <!-- 坪數資訊面板 -->
         <div class="fp-lightbox-info" id="fpLightboxInfo"></div>
+    </div>
+
+    <!-- 獨立的 360 環景燈箱 (360 Panorama Modal) -->
+    <div class="fp-lightbox" id="fpPanoLightbox" style="z-index: 999998; background-color: #000;">
+        <button class="fp-lightbox-close" id="fpPanoLightboxClose" title="關閉環景" style="z-index: 100001;">✕</button>
+        <div class="fp-pano-title-overlay" id="fpPanoTitleOverlay">
+            <h2 id="fpPanoTitleText">2-6F</h2>
+            <p>PANORAMA</p>
+        </div>
+        <div id="panoramaViewer" style="width: 100vw; height: 100vh;"></div>
     </div>
 
     <!-- 常駐免責聲明 -->
@@ -189,14 +242,31 @@
             const sections = document.querySelectorAll('.fp-section');
             const fpNav = document.getElementById('fpNav');
 
-            // 平滑滾動到錨點
+            // 平滑滾動到錨點與切換燈箱圖片
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     const targetId = link.getAttribute('data-target');
                     const target = document.getElementById(targetId);
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                    if (document.body.classList.contains('lightbox-active')) {
+                        // 如果在燈箱模式，直接切換燈箱圖片
+                        if (target) {
+                            const img = target.querySelector('.fp-image-wrapper img');
+                            if (img) {
+                                // 觸發點擊載入新圖片
+                                img.click();
+                                // 同時更新選單上的高亮
+                                navLinks.forEach(l => l.classList.remove('active'));
+                                document.querySelectorAll('.pano-link').forEach(l => l.classList.remove('active'));
+                                link.classList.add('active');
+                            }
+                        }
+                    } else {
+                        // 正常模式，捲動畫面
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
                     }
                 });
             });
@@ -236,6 +306,7 @@
 
             // ===== 燈箱 (Lightbox) =====
             const lightbox = document.getElementById('fpLightbox');
+            const lightboxContent = document.getElementById('fpLightboxContent');
             const lightboxImg = document.getElementById('fpLightboxImg');
             const lightboxClose = document.getElementById('fpLightboxClose');
             const lightboxInfo = document.getElementById('fpLightboxInfo');
@@ -253,9 +324,9 @@
                 ],
                 'A1': { main: 20.58, balc: 2.29, pub: 12.21, total: 35.08 },
                 'A2': { main: 20.58, balc: 2.29, pub: 12.21, total: 35.08 },
-                'A3': { main: 15.64, balc: 1.57, pub:  9.18, total: 26.39 },
+                'A3': { main: 15.64, balc: 1.57, pub: 9.18, total: 26.39 },
                 'A5': { main: 18.83, balc: 1.59, pub: 10.90, total: 31.31 },
-                'A6': { main: 14.82, balc: 1.63, pub:  8.78, total: 25.22 },
+                'A6': { main: 14.82, balc: 1.63, pub: 8.78, total: 25.22 },
                 'A7': { main: 20.58, balc: 2.29, pub: 12.21, total: 35.08 },
                 'A8': { main: 20.58, balc: 2.29, pub: 12.21, total: 35.08 }
             };
@@ -264,13 +335,26 @@
             let lbDragging = false, lbStartX = 0, lbStartY = 0;
             let lbDragMoved = false; // 用來區分「點擊」與「拖曳」
 
+            // 丈量工具狀態
+            let measureActive = false;
+            let measureMode = 'calibrate'; // calibrate, distance, area
+            let pxPerCm = 0; // 繪圖像素與真實公分比例
+            let measurePoints = [];
+            let completedMeasurements = []; // 儲存多個已完成測量的區塊
+
             // 點擊圖片開啟燈箱
             const lightboxHint = lightbox.querySelector('.fp-lightbox-hint');
             document.querySelectorAll('.fp-image-wrapper img').forEach(img => {
                 img.addEventListener('click', () => {
+                    // 如果 360 環景正在開著，先關閉它
+                    const panoBox = document.getElementById('fpPanoLightbox');
+                    if (panoBox && panoBox.classList.contains('active') && typeof closePanoLightbox === 'function') {
+                        closePanoLightbox();
+                    }
+
                     lightboxImg.src = img.src;
                     lightboxImg.alt = img.alt;
-                    
+
                     // 判斷要顯示的資訊
                     let infoHtml = '';
                     if (img.alt.includes('4-14F')) {
@@ -317,16 +401,24 @@
                     lbScale = 1; lbTx = 0; lbTy = 0;
                     updateLightboxTransform();
                     lightbox.classList.add('active');
+                    document.body.classList.add('lightbox-active'); // 給 body 加上特殊 class
                     document.body.style.overflow = 'hidden';
                     // 重新觸發提示動畫
                     lightboxHint.style.animation = 'none';
                     lightboxHint.offsetHeight; // 強制 reflow
                     lightboxHint.style.animation = '';
+
+                    // 重設丈量工具狀態
+                    if (measureActive) {
+                        btnMeasureToggle.click(); // 若開啟則自動關閉
+                    }
+                    setTimeout(() => { resetCanvasSize() }, 100);
                 });
             });
 
             function closeLightbox() {
                 lightbox.classList.remove('active');
+                document.body.classList.remove('lightbox-active');
                 document.body.style.overflow = '';
             }
 
@@ -341,15 +433,29 @@
 
             function updateLightboxTransform() {
                 if (lbScale <= 1) { lbScale = 1; lbTx = 0; lbTy = 0; }
-                lightboxImg.style.transform = `translate(${lbTx}px, ${lbTy}px) scale(${lbScale})`;
+                lightboxContent.style.transform = `translate(${lbTx}px, ${lbTy}px) scale(${lbScale})`;
+
+                // 讓浮動按鈕不受縮放影響，保持原始大小
+                const invScale = 1 / lbScale;
+                const floatingBtn = document.getElementById('btnFloatingFinish');
+                if (floatingBtn) floatingBtn.style.transform = `translate(-50%, 15px) scale(${invScale})`;
+                document.querySelectorAll('.fp-delete-btn').forEach(btn => {
+                    if (btn.dataset.position === 'top-right') {
+                        btn.style.transform = `translate(-120%, 20%) scale(${invScale})`; // 放進內部
+                    } else {
+                        btn.style.transform = `translate(-50%, -50%) scale(${invScale})`;
+                    }
+                });
             }
 
             // 拖曳
             lightbox.addEventListener('mousedown', (e) => {
+                if (measureActive) return; // 啟動丈量模式時禁用拖曳
                 if (e.target.closest('.fp-lightbox-close')) return;
+                if (e.target.closest('.fp-measure-tools')) return; // 防止點擊工具列拖曳
                 // 防止點擊到彈出資訊框也觸發背景圖案的拖曳
                 if (e.target.closest('.fp-lightbox-info')) return;
-                
+
                 e.preventDefault(); // 防止圖片的原生拖曳行為
                 lbDragging = true;
                 lbDragMoved = false;
@@ -393,10 +499,340 @@
 
             // 雙擊還原
             lightbox.addEventListener('dblclick', (e) => {
+                if (measureActive) return; // 丈量模式時禁用雙擊還原
                 if (e.target.closest('.fp-lightbox-close')) return;
                 lbScale = 1; lbTx = 0; lbTy = 0;
                 updateLightboxTransform();
             });
+
+            // ===== 測量工具邏輯 =====
+            const btnMeasureToggle = document.getElementById('btnMeasureToggle');
+            const measurePanel = document.getElementById('measurePanel');
+            const btnModeCalibrate = document.getElementById('btnMeasureModeCalibrate');
+            const btnModeDistance = document.getElementById('btnMeasureModeDistance');
+            const btnModeArea = document.getElementById('btnMeasureModeArea');
+            const inputMeasureCm = document.getElementById('inputMeasureCm');
+            const btnMeasureClear = document.getElementById('btnMeasureClear');
+            const measureResultText = document.getElementById('measureResultText');
+            const measureCanvas = document.getElementById('fpMeasureCanvas');
+            const btnFloatingFinish = document.getElementById('btnFloatingFinish');
+            const btnMeasureButtonsContainer = document.getElementById('fpMeasureButtonsContainer');
+            const ctx = measureCanvas.getContext('2d');
+
+            function resetCanvasSize() {
+                if (!lightboxImg.src || !lightboxImg.naturalWidth) return;
+                measureCanvas.width = lightboxImg.naturalWidth;
+                measureCanvas.height = lightboxImg.naturalHeight;
+                drawMeasurement();
+                updateDeleteButtons();
+            }
+
+            lightboxImg.addEventListener('load', resetCanvasSize);
+
+            btnMeasureToggle.addEventListener('click', () => {
+                measureActive = !measureActive;
+                if (measureActive) {
+                    lightbox.classList.add('measuring');
+                    measurePanel.style.display = 'flex';
+                    btnMeasureToggle.textContent = '❌ 關閉丈量';
+                } else {
+                    lightbox.classList.remove('measuring');
+                    measurePanel.style.display = 'none';
+                    btnMeasureToggle.textContent = '📏 開啟丈量';
+                }
+            });
+
+            function setMode(mode, btn) {
+                measureMode = mode;
+                [btnModeCalibrate, btnModeDistance, btnModeArea].forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // 切換模式不用清除舊區塊，而是讓使用者繼續疊加
+                measurePoints = [];
+                btnFloatingFinish.style.display = 'none';
+
+                if (mode === 'calibrate') {
+                    measureResultText.textContent = '請在圖上點出兩點進行校準';
+                    document.getElementById('measureCalibrateInputRow').style.display = 'flex';
+                } else if (mode === 'distance') {
+                    if (!pxPerCm) { measureResultText.textContent = '請先完成「尺寸校準」!!'; return; }
+                    measureResultText.textContent = '點擊畫面畫出測距線';
+                    document.getElementById('measureCalibrateInputRow').style.display = 'none';
+                } else if (mode === 'area') {
+                    if (!pxPerCm) { measureResultText.textContent = '請先完成「尺寸校準」!!'; return; }
+                    measureResultText.textContent = '點選畫出多邊形封閉範圍';
+                    document.getElementById('measureCalibrateInputRow').style.display = 'none';
+                }
+                drawMeasurement();
+            }
+
+            btnModeCalibrate.addEventListener('click', () => setMode('calibrate', btnModeCalibrate));
+            btnModeDistance.addEventListener('click', () => setMode('distance', btnModeDistance));
+            btnModeArea.addEventListener('click', () => setMode('area', btnModeArea));
+
+            btnFloatingFinish.addEventListener('click', (e) => {
+                e.stopPropagation(); // 避免點擊畫出新的點
+                if (measurePoints.length > 0) {
+                    completedMeasurements.push({
+                        mode: measureMode,
+                        points: [...measurePoints],
+                        resultHtml: measureResultText.innerHTML
+                    });
+                    measurePoints = [];
+                    btnFloatingFinish.style.display = 'none';
+                    drawMeasurement();
+                    updateDeleteButtons();
+                    measureResultText.textContent = '已保存當前圖形，可繼續點選圖面測量新區塊';
+                }
+            });
+
+            btnMeasureClear.addEventListener('click', () => {
+                measurePoints = [];
+                completedMeasurements = [];
+                btnFloatingFinish.style.display = 'none';
+                drawMeasurement();
+                updateDeleteButtons();
+                if (measureMode !== 'calibrate' && !pxPerCm) {
+                    measureResultText.textContent = '請先完成「尺寸校準」!!';
+                } else {
+                    measureResultText.textContent = '已清除標記';
+                }
+            });
+
+            inputMeasureCm.addEventListener('change', () => {
+                if (measurePoints.length === 2 && measureMode === 'calibrate') {
+                    calculateCalibration();
+                }
+            });
+
+            measureCanvas.addEventListener('mousedown', (e) => {
+                if (!measureActive) return;
+                // e.offsetX / Y is relative to viewport of canvas. Convert to internal canvas resolution
+                const rect = measureCanvas.getBoundingClientRect();
+                const scaleX = measureCanvas.width / rect.width;
+                const scaleY = measureCanvas.height / rect.height;
+                const px = (e.clientX - rect.left) * scaleX;
+                const py = (e.clientY - rect.top) * scaleY;
+
+                if (measureMode === 'calibrate') {
+                    if (measurePoints.length >= 2) measurePoints = [];
+                    measurePoints.push({ x: px, y: py });
+                    if (measurePoints.length === 2) {
+                        calculateCalibration();
+                    } else {
+                        measureResultText.textContent = '請點擊第二點完成校準線';
+                    }
+                    btnFloatingFinish.style.display = 'none';
+                } else {
+                    if (!pxPerCm) return;
+                    measurePoints.push({ x: px, y: py });
+                    calculateMeasurement();
+                    // 將「完成」按鈕跟隨最後一個點位
+                    const pctX = (px / measureCanvas.width) * 100;
+                    const pctY = (py / measureCanvas.height) * 100;
+                    btnFloatingFinish.style.left = `${pctX}%`;
+                    btnFloatingFinish.style.top = `${pctY}%`;
+                    btnFloatingFinish.style.display = 'block';
+                }
+                drawMeasurement();
+            });
+
+            function updateDeleteButtons() {
+                btnMeasureButtonsContainer.innerHTML = ''; // 清空所有刪除鍵
+                completedMeasurements.forEach((shape, index) => {
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'fp-delete-btn';
+                    delBtn.innerHTML = '✕';
+                    delBtn.title = '刪除此區塊';
+
+                    const invScale = 1 / lbScale;
+                    let px, py;
+
+                    // 找出此形狀適合放刪除按鈕的位置
+                    if (shape.mode === 'area') {
+                        // Area: 放在圖形 Bounding Box 的右上角 (maxX, minY)，向內平移
+                        px = Math.max(...shape.points.map(p => p.x));
+                        py = Math.min(...shape.points.map(p => p.y));
+                        delBtn.dataset.position = 'top-right';
+                        delBtn.style.transform = `translate(-120%, 20%) scale(${invScale})`;
+                    } else {
+                        // 線段: 放在第一點
+                        px = shape.points[0].x;
+                        py = shape.points[0].y;
+                        delBtn.dataset.position = 'center';
+                        delBtn.style.transform = `translate(-50%, -50%) scale(${invScale})`;
+                    }
+
+                    const pctX = (px / measureCanvas.width) * 100;
+                    const pctY = (py / measureCanvas.height) * 100;
+                    delBtn.style.left = `${pctX}%`;
+                    delBtn.style.top = `${pctY}%`;
+
+                    // 點擊事件：刪除這個區塊
+                    delBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        // 移除區塊
+                        completedMeasurements.splice(index, 1);
+                        drawMeasurement();
+                        updateDeleteButtons();
+                        measureResultText.textContent = '已刪除區塊';
+                    };
+                    btnMeasureButtonsContainer.appendChild(delBtn);
+                });
+            }
+
+            function calculateCalibration() {
+                const p1 = measurePoints[0];
+                const p2 = measurePoints[1];
+                const distPx = Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+                const targetCm = parseFloat(inputMeasureCm.value) || 120;
+                pxPerCm = distPx / targetCm; // 1 cm = X px
+                measureResultText.textContent = `校準完成！(比例: 1cm = ${(pxPerCm).toFixed(2)}px)`;
+            }
+
+            function calculateMeasurement() {
+                if (measurePoints.length < 2) return;
+                if (measureMode === 'distance') {
+                    let totalDistPx = 0;
+                    for (let i = 1; i < measurePoints.length; i++) {
+                        const p1 = measurePoints[i - 1];
+                        const p2 = measurePoints[i];
+                        totalDistPx += Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+                    }
+                    const cm = totalDistPx / pxPerCm;
+                    measureResultText.textContent = `總實測長度：${cm.toFixed(1)} cm`;
+                } else if (measureMode === 'area') {
+                    if (measurePoints.length < 3) {
+                        measureResultText.textContent = '請標記至少三點以形成面積';
+                        return;
+                    }
+                    // Shoelace formula for area in px^2
+                    let areaPx = 0;
+                    let j = measurePoints.length - 1;
+                    for (let i = 0; i < measurePoints.length; i++) {
+                        areaPx += (measurePoints[j].x + measurePoints[i].x) * (measurePoints[j].y - measurePoints[i].y);
+                        j = i;
+                    }
+                    areaPx = Math.abs(areaPx / 2);
+
+                    const cm2 = areaPx / (pxPerCm * pxPerCm);
+                    const m2 = cm2 / 10000;
+                    const ping = m2 * 0.3025;
+
+                    measureResultText.innerHTML = `面積：${m2.toFixed(2)} m² <br> (${ping.toFixed(2)} 坪)`;
+                }
+            }
+
+            function drawMeasurement() {
+                ctx.clearRect(0, 0, measureCanvas.width, measureCanvas.height);
+
+                // 先畫出已儲存的區塊
+                completedMeasurements.forEach((shape) => {
+                    renderShape(shape.mode, shape.points, true);
+                });
+
+                // 再畫出當前正在操作的點位
+                if (measurePoints.length > 0) {
+                    renderShape(measureMode, measurePoints, false);
+                }
+            }
+
+            function renderShape(mode, points, isCompleted) {
+                ctx.lineWidth = Math.max(2, measureCanvas.width / 800);
+                const radius = Math.max(4, measureCanvas.width / 400);
+
+                // 已完成的區塊使用綠色系，操作中為藍色系
+                let strokeColor = mode === 'calibrate' ? '#bd985c' : '#2563eb';
+                let fillColor = strokeColor;
+                if (mode === 'area') {
+                    fillColor = isCompleted ? 'rgba(16, 185, 129, 0.25)' : 'rgba(37, 99, 235, 0.2)';
+                    strokeColor = isCompleted ? '#10b981' : '#2563eb';
+                } else if (isCompleted) {
+                    strokeColor = '#10b981';
+                    fillColor = '#10b981';
+                }
+
+                ctx.strokeStyle = strokeColor;
+                ctx.fillStyle = fillColor;
+
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                for (let i = 1; i < points.length; i++) {
+                    ctx.lineTo(points[i].x, points[i].y);
+                }
+
+                if (mode === 'area' && points.length >= 3) {
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                ctx.stroke();
+
+                ctx.fillStyle = isCompleted ? '#059669' : '#ef4444';
+                points.forEach((p, index) => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    if (mode === 'distance' && index > 0 && pxPerCm > 0) {
+                        const prev = points[index - 1];
+                        const distPx = Math.sqrt(Math.pow(p.x - prev.x, 2) + Math.pow(p.y - prev.y, 2));
+                        const cm = distPx / pxPerCm;
+
+                        ctx.save();
+                        ctx.font = `bold ${Math.max(16, measureCanvas.width / 60)}px sans-serif`;
+                        ctx.fillStyle = 'black';
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = Math.max(3, measureCanvas.width / 150);
+                        ctx.lineJoin = 'round'; // 邊框轉角圓潤
+                        ctx.lineCap = 'round';
+                        ctx.textAlign = 'center'; // 置中
+                        ctx.textBaseline = 'bottom'; // 貼齊在點位上方
+                        const midX = (prev.x + p.x) / 2;
+                        const midY = (prev.y + p.y) / 2;
+                        const text = `${cm.toFixed(1)}cm`;
+                        ctx.strokeText(text, midX, midY - 5);
+                        ctx.fillText(text, midX, midY - 5);
+                        ctx.restore();
+                    }
+                });
+
+                if (mode === 'area' && points.length >= 3 && pxPerCm > 0) {
+                    let cx = 0, cy = 0;
+                    points.forEach(p => { cx += p.x; cy += p.y; });
+                    cx /= points.length;
+                    cy /= points.length;
+
+                    let areaPx = 0;
+                    let j = points.length - 1;
+                    for (let i = 0; i < points.length; i++) {
+                        areaPx += (points[j].x + points[i].x) * (points[j].y - points[i].y);
+                        j = i;
+                    }
+                    areaPx = Math.abs(areaPx / 2);
+                    const cm2 = areaPx / (pxPerCm * pxPerCm);
+                    const m2 = cm2 / 10000;
+                    const ping = m2 * 0.3025;
+
+                    ctx.save();
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.font = `bold ${Math.max(22, measureCanvas.width / 40)}px sans-serif`;
+                    ctx.fillStyle = isCompleted ? '#059669' : '#ef4444';
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = Math.max(3, measureCanvas.width / 120);
+                    ctx.lineJoin = 'round'; // 邊框轉角圓潤
+                    ctx.lineCap = 'round';
+                    const textPing = `${ping.toFixed(2)} 坪`;
+                    const textM2 = `${m2.toFixed(2)} m²`;
+                    const gap = Math.max(22, measureCanvas.width / 40) + 5;
+
+                    ctx.strokeText(textPing, cx, cy - gap / 2);
+                    ctx.fillText(textPing, cx, cy - gap / 2);
+                    ctx.strokeText(textM2, cx, cy + gap / 2);
+                    ctx.fillText(textM2, cx, cy + gap / 2);
+                    ctx.restore();
+                }
+            }
 
             // ===== 圖片淡入動畫 =====
             const fadeObserver = new IntersectionObserver((entries) => {
@@ -415,6 +851,77 @@
                 fadeObserver.observe(wrapper);
             });
 
+            // ===== 360 環景瀏覽器邏輯 (Pannellum) =====
+            const panoLinks = document.querySelectorAll('.pano-link');
+            const fpPanoLightbox = document.getElementById('fpPanoLightbox');
+            const fpPanoLightboxClose = document.getElementById('fpPanoLightboxClose');
+            const fpPanoTitleText = document.getElementById('fpPanoTitleText');
+            let panoViewer = null;
+
+            panoLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const src = link.getAttribute('data-src');
+                    const titleStr = link.textContent.trim(); // 取得 2-6F, 7-11F 等文字內容
+
+                    // 更新環景標題
+                    if (fpPanoTitleText) {
+                        fpPanoTitleText.textContent = titleStr;
+                    }
+
+                    // 確保普通平面燈箱關閉
+                    if (lightbox.classList.contains('active')) {
+                        closeLightbox();
+                    }
+
+                    // 顯示 360 燈箱
+                    fpPanoLightbox.classList.add('active');
+                    document.body.classList.add('lightbox-active');
+                    document.body.style.overflow = 'hidden';
+
+                    // 銷毀舊的 instance 避免記憶體洩漏
+                    if (panoViewer) {
+                        panoViewer.destroy();
+                    }
+
+                    // 初始化 Pannellum 360
+                    panoViewer = pannellum.viewer('panoramaViewer', {
+                        "type": "equirectangular",
+                        "panorama": src,
+                        "autoLoad": true,
+                        "autoRotate": -2,
+                        "mouseZoom": true,
+                        "keyboardZoom": false,
+                        "showControls": false, // 隱藏所有內建的控制與套件UI
+                        "showZoomCtrl": false,
+                        "showFullscreenCtrl": false,
+                        "compass": false,
+                        "author": "" // 確保沒有作者浮水印
+                    });
+
+                    // 同步選單高亮
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    panoLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                });
+            });
+
+            function closePanoLightbox() {
+                fpPanoLightbox.classList.remove('active');
+                document.body.classList.remove('lightbox-active');
+                document.body.style.overflow = '';
+                if (panoViewer) {
+                    panoViewer.destroy();
+                    panoViewer = null;
+                }
+            }
+
+            fpPanoLightboxClose.addEventListener('click', closePanoLightbox);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && fpPanoLightbox.classList.contains('active')) closePanoLightbox();
+            });
+
+
             // ===== 懸浮立體流動光球 (Orb Background Effect) =====
             // 動態生成 12 顆光球，在 3D 空間內緩慢旋轉，使用高級品牌配色
             const colorsList = [
@@ -432,7 +939,7 @@
             let orbStyles = '';
             for (let i = 1; i <= length; i++) {
                 const c = colorsList[Math.floor(Math.random() * colorsList.length)];
-                
+
                 // 此處模擬原作者 SCSS 中的特定隨機參數範圍
                 const top = Math.floor(Math.random() * 100);
                 const left = Math.floor(Math.random() * 100);
@@ -440,11 +947,11 @@
                 const delay = -(Math.floor(Math.random() * 45)); // 0s to -45s
                 const originX = Math.floor(Math.random() * 50) - 25; // -25vw to 25vw
                 const originY = Math.floor(Math.random() * 50) - 25; // -25vh to 25vh
-                
+
                 // box-shadow 形狀與擴散 (Dir: 1 或 -1，Blur 隨機模糊)
                 const dir = Math.random() > 0.5 ? 40 : -40;
                 const blur = (Math.random() * 2 + 4).toFixed(3); // 4vmin - 6vmin
-                
+
                 orbStyles += `
                 .fp-orb.b${i} {
                     color: ${c};

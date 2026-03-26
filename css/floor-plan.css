@@ -101,7 +101,7 @@ body.floor-plan-page::after {
 /* ===== 主內容容器 ===== */
 .fp-container {
     position: relative;
-    z-index: 1;
+    /* 移除 z-index 限制，讓內部的 nav 可以在燈箱模式時浮到最上方 */
     padding-top: calc(var(--topbar-height, 70px) + 20px);
     padding-bottom: 100px;
 }
@@ -143,10 +143,19 @@ body.floor-plan-page::after {
     /* 隱藏滾動條但保持可滑動 */
     scrollbar-width: none;
     -ms-overflow-style: none;
+    transition: top 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 .fp-nav::-webkit-scrollbar {
     display: none;
+}
+
+/* 當進入燈箱模式時，導覽列往上平滑吸附到螢幕頂端 */
+body.lightbox-active .fp-nav {
+    top: 0;
+    z-index: 100000;
+    background: rgba(233, 236, 240, 0.95);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 增加一點陰影，讓它更突出 */
 }
 
 .fp-nav-inner {
@@ -279,21 +288,261 @@ body.floor-plan-page::after {
     cursor: grabbing;
 }
 
-.fp-lightbox img {
-    max-width: var(--fp-lightbox-max-width, 95vw);
-    max-height: var(--fp-lightbox-max-height, 95vh);
-    object-fit: contain;
+/* 360 環景專屬標題浮層 */
+.fp-pano-title-overlay {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    z-index: 100000; /* 需要高於 pannellum 的 z-index */
     pointer-events: none;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.fp-pano-title-overlay h2 {
+    font-size: 3rem;
+    margin: 0;
+    letter-spacing: 4px;
+    font-weight: bold;
+}
+
+.fp-pano-title-overlay p {
+    font-size: 1rem;
+    letter-spacing: 8px;
+    margin-top: 5px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0;
+}
+
+/* 隱藏 Pannellum 內建的作者/版權/除錯UI，保持畫面純淨 */
+.pnlm-controls-container,
+.pnlm-about-msg,
+.pnlm-panorama-info {
+    display: none !important;
+}
+
+.fp-lightbox-content {
+    position: relative;
+    display: inline-block;
+    max-width: var(--fp-lightbox-max-width, 95vw);
+    max-height: calc(95vh - 60px);
+    margin-top: 60px; /* 保留頂部導覽列(約50px)與預設邊距的安全空隙 */
     transform-origin: center center;
     will-change: transform;
     transition: transform 0.06s linear;
 }
 
-.fp-lightbox-close {
+.fp-lightbox img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(95vh - 60px); /* 避免被往下擠出螢幕外 */
+    width: auto;
+    height: auto;
+    pointer-events: none;
+}
+
+#fpMeasureCanvas {
     position: absolute;
-    top: 20px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+    touch-action: none;
+}
+
+.fp-lightbox.measuring #fpMeasureCanvas {
+    pointer-events: auto;
+    cursor: crosshair;
+}
+
+#fpMeasureButtonsContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 6;
+}
+
+.fp-floating-btn {
+    position: absolute;
+    transform: translate(-50%, 15px);
+    /* default */
+    background: #bd985c;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    pointer-events: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: none;
+    white-space: nowrap;
+    z-index: 10;
+    transition: background 0.2s, color 0.2s;
+}
+
+.fp-floating-btn:hover {
+    background: #8b6914;
+}
+
+.fp-delete-btn {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    /* default */
+    background: #ef4444;
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.fp-delete-btn:hover {
+    background: #dc2626;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* 測量工具列 */
+.fp-measure-tools {
+    position: absolute;
+    /* 改置於右下角，避免擋住左上角的戶型名稱與資訊 */
+    bottom: 30px;
     right: 30px;
     z-index: 10;
+    font-family: var(--font-sans, system-ui);
+    display: flex;
+    flex-direction: column-reverse;
+    /* 按鈕在下，面板往上拉出 */
+    align-items: flex-end;
+    /* 靠右對齊 */
+    gap: 12px;
+    /* 按鈕與面板的間距 */
+}
+
+.fp-measure-toggle {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(180, 165, 130, 0.4);
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.fp-measure-toggle:hover {
+    background: #fff;
+    border-color: #bd985c;
+    color: #8b6914;
+}
+
+.fp-measure-panel {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(180, 165, 130, 0.3);
+    border-radius: 12px;
+    padding: 18px 20px;
+    /* 增加內距讓文字呼吸 */
+    /* 移除 margin-top，改由 gap 控制 */
+    margin: 0;
+    width: 320px;
+    /* 加大寬度，防止文字過早換行 */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.fp-measure-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    /* 加大字體讓客戶好閱讀 */
+    color: #555;
+    white-space: nowrap;
+    /* 避免單行屬性標題換行 */
+}
+
+.fp-measure-btn-group {
+    display: flex;
+    gap: 4px;
+}
+
+.fp-measure-btn-group button {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.fp-measure-btn-group button.active {
+    background: #8b6914;
+    color: white;
+    border-color: #8b6914;
+}
+
+.fp-measure-clear-btn {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.fp-measure-clear-btn:hover {
+    background: #ffebeb;
+    color: #d32f2f;
+    border-color: #ffcccc;
+}
+
+.fp-measure-result {
+    font-size: 15px;
+    font-weight: bold;
+    color: #1a1a1a;
+    text-align: center;
+    background: #f8f9fa;
+    padding: 10px;
+    /* 增加內距 */
+    border-radius: 6px;
+    border: 1px dashed #ccc;
+    /* 移除 word-break: break-all，改用 keep-all 保護中文分詞完整性 */
+    word-break: keep-all;
+    line-height: 1.5;
+    /* 讓如果有兩行（如坪數/m2）時不會太壅擠 */
+}
+
+.fp-lightbox-close {
+    position: absolute;
+    top: 70px; /* 往下修正，避開上方 50px 的懸浮導覽列 */
+    right: 30px;
+    z-index: 100001; /* 確保不管怎樣都在最上層 */
     width: 48px;
     height: 48px;
     border-radius: 50%;
