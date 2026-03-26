@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>平面規劃 - 富宇學森 The Academic Forest</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/topbar.css">
+    <link rel="stylesheet" href="css/floor-plan.css">
+</head>
+
+<body class="floor-plan-page">
+
+    <!-- Top Bar (由 topbar.js 統一注入) -->
+    <div id="topbar-root"></div>
+
+    <div class="fp-container">
+
+        <!-- 頁面標題 -->
+        <div class="fp-page-header">
+            <h1>平面規劃</h1>
+            <p class="fp-page-subtitle">FLOOR PLAN</p>
+        </div>
+
+        <!-- 導覽列 -->
+        <nav class="fp-nav" id="fpNav">
+            <div class="fp-nav-inner">
+                <!-- 樓層平面 -->
+                <div class="fp-nav-group">
+                    <span class="fp-nav-group-label">樓層平面</span>
+                    <a href="#plan-1F" class="fp-nav-link active" data-target="plan-1F">1F</a>
+                    <a href="#plan-2F" class="fp-nav-link" data-target="plan-2F">2F</a>
+                    <a href="#plan-3F" class="fp-nav-link" data-target="plan-3F">3F</a>
+                    <a href="#plan-4-14F" class="fp-nav-link" data-target="plan-4-14F">4-14F</a>
+                </div>
+
+                <div class="fp-nav-divider"></div>
+
+                <!-- 傢俱配置圖 -->
+                <div class="fp-nav-group">
+                    <span class="fp-nav-group-label">傢俱配置圖</span>
+                    <a href="#plan-A1" class="fp-nav-link" data-target="plan-A1">A1</a>
+                    <a href="#plan-A2" class="fp-nav-link" data-target="plan-A2">A2</a>
+                    <a href="#plan-A3" class="fp-nav-link" data-target="plan-A3">A3</a>
+                    <a href="#plan-A5" class="fp-nav-link" data-target="plan-A5">A5</a>
+                    <a href="#plan-A6" class="fp-nav-link" data-target="plan-A6">A6</a>
+                    <a href="#plan-A7" class="fp-nav-link" data-target="plan-A7">A7</a>
+                    <a href="#plan-A8" class="fp-nav-link" data-target="plan-A8">A8</a>
+                </div>
+
+                <div class="fp-nav-divider"></div>
+
+                <!-- 地下室車位-->
+                <div class="fp-nav-group">
+                    <span class="fp-nav-group-label">地下室車位</span>
+                    <a href="#plan-B1" class="fp-nav-link" data-target="plan-B1">B1</a>
+                    <a href="#plan-B2" class="fp-nav-link" data-target="plan-B2">B2</a>
+                    <a href="#plan-B3" class="fp-nav-link" data-target="plan-B3">B3</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ===== 圖面區塊 ===== -->
+
+        <!-- 公設樓層 -->
+        <section class="fp-section" id="plan-1F">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/1F.webp" alt="1F 平面配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <section class="fp-section" id="plan-2F">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/2F.webp" alt="2F 平面配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <section class="fp-section" id="plan-3F">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/3F.webp" alt="3F 平面配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <section class="fp-section" id="plan-4-14F">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/4-14F.webp" alt="4-14F 平面配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <!-- A 戶型 -->
+        <section class="fp-section" id="plan-A1">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/A1.webp" alt="A1 傢俱配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <section class="fp-section" id="plan-A2">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/A2.webp" alt="A2 傢俱配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <section class="fp-section" id="plan-A3">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/A3.webp" alt="A3 傢俱配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <section class="fp-section" id="plan-A5">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/A5.webp" alt="A5 傢俱配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <section class="fp-section" id="plan-A6">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/A6.webp" alt="A6 傢俱配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <section class="fp-section" id="plan-A7">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/A7.webp" alt="A7 傢俱配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <section class="fp-section" id="plan-A8">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/A8.webp" alt="A8 傢俱配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <!-- B 戶型 -->
+        <section class="fp-section" id="plan-B1">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/B1.webp" alt="B1 傢俱配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <section class="fp-section" id="plan-B2">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/B2.webp" alt="B2 傢俱配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+        <section class="fp-section" id="plan-B3">
+            <div class="fp-image-wrapper">
+                <img src="assets/images/layout/B3.webp" alt="B3 傢俱配置參考圖" loading="lazy">
+            </div>
+        </section>
+
+    </div>
+
+    <!-- 燈箱 (Lightbox) -->
+    <div class="fp-lightbox" id="fpLightbox">
+        <button class="fp-lightbox-close" id="fpLightboxClose" title="關閉">✕</button>
+        <img src="" alt="" id="fpLightboxImg" draggable="false">
+        <div class="fp-lightbox-hint">滾輪縮放 · 拖曳移動 · ESC 關閉</div>
+    </div>
+
+    <!-- 常駐免責聲明 -->
+    <div class="fp-disclaimer">
+        此房屋銷售平面圖僅供參考，實際規劃依建造變更核准圖面為依據。不動產經紀業：一研九鼎廣告策劃有限公司
+    </div>
+
+    <!-- 回到頂部 -->
+    <button class="fp-back-top" id="fpBackTop" title="回到頂部">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
+    <!-- JS -->
+    <script src="js/topbar.js"></script>
+    <script>
+        (() => {
+            // ===== 導覽列滾動高亮 =====
+            const navLinks = document.querySelectorAll('.fp-nav-link');
+            const sections = document.querySelectorAll('.fp-section');
+            const fpNav = document.getElementById('fpNav');
+
+            // 平滑滾動到錨點
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    const target = document.getElementById(targetId);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+            // IntersectionObserver 偵測可視區域
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(l => l.classList.remove('active'));
+                        const activeLink = document.querySelector(`.fp-nav-link[data-target="${entry.target.id}"]`);
+                        if (activeLink) {
+                            activeLink.classList.add('active');
+                            // 自動將導覽列滾動到可視範圍
+                            activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        }
+                    }
+                });
+            }, {
+                rootMargin: '-40% 0px -50% 0px',
+                threshold: 0
+            });
+
+            sections.forEach(sec => observer.observe(sec));
+
+            // ===== 回到頂部按鈕 =====
+            const backTopBtn = document.getElementById('fpBackTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 400) {
+                    backTopBtn.classList.add('visible');
+                } else {
+                    backTopBtn.classList.remove('visible');
+                }
+            });
+            backTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // ===== 燈箱 (Lightbox) =====
+            const lightbox = document.getElementById('fpLightbox');
+            const lightboxImg = document.getElementById('fpLightboxImg');
+            const lightboxClose = document.getElementById('fpLightboxClose');
+
+            let lbScale = 1, lbTx = 0, lbTy = 0;
+            let lbDragging = false, lbStartX = 0, lbStartY = 0;
+            let lbDragMoved = false; // 用來區分「點擊」與「拖曳」
+
+            // 點擊圖片開啟燈箱
+            const lightboxHint = lightbox.querySelector('.fp-lightbox-hint');
+            document.querySelectorAll('.fp-image-wrapper img').forEach(img => {
+                img.addEventListener('click', () => {
+                    lightboxImg.src = img.src;
+                    lightboxImg.alt = img.alt;
+                    lbScale = 1; lbTx = 0; lbTy = 0;
+                    updateLightboxTransform();
+                    lightbox.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                    // 重新觸發提示動畫
+                    lightboxHint.style.animation = 'none';
+                    lightboxHint.offsetHeight; // 強制 reflow
+                    lightboxHint.style.animation = '';
+                });
+            });
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            lightboxClose.addEventListener('click', closeLightbox);
+            // 只有在「沒有拖曳」的情況下，點擊背景才關閉
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox && !lbDragMoved) closeLightbox();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+            });
+
+            function updateLightboxTransform() {
+                if (lbScale <= 1) { lbScale = 1; lbTx = 0; lbTy = 0; }
+                lightboxImg.style.transform = `translate(${lbTx}px, ${lbTy}px) scale(${lbScale})`;
+            }
+
+            // 拖曳
+            lightbox.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.fp-lightbox-close')) return;
+                e.preventDefault(); // 防止圖片的原生拖曳行為
+                lbDragging = true;
+                lbDragMoved = false;
+                lbStartX = e.clientX; lbStartY = e.clientY;
+            });
+            window.addEventListener('mousemove', (e) => {
+                if (!lbDragging) return;
+                const dx = e.clientX - lbStartX;
+                const dy = e.clientY - lbStartY;
+                // 超過 5px 的移動就視為「拖曳」而非「點擊」
+                if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+                    lbDragMoved = true;
+                }
+                lbTx += dx;
+                lbTy += dy;
+                lbStartX = e.clientX; lbStartY = e.clientY;
+                updateLightboxTransform();
+            });
+            window.addEventListener('mouseup', () => {
+                lbDragging = false;
+                // 延遲重設 lbDragMoved，讓 click 事件先判斷完
+                setTimeout(() => { lbDragMoved = false; }, 50);
+            });
+
+            // 滾輪縮放
+            lightbox.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const dir = e.deltaY < 0 ? 1 : -1;
+                let newScale = lbScale * Math.exp(dir * 0.1);
+                if (newScale < 1) newScale = 1;
+                if (newScale > 10) newScale = 10;
+                const rect = lightbox.getBoundingClientRect();
+                const mx = e.clientX - rect.left - rect.width / 2;
+                const my = e.clientY - rect.top - rect.height / 2;
+                const ratio = 1 - (newScale / lbScale);
+                lbTx += (mx - lbTx) * ratio;
+                lbTy += (my - lbTy) * ratio;
+                lbScale = newScale;
+                updateLightboxTransform();
+            }, { passive: false });
+
+            // 雙擊還原
+            lightbox.addEventListener('dblclick', (e) => {
+                if (e.target.closest('.fp-lightbox-close')) return;
+                lbScale = 1; lbTx = 0; lbTy = 0;
+                updateLightboxTransform();
+            });
+
+            // ===== 圖片淡入動畫 =====
+            const fadeObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fp-image-wrapper').forEach(wrapper => {
+                wrapper.style.opacity = '0';
+                wrapper.style.transform = 'translateY(30px)';
+                wrapper.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                fadeObserver.observe(wrapper);
+            });
+
+        })();
+    </script>
+    <script src="js/spa-router.js"></script>
+</body>
+
+</html>

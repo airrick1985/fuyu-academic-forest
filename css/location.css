@@ -19,6 +19,10 @@ body.pano-page {
 #panorama {
     width: 100%;
     height: 100%;
+    /* 覆蓋 Pannellum 預設的黑色邊框，避免外框比例偏移 */
+    border: none !important;
+    outline: none !important;
+    box-sizing: border-box;
 }
 
 /* 覆蓋 Pannellum 預設的控制項樣式 */
@@ -46,7 +50,7 @@ body.pano-page {
 }
 
 /* 頁面標題浮層 */
-.pano-title-overlay {
+.loc-title-overlay {
     position: fixed;
     bottom: 40px;
     left: 50%;
@@ -58,7 +62,7 @@ body.pano-page {
     opacity: 0;
 }
 
-.pano-title-overlay h2 {
+.loc-title-overlay h2 {
     font-family: var(--font-serif);
     font-size: 36px;
     color: #fff;
@@ -67,7 +71,7 @@ body.pano-page {
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
 }
 
-.pano-title-overlay p {
+.loc-title-overlay p {
     font-family: var(--font-english-serif);
     font-size: 16px;
     color: rgba(255, 215, 0, 0.8);
@@ -76,7 +80,7 @@ body.pano-page {
 }
 
 /* 操作提示 */
-.pano-hint {
+.loc-hint {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -89,13 +93,13 @@ body.pano-page {
     opacity: 0;
 }
 
-.pano-hint-icon {
+.loc-hint-icon {
     font-size: 48px;
     margin-bottom: 16px;
     animation: hint-drag 2s ease-in-out infinite;
 }
 
-.pano-hint-text {
+.loc-hint-text {
     font-size: 18px;
     color: rgba(255, 255, 255, 0.8);
     letter-spacing: 4px;

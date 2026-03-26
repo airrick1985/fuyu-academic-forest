@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全景 - 富宇學森 The Academic Forest</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/topbar.css">
+
+    <link rel="stylesheet" href="css/panorama.css">
+</head>
+
+<body class="pano-page">
+
+    <!-- Top Bar (由 topbar.js 統一注入) -->
+    <div id="topbar-root"></div>
+
+    <!-- 廣角全景區塊 -->
+    <div class="pano-wrapper" id="panoWrapper">
+        <img src="assets/images/location.webp" alt="全景" class="pano-image-target" id="panoImage">
+    </div>
+
+    <!-- POI Modal Dialog -->
+    <div class="pnrm-modal-overlay" id="poiModal">
+        <div class="pnrm-modal" style="position: relative;">
+            <button class="pnrm-modal-close" id="poiModalClose">×</button>
+            <img class="pnrm-modal-img" id="poiModalImg" src="" alt="">
+            <div class="pnrm-modal-body">
+                <h3 class="pnrm-modal-title" id="poiModalTitle"></h3>
+                <div class="pnrm-modal-subtitle" id="poiModalSubtitle"></div>
+                <p class="pnrm-modal-desc" id="poiModalDesc"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 操作提示（自動消失） -->
+    <div class="pnrm-hint">
+        <div class="pnrm-hint-icon">🖱️</div>
+        <div class="pnrm-hint-text">拖曳移動，滾輪縮放照片</div>
+    </div>
+
+    <!-- 頁面標題浮層 -->
+    <div class="pnrm-title-overlay">
+        <h2>全景</h2>
+        <p>PANORAMA</p>
+    </div>
+
+    <!-- JS -->
+    <script src="js/topbar.js"></script>
+    <script>
+        (() => {
+            const container = document.getElementById('panoWrapper');
+            const img = document.getElementById('panoImage');
+
+            let scale = 1;
+            let translateX = 0;
+            let translateY = 0;
+
+            let isDragging = false;
+            let startClientX = 0;
+            let startClientY = 0;
+            let isDraggingWalk = 0;
+
+            // ===== 熱點設定 (Hotspots) =====
+            // 是否開啟 debug 模式 (true: 顯示黃色半透明背景與邊框並顯示點擊座標 / false: 透明可點擊區域)
+            const hotSpotDebug = false;
+
+            const hotspots = [
+                {
+                    id: 'station', x: 4.88, y: 24.50, w: 1.0, h: 14.5,
+                    label: '新莊車站', title: '新莊車站', subtitle: 'TRAIN STATION',
+                    image: 'assets/images/train-station.jpg', desc: '徒步11分鐘，約800公尺'
+                },
+                {
+                    id: 'KHPark', x: 22.42, y: 24.50, w: 1.0, h: 14.5,
+                    label: '關新公園', title: '關新公園', subtitle: 'Guanxin Park',
+                    image: 'assets/images/KHPark.jpg', desc: '徒步8分鐘，約550公尺'
+                },
+                {
+                    id: 'HSP', x: 41.53, y: 24.50, w: 1.0, h: 14.5,
+                    label: '竹科園區', title: '竹科園區', subtitle: 'Hsinchu Science Park',
+                    image: 'assets/images/HSP.jpg', desc: '開車7分鐘，約2公里'
+                },
+                {
+                    id: 'CCpark', x: 52.84, y: 24.50, w: 1.0, h: 14.5,
+                    label: '長春公園', title: '長春公園', subtitle: 'Changchun Park',
+                    image: 'assets/images/CCpark.jpg', desc: '徒步2分鐘，約120公尺'
+                },
+                {
+                    id: 'GWJH', x: 58.60, y: 24.50, w: 1.0, h: 14.5,
+                    label: '光武國中', title: '光武國中', subtitle: 'Guangwu Junior High School',
+                    image: 'assets/images/GWJH.jpg', desc: '徒步6分鐘，約450公尺'
+                },
+                {
+                    id: 'NYIO', x: 61.32, y: 24.50, w: 1.0, h: 14.5,
+                    label: '紐約國際幼兒園', title: '紐約國際幼兒園', subtitle: 'New York International Organization',
+                    image: 'assets/images/NYIO.jpg', desc: '徒步4分鐘，約300公尺'
+                },
+                {
+                    id: 'GPES', x: 64.60, y: 24.50, w: 1.0, h: 14.5,
+                    label: '關埔國小', title: '關埔國小', subtitle: 'Guanpu Elementary School',
+                    image: 'assets/images/GPES.jpg', desc: '徒步5分鐘，約350公尺'
+                },
+                {
+                    id: 'Sun Yat-sen Freeway', x: 75.60, y: 24.50, w: 1.0, h: 14.5,
+                    label: '國道一號', title: '國道一號', subtitle: 'Sun Yat-sen Freeway',
+                    image: 'assets/images/Sun Yat-sen Freeway.jpg', desc: '開車5分鐘，約1.5公里'
+                },
+                {
+                    id: 'Starbucks', x: 80.20, y: 24.50, w: 1.0, h: 14.5,
+                    label: '星巴克', title: '星巴克', subtitle: 'Starbucks',
+                    image: 'assets/images/Starbucks.jpg', desc: '徒步8分鐘，約650公尺'
+                },
+                {
+                    id: 'DECATHLON', x: 88.00, y: 24.50, w: 1.0, h: 14.5,
+                    label: '迪卡儂', title: '迪卡儂', subtitle: 'DECATHLON',
+                    image: 'assets/images/DECATHLON.jpg', desc: '開車4分鐘，約1公里'
+                },
+                {
+                    id: 'COSTCO', x: 96.80, y: 24.50, w: 1.0, h: 14.5,
+                    label: '好市多', title: '好市多', subtitle: 'COSTCO',
+                    image: 'assets/images/COSTCO.jpg', desc: '開車6分鐘，約1.3公里'
+                }
+            ];
+
+            const hotspotEls = [];
+            hotspots.forEach(hs => {
+                const el = document.createElement('div');
+                el.className = 'pnrm-hotspot' + (hotSpotDebug ? ' debug' : '');
+                // 改用自訂 data-desc 來觸發 CSS ::after Tooltip
+                el.setAttribute('data-desc', hs.desc);
+                el._hsData = hs;
+                el.addEventListener('click', (e) => {
+                    if (isDraggingWalk > 5) return;
+                    e.stopPropagation();
+                    openPoiModal(hs);
+                });
+                container.appendChild(el);
+                hotspotEls.push(el);
+            });
+
+            if (img.complete) setTimeout(updateTransform, 50);
+            img.addEventListener('load', () => updateTransform());
+
+            // 限制縮放比例
+            const MIN_SCALE = 1;
+            const MAX_SCALE = 10;
+
+            // 限制拖曳範圍
+            function restrictTranslation() {
+                // img 的原始大小 (scale=1 時)
+                const imgW = img.offsetWidth;
+                const imgH = img.offsetHeight;
+
+                // 容器的大小
+                const containerW = container.clientWidth;
+                const containerH = container.clientHeight;
+
+                // 放大後的影像在畫面上的實際寬高
+                const scaledImgW = imgW * scale;
+                const scaledImgH = imgH * scale;
+
+                // 計算可移動的最大位移
+                let maxTx = 0;
+                let maxTy = 0;
+
+                if (scaledImgW > containerW) {
+                    maxTx = (scaledImgW - containerW) / 2;
+                }
+
+                if (scaledImgH > containerH) {
+                    maxTy = (scaledImgH - containerH) / 2;
+                }
+
+                // 限制範圍
+                if (translateX > maxTx) translateX = maxTx;
+                if (translateX < -maxTx) translateX = -maxTx;
+
+                if (translateY > maxTy) translateY = maxTy;
+                if (translateY < -maxTy) translateY = -maxTy;
+            }
+
+            // 更新變形
+            function updateTransform() {
+                // 如果縮放回 1，則將位置歸零，實現「完整全部呈現水平垂直置中」
+                if (scale === 1) {
+                    translateX = 0;
+                    translateY = 0;
+                } else {
+                    restrictTranslation();
+                }
+                img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+                // 同步計算並定位所有熱點
+                if (img.naturalWidth) {
+                    const imgAR = img.naturalWidth / img.naturalHeight;
+                    const conAR = container.clientWidth / container.clientHeight;
+                    let actualW, actualH;
+                    if (imgAR > conAR) {
+                        actualW = container.clientWidth;
+                        actualH = actualW / imgAR;
+                    } else {
+                        actualH = container.clientHeight;
+                        actualW = actualH * imgAR;
+                    }
+
+                    const centerX = container.clientWidth / 2;
+                    const centerY = container.clientHeight / 2;
+
+                    hotspotEls.forEach(el => {
+                        const hs = el._hsData;
+                        const offsetX = (hs.x / 100 - 0.5) * actualW;
+                        const offsetY = (hs.y / 100 - 0.5) * actualH;
+
+                        const finalX = centerX + offsetX * scale + translateX;
+                        const finalY = centerY + offsetY * scale + translateY;
+
+                        const finalW = (hs.w / 100) * actualW * scale;
+                        const finalH = (hs.h / 100) * actualH * scale;
+
+                        el.style.left = (finalX - finalW / 2) + 'px';
+                        el.style.top = (finalY - finalH / 2) + 'px';
+                        el.style.width = finalW + 'px';
+                        el.style.height = finalH + 'px';
+                    });
+                }
+            }
+
+            // --- 拖曳事件 ---
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                isDraggingWalk = 0;
+                startClientX = e.clientX;
+                startClientY = e.clientY;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+
+                const deltaX = e.clientX - startClientX;
+                const deltaY = e.clientY - startClientY;
+                isDraggingWalk += Math.abs(deltaX) + Math.abs(deltaY);
+
+                // transform: translate(tx) scale(s)
+                // translate 位於前方，代表移動是以螢幕像素為單位
+                translateX += deltaX;
+                translateY += deltaY;
+
+                startClientX = e.clientX;
+                startClientY = e.clientY;
+
+                updateTransform();
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            // --- 滾輪縮放事件 ---
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault(); // 阻止頁面捲動
+
+                const zoomIntensity = 0.1;
+                const wheelDirection = e.deltaY < 0 ? 1 : -1;
+                let newScale = scale * Math.exp(wheelDirection * zoomIntensity);
+
+                // 限制區間
+                if (newScale < MIN_SCALE) newScale = MIN_SCALE;
+                if (newScale > MAX_SCALE) newScale = MAX_SCALE;
+
+                // 游標距離中心點的螢幕偏移量
+                // 我們希望縮放後，滑鼠所在點的實際位置保持不變
+                // 公式： dx = mouseX_from_center
+                // 新的 translateX 應該向游標的方向偏移，使得影像被放大時向游標靠攏
+                const rect = container.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left - rect.width / 2;
+                const mouseY = e.clientY - rect.top - rect.height / 2;
+
+                // 計算差值
+                const ratio = 1 - (newScale / scale);
+
+                translateX += (mouseX - translateX) * ratio;
+                translateY += (mouseY - translateY) * ratio;
+
+                scale = newScale;
+                updateTransform();
+            }, { passive: false });
+
+            // 雙擊還原
+            container.addEventListener('dblclick', () => {
+                scale = 1;
+                translateX = 0;
+                translateY = 0;
+                updateTransform();
+            });
+
+            // Debug 點擊取得座標
+            container.addEventListener('click', (e) => {
+                if (isDraggingWalk > 5 || !hotSpotDebug) return;
+
+                if (!img.naturalWidth) return;
+                const imgAR = img.naturalWidth / img.naturalHeight;
+                const conAR = container.clientWidth / container.clientHeight;
+                let actualW, actualH;
+                if (imgAR > conAR) {
+                    actualW = container.clientWidth;
+                    actualH = actualW / imgAR;
+                } else {
+                    actualH = container.clientHeight;
+                    actualW = actualH * imgAR;
+                }
+                const centerX = container.clientWidth / 2;
+                const centerY = container.clientHeight / 2;
+
+                const offsetX = (e.clientX - centerX - translateX) / scale;
+                const offsetY = (e.clientY - centerY - translateY) / scale;
+
+                const pctX = (offsetX / actualW + 0.5) * 100;
+                const pctY = (offsetY / actualH + 0.5) * 100;
+
+                console.log(`[HotSpot Debug] x: ${pctX.toFixed(2)}, y: ${pctY.toFixed(2)} | Code: { id: 'new', x: ${pctX.toFixed(2)}, y: ${pctY.toFixed(2)}, w: 1.0, h: 14.5 }`);
+                alert(`座標取得：\nx = ${pctX.toFixed(2)}%\ny = ${pctY.toFixed(2)}%`);
+            });
+
+            // ===== Modal 控制 =====
+            const modal = document.getElementById('poiModal');
+            const modalImg = document.getElementById('poiModalImg');
+            const modalTitle = document.getElementById('poiModalTitle');
+            const modalSubtitle = document.getElementById('poiModalSubtitle');
+            const modalDesc = document.getElementById('poiModalDesc');
+            const modalClose = document.getElementById('poiModalClose');
+
+            function openPoiModal(poi) {
+                modalImg.src = poi.image;
+                modalImg.alt = poi.title;
+                modalTitle.textContent = poi.title;
+                modalSubtitle.textContent = poi.subtitle;
+                modalDesc.textContent = poi.desc;
+                modal.classList.add('active');
+            }
+
+            function closePoiModal() {
+                modal.classList.remove('active');
+            }
+
+            modalClose.addEventListener('click', closePoiModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closePoiModal();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closePoiModal();
+            });
+
+        })();
+    </script>
+</body>
+
+</html>

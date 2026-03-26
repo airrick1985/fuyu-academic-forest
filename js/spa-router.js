@@ -2,6 +2,8 @@
 if (!window._spaRouterInitialized) {
     window._spaRouterInitialized = true;
 
+    window.spaNavigate = navigate;
+
     async function navigate(url) {
         try {
             const response = await fetch(url);
@@ -53,6 +55,9 @@ if (!window._spaRouterInitialized) {
                 }
             }
 
+            // 清除可能殘留的滾動鎖定 (例如從 pano-page 或 lightbox 離開)
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
             window.scrollTo(0, 0);
         } catch (err) {
             console.error('SPA Navigation failed:', err);

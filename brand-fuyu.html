@@ -14,44 +14,8 @@
 
 <body class="brand-page">
 
-    <!-- Top Bar -->
-    <header class="topbar scrolled">
-        <div class="topbar-logo">
-            <a href="index.html">
-                <span>富宇學森</span>
-            </a>
-        </div>
-        <nav class="topbar-nav">
-            <div class="nav-item active">
-                <a href="brand-fuyu.html" class="nav-link">品牌介紹</a>
-                <div class="submenu">
-                    <div class="submenu-item"><a href="brand-fuyu.html">富宇機構</a></div>
-                    <div class="submenu-item"><a href="brand-team.html">建築團隊</a></div>
-                </div>
-            </div>
-            <div class="nav-item">
-                <a href="location.html" class="nav-link">地段環境</a>
-            </div>
-            <div class="nav-item">
-                <a href="coming-soon.html?page=architecture" class="nav-link">建築規劃</a>
-            </div>
-            <div class="nav-item">
-                <a href="coming-soon.html?page=materials" class="nav-link">建材設備</a>
-            </div>
-            <div class="nav-item">
-                <a href="coming-soon.html?page=construction" class="nav-link">工法介紹</a>
-            </div>
-        </nav>
-        <div class="topbar-actions">
-            <button class="refresh-btn" onclick="location.reload()" title="重新整理">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="23 4 23 10 17 10"></polyline>
-                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                </svg>
-            </button>
-        </div>
-    </header>
+    <!-- Top Bar (由 topbar.js 統一注入) -->
+    <div id="topbar-root"></div>
 
     <!-- Content -->
     <main class="brand-content container">
@@ -145,7 +109,7 @@
     <!-- JS -->
     <script src="js/topbar.js"></script>
     <script src="js/animations.js"></script>
-    <script src="js/fullscreen.js"></script>
+
     <script src="js/spa-router.js"></script>
 </body>
 

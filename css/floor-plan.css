@@ -1,0 +1,436 @@
+/* css/floor-plan.css — 平面規劃頁面 */
+
+/* ===== 淺色草紙紋理背景 ===== */
+body.floor-plan-page {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    /* 冷調淺灰底色，避免與 WEBP 暖色混淆 */
+    background-color: #e9ecf0;
+    /* 多層疊加營造紙質紋理 */
+    background-image:
+        /* 細微噪點紋理 */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
+        /* 交叉纖維線條 */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cline x1='0' y1='50' x2='100' y2='52' stroke='%23b8bcc4' stroke-width='0.3' opacity='0.25'/%3E%3Cline x1='30' y1='0' x2='32' y2='100' stroke='%23b8bcc4' stroke-width='0.2' opacity='0.15'/%3E%3C/svg%3E");
+    overflow-x: hidden;
+}
+
+/* 背景質感微光動畫 - 用偽元素疊加 */
+body.floor-plan-page::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(180, 195, 215, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(160, 175, 200, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(190, 200, 220, 0.08) 0%, transparent 60%);
+    animation: fp-ambientShift 20s ease-in-out infinite alternate;
+    z-index: 0;
+    pointer-events: none;
+}
+
+@keyframes fp-ambientShift {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    33% {
+        transform: translate(2%, -1%) rotate(0.5deg);
+    }
+
+    66% {
+        transform: translate(-1%, 2%) rotate(-0.3deg);
+    }
+
+    100% {
+        transform: translate(1%, -2%) rotate(0.2deg);
+    }
+}
+
+/* 浮動微粒動畫 */
+body.floor-plan-page::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(circle 2px, rgba(150, 165, 185, 0.1) 0%, transparent 100%),
+        radial-gradient(circle 1.5px, rgba(170, 180, 200, 0.08) 0%, transparent 100%),
+        radial-gradient(circle 1px, rgba(140, 155, 175, 0.06) 0%, transparent 100%);
+    background-size: 300px 300px, 200px 200px, 150px 150px;
+    background-position: 0 0, 100px 50px, 50px 100px;
+    animation: fp-dustFloat 30s linear infinite;
+    z-index: 0;
+    pointer-events: none;
+}
+
+@keyframes fp-dustFloat {
+    0% {
+        background-position: 0 0, 100px 50px, 50px 100px;
+    }
+
+    100% {
+        background-position: 300px 300px, 400px 350px, 350px 400px;
+    }
+}
+
+/* ===== 主內容容器 ===== */
+.fp-container {
+    position: relative;
+    z-index: 1;
+    padding-top: calc(var(--topbar-height, 70px) + 20px);
+    padding-bottom: 100px;
+}
+
+/* ===== 頁面標題 ===== */
+.fp-page-header {
+    text-align: center;
+    padding: 40px 20px 20px;
+}
+
+.fp-page-header h1 {
+    font-size: 2.2rem;
+    color: #3a3228;
+    letter-spacing: 6px;
+    margin: 0 0 8px 0;
+    font-weight: 600;
+}
+
+.fp-page-header .fp-page-subtitle {
+    font-family: var(--font-english-serif, serif);
+    font-size: 0.95rem;
+    color: #9a8e7a;
+    letter-spacing: 4px;
+    margin: 0;
+}
+
+/* ===== 導覽選單列 ===== */
+.fp-nav {
+    position: sticky;
+    top: var(--topbar-height, 70px);
+    z-index: 50;
+    background: rgba(233, 236, 240, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(160, 170, 185, 0.3);
+    border-top: 1px solid rgba(160, 170, 185, 0.15);
+    padding: 0 20px;
+    overflow-x: auto;
+    /* 隱藏滾動條但保持可滑動 */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.fp-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.fp-nav-inner {
+    display: flex;
+    gap: 0;
+    justify-content: center;
+    min-width: max-content;
+    margin: 0 auto;
+}
+
+.fp-nav-group {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.fp-nav-group-label {
+    font-size: 11px;
+    color: #b0a48e;
+    letter-spacing: 2px;
+    padding: 14px 8px 14px 16px;
+    white-space: nowrap;
+    font-weight: 500;
+    border-right: 1px solid rgba(180, 165, 130, 0.2);
+}
+
+.fp-nav-link {
+    display: block;
+    padding: 14px 18px;
+    font-size: 15px;
+    color: #6b5e4e;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    position: relative;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+.fp-nav-link:hover {
+    color: #3a3228;
+    background: rgba(180, 165, 130, 0.12);
+}
+
+.fp-nav-link.active {
+    color: #8b6914;
+    font-weight: 600;
+}
+
+.fp-nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background: #8b6914;
+    border-radius: 1px;
+}
+
+.fp-nav-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(180, 165, 130, 0.3);
+    align-self: center;
+    margin: 0 4px;
+}
+
+/* ===== 圖面展示區 ===== */
+.fp-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    scroll-margin-top: calc(var(--topbar-height, 70px) + 50px);
+}
+
+.fp-section+.fp-section {
+    border-top: 1px solid rgba(180, 165, 130, 0.2);
+}
+
+/* 圖片容器 */
+.fp-image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    /* 圖面下方留一些空間 */
+    padding: 20px 0;
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+}
+
+.fp-image-wrapper img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    /* 帶有微微陰影讓平面圖「浮」在紙面上 */
+    filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.08));
+    transition: filter 0.3s ease;
+}
+
+.fp-image-wrapper img:hover {
+    filter: drop-shadow(0 8px 30px rgba(0, 0, 0, 0.12));
+}
+
+/* ===== 圖片燈箱 (Lightbox) ===== */
+.fp-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    /* 冷調淺灰背景，確保透明 WEBP 文字清晰可見 */
+    background-color: #e9ecf0;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cline x1='0' y1='50' x2='100' y2='52' stroke='%23b8bcc4' stroke-width='0.3' opacity='0.15'/%3E%3Cline x1='30' y1='0' x2='32' y2='100' stroke='%23b8bcc4' stroke-width='0.2' opacity='0.1'/%3E%3C/svg%3E");
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.fp-lightbox.active {
+    display: flex;
+}
+
+.fp-lightbox:active {
+    cursor: grabbing;
+}
+
+.fp-lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    pointer-events: none;
+    transform-origin: center center;
+    will-change: transform;
+    transition: transform 0.06s linear;
+}
+
+.fp-lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(180, 165, 130, 0.4);
+    background: rgba(0, 0, 0, 0.06);
+    color: #5a4e3e;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.fp-lightbox-close:hover {
+    background: rgba(139, 105, 20, 0.15);
+    border-color: rgba(139, 105, 20, 0.5);
+    color: #8b6914;
+}
+
+.fp-lightbox-hint {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(100, 90, 70, 0.4);
+    font-size: 13px;
+    pointer-events: none;
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: fp-hint-show 5s ease forwards;
+}
+
+@keyframes fp-hint-show {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+
+    8% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    80% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+}
+
+/* ===== 常駐免責聲明 ===== */
+.fp-disclaimer {
+    position: fixed;
+    bottom: 15px;
+    left: 20px;
+    z-index: 90;
+    font-size: 12px;
+    color: rgba(100, 90, 70, 0.5);
+    line-height: 1.6;
+    text-align: left;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* ===== 回到頂部按鈕 ===== */
+.fp-back-top {
+    position: fixed;
+    bottom: 80px;
+    right: 25px;
+    z-index: 90;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(180, 165, 130, 0.4);
+    background: rgba(245, 240, 232, 0.8);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #6b5e4e;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.fp-back-top.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.fp-back-top:hover {
+    background: rgba(139, 105, 20, 0.15);
+    border-color: rgba(139, 105, 20, 0.5);
+    color: #8b6914;
+}
+
+/* ===== topbar 深色模式修正 (淺色頁面上 topbar 需要調整) ===== */
+
+body.floor-plan-page .topbar.scrolled {
+    background: rgba(233, 236, 240, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(180, 165, 130, 0.3);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+body.floor-plan-page .topbar .nav-link,
+body.floor-plan-page .topbar .topbar-logo a {
+    color: #3a3228;
+}
+
+body.floor-plan-page .topbar .nav-item:hover .nav-link,
+body.floor-plan-page .topbar .nav-item.active .nav-link {
+    color: #8b6914;
+    text-shadow: none;
+}
+
+body.floor-plan-page .topbar .nav-item:hover .nav-link::after,
+body.floor-plan-page .topbar .nav-item.active .nav-link::after {
+    background-color: #8b6914;
+    box-shadow: none;
+}
+
+body.floor-plan-page .topbar .submenu {
+    background: rgba(245, 240, 232, 0.95);
+    border-color: rgba(180, 165, 130, 0.3);
+}
+
+body.floor-plan-page .topbar .submenu-item a {
+    color: #3a3228;
+}
+
+body.floor-plan-page .topbar .submenu-item a:hover {
+    background: rgba(139, 105, 20, 0.1);
+    color: #8b6914;
+}
+
+body.floor-plan-page .topbar .fullscreen-btn,
+body.floor-plan-page .topbar .refresh-btn {
+    color: #6b5e4e;
+    border-color: rgba(180, 165, 130, 0.4);
+}
+
+body.floor-plan-page .topbar .fullscreen-btn:hover,
+body.floor-plan-page .topbar .refresh-btn:hover {
+    color: #8b6914;
+    border-color: #8b6914;
+    background: rgba(139, 105, 20, 0.1);
+    box-shadow: none;
+}

@@ -1,0 +1,218 @@
+/* css/exterior-3d.css — 外觀3D 全螢幕圖片輪播 */
+
+/* 容器 */
+.ext3d-viewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* 每張幻燈片 */
+.ext3d-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+}
+
+.ext3d-slide:active {
+    cursor: grabbing;
+}
+
+.ext3d-slide.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+/* 圖片 */
+.ext3d-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform-origin: center center;
+    will-change: transform;
+    transition: transform 0.08s linear;
+    pointer-events: none;
+}
+
+/* ===== 左右切換箭頭 ===== */
+.ext3d-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+}
+
+.ext3d-arrow:hover {
+    opacity: 1;
+    background: rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.ext3d-arrow svg {
+    width: 24px;
+    height: 24px;
+}
+
+.ext3d-arrow-prev {
+    left: 30px;
+}
+
+.ext3d-arrow-next {
+    right: 30px;
+}
+
+/* ===== 底部指標 & 資訊列 ===== */
+.ext3d-bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 40px 25px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+/* 圓點指標 */
+.ext3d-dots {
+    display: flex;
+    gap: 12px;
+    pointer-events: auto;
+}
+
+.ext3d-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ext3d-dot.active {
+    background: var(--color-accent, #ffd700);
+    border-color: var(--color-accent, #ffd700);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    transform: scale(1.2);
+}
+
+.ext3d-dot:hover {
+    background: rgba(255, 255, 255, 0.6);
+}
+
+/* ===== 頁面標題浮層 ===== */
+.ext3d-title-overlay {
+    position: absolute;
+    top: calc(var(--topbar-height, 70px) + 20px);
+    left: 40px;
+    z-index: 10;
+    pointer-events: none;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.ext3d-title-overlay h2 {
+    font-size: 2rem;
+    margin: 0 0 5px 0;
+    letter-spacing: 3px;
+    font-weight: 600;
+}
+
+.ext3d-title-overlay p {
+    font-size: 0.9rem;
+    margin: 0;
+    opacity: 0.75;
+    letter-spacing: 2px;
+    font-family: var(--font-english-serif, serif);
+}
+
+/* ===== 計數器 (1 / 2) ===== */
+.ext3d-counter {
+    position: absolute;
+    top: calc(var(--topbar-height, 70px) + 25px);
+    right: 40px;
+    z-index: 10;
+    pointer-events: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: var(--font-english-serif, serif);
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== 3D渲染圖免責聲明 ===== */
+.ext3d-disclaimer {
+    position: absolute;
+    bottom: 60px;
+    right: 40px;
+    z-index: 10;
+    pointer-events: none;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 20px;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== 操作提示（自動消失） ===== */
+.ext3d-hint {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: ext3d-fadeOut 2.5s ease forwards;
+    animation-delay: 4s;
+}
+
+@keyframes ext3d-fadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+}
