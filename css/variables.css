@@ -1,0 +1,31 @@
+/* css/variables.css */
+:root {
+  /* Colors */
+  --color-primary: #2D5016;
+  --color-primary-light: #3D6B22;
+  --color-secondary: #8FBF5F;
+  --color-accent: #FFD700;
+  --color-accent-soft: #F5E6A8;
+  --color-bg-dark: #0A1F0A;
+  --color-bg-card: rgba(15, 35, 15, 0.7);
+  --color-text-primary: #FAFAF5;
+  --color-text-secondary: #C8D8B8;
+  --color-glass: rgba(10, 31, 10, 0.85);
+  --color-border: rgba(143, 191, 95, 0.3);
+
+  /* Fonts */
+  --font-serif: 'Noto Serif TC', serif;
+  --font-sans: 'Noto Sans TC', sans-serif;
+  --font-english-serif: 'Playfair Display', serif;
+  --font-english-sans: 'Inter', sans-serif;
+
+  /* Spacing */
+  --content-max-width: 1920px;
+  --section-spacing: 120px;
+  --card-radius: 12px;
+  --topbar-height: 80px;
+
+  /* Animations */
+  --transition-standard: 0.3s ease;
+  --animation-entrance: 0.8s ease-out;
+}

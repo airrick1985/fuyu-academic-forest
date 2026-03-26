@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>富宇學森 The Academic Forest - 建案電子銷售表板</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/topbar.css">
+    <link rel="stylesheet" href="css/hero.css">
+</head>
+
+<body>
+
+    <!-- Top Bar -->
+    <header class="topbar">
+        <div class="topbar-logo">
+            <a href="index.html">
+                <!-- User should provide real logo, this is a placeholder text if no image -->
+                <span>富宇學森</span>
+            </a>
+        </div>
+        <nav class="topbar-nav">
+            <div class="nav-item">
+                <a href="brand-fuyu.html" class="nav-link">品牌介紹</a>
+                <div class="submenu">
+                    <div class="submenu-item"><a href="brand-fuyu.html">富宇機構</a></div>
+                    <div class="submenu-item"><a href="brand-team.html">建築團隊</a></div>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="location.html" class="nav-link">地段環境</a>
+            </div>
+            <div class="nav-item">
+                <a href="coming-soon.html?page=architecture" class="nav-link">建築規劃</a>
+            </div>
+            <div class="nav-item">
+                <a href="coming-soon.html?page=materials" class="nav-link">建材設備</a>
+            </div>
+            <div class="nav-item">
+                <a href="coming-soon.html?page=construction" class="nav-link">工法介紹</a>
+            </div>
+        </nav>
+        <div class="topbar-actions">
+            <button class="refresh-btn" onclick="location.reload()" title="重新整理">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <!-- Background -->
+        <div class="hero-bg">
+            <img src="assets/images/hero-forest.png" alt="Forest Background">
+        </div>
+        <div class="hero-overlay"></div>
+
+        <!-- Fireflies Particles -->
+        <div class="fireflies-canvas"></div>
+
+        <!-- Content -->
+        <div class="hero-content">
+            <!-- 替換建案LOGO：將 data-logo-url 修改為您的 logo.png 或者 SVG 路徑即可生效特效 -->
+            <div class="hero-logo" style="--logo-url: url('../assets/images/xuesen_logo.png');">
+                <img src="assets/images/xuesen_logo.png" alt="富宇學森 LOGO">
+                <div class="logo-shine-layer"></div>
+            </div>
+            <h2 class="hero-slogan">學境寓所．校園共森</h2>
+        </div>
+    </section>
+
+    <!-- JS -->
+    <script src="js/topbar.js"></script>
+    <script src="js/fireflies.js?v=2"></script>
+    <script src="js/birds.js?v=2"></script>
+    <script src="js/fullscreen.js?v=2"></script>
+    <script src="js/spa-router.js"></script>
+</body>
+
+</html>

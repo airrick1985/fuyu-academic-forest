@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地段環境 - 富宇學森 The Academic Forest</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/topbar.css">
+    <!-- Pannellum 360 Viewer -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+    <link rel="stylesheet" href="css/location.css">
+</head>
+
+<body class="pano-page">
+
+    <!-- Top Bar -->
+    <header class="topbar scrolled">
+        <div class="topbar-logo">
+            <a href="index.html">
+                <span>富宇學森</span>
+            </a>
+        </div>
+        <nav class="topbar-nav">
+            <div class="nav-item">
+                <a href="brand-fuyu.html" class="nav-link">品牌介紹</a>
+                <div class="submenu">
+                    <div class="submenu-item"><a href="brand-fuyu.html">富宇機構</a></div>
+                    <div class="submenu-item"><a href="brand-team.html">建築團隊</a></div>
+                </div>
+            </div>
+            <div class="nav-item active">
+                <a href="location.html" class="nav-link">地段環境</a>
+            </div>
+            <div class="nav-item">
+                <a href="coming-soon.html?page=architecture" class="nav-link">建築規劃</a>
+            </div>
+            <div class="nav-item">
+                <a href="coming-soon.html?page=materials" class="nav-link">建材設備</a>
+            </div>
+            <div class="nav-item">
+                <a href="coming-soon.html?page=construction" class="nav-link">工法介紹</a>
+            </div>
+        </nav>
+        <div class="topbar-actions">
+            <button class="refresh-btn" onclick="location.reload()" title="重新整理">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- 360 全景檢視器 -->
+    <div class="pano-wrapper">
+        <div id="panorama"></div>
+    </div>
+
+    <!-- 操作提示（自動消失） -->
+    <div class="pano-hint">
+        <div class="pano-hint-icon">👆</div>
+        <div class="pano-hint-text">拖曳畫面以環顧四周</div>
+    </div>
+
+    <!-- 頁面標題浮層 -->
+    <div class="pano-title-overlay">
+        <h2>地段環境</h2>
+        <p>LOCATION & SURROUNDINGS</p>
+    </div>
+
+    <!-- POI Modal Dialog -->
+    <div class="poi-modal-overlay" id="poiModal">
+        <div class="poi-modal" style="position: relative;">
+            <button class="poi-modal-close" id="poiModalClose">×</button>
+            <img class="poi-modal-img" id="poiModalImg" src="" alt="">
+            <div class="poi-modal-body">
+                <h3 class="poi-modal-title" id="poiModalTitle"></h3>
+                <div class="poi-modal-subtitle" id="poiModalSubtitle"></div>
+                <p class="poi-modal-desc" id="poiModalDesc"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="js/topbar.js"></script>
+    <script src="js/fullscreen.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <script>
+        (() => {
+            /* ===== 熱點資料定義 =====
+             * 如何取得座標？將下方 hotSpotDebug 設為 true，
+             * 然後在 360 畫面上點擊任意位置，流覽器 Console 會印出該點的 yaw 與 pitch 值。
+             * 將數字填入以下陣列即可。
+             */
+            const hotspots = [
+
+                {
+                    id: 'station',
+                    yaw: -54.983669481743426,
+                    pitch: -14.185284894963834,
+                    label: '新莊車站',
+                    icon: '🚉',
+                    title: '新莊車站',
+                    subtitle: 'TRAIN STATION',
+                    image: 'assets/images/train-station.jpg',
+                    desc: '徒步11分鐘，約800公尺。'
+                },
+                {
+                    id: 'KHPark',
+                    yaw: -31.087249485523095,
+                    pitch: -16.251408517896913,
+                    label: '關新公園',
+                    icon: '🌳',
+                    title: '關新公園',
+                    subtitle: 'Guanxin Park',
+                    image: 'assets/images/KHPark.jpg',
+                    desc: '徒步8分鐘，約550公尺。'
+                },
+                {
+                    id: 'CCpark',
+                    yaw: 12.034750849291216,
+                    pitch: -25.465971946544524,
+                    label: '長春公園',
+                    icon: '🌳',
+                    title: '長春公園',
+                    subtitle: 'Changchun Park',
+                    image: 'assets/images/CCpark.jpg',
+                    desc: '徒步2分鐘，約120公尺。'
+                },
+                {
+                    id: 'GPES',
+                    yaw: 23.42357180538572,
+                    pitch: -40.191469872592634,
+                    label: '關埔國小',
+                    icon: '🏫',
+                    title: '關埔國小',
+                    subtitle: 'Guanpu Elementary School',
+                    image: 'assets/images/GPES.jpg',
+                    desc: '徒步5分鐘，約350公尺。'
+                },
+                {
+                    id: 'NYIO',
+                    yaw: 30.666242540957676,
+                    pitch: -27.95213645880542,
+                    label: '紐約國際幼兒園',
+                    icon: '🏫',
+                    title: '紐約國際幼兒園',
+                    subtitle: 'New York International Organization',
+                    image: 'assets/images/NYIO.jpg',
+                    desc: '徒步4分鐘，約300公尺。'
+                },
+                {
+                    id: 'GWJH',
+                    yaw: 35.21799566524849,
+                    pitch: -19.524178137394934,
+                    label: '光武國中',
+                    icon: '🏫',
+                    title: '光武國中',
+                    subtitle: 'Guangwu Junior High School',
+                    image: 'assets/images/GWJH.jpg',
+                    desc: '徒步6分鐘，約450公尺。'
+                },
+                {
+                    id: 'HSP',
+                    yaw: 20.344371156638374,
+                    pitch: -6.038966652929766,
+                    label: '竹科園區',
+                    icon: '🏫',
+                    title: '竹科園區',
+                    subtitle: 'Hsinchu Science Park',
+                    image: 'assets/images/HSP.jpg',
+                    desc: '開車7分鐘，約2公里。'
+                },
+                {
+                    id: 'Starbucks',
+                    yaw: 71.03701587307552,
+                    pitch: -57.06109384697529,
+                    label: '星巴克',
+                    icon: '☕',
+                    title: '星巴克',
+                    subtitle: 'Starbucks',
+                    image: 'assets/images/Starbucks.jpg',
+                    desc: '徒步8分鐘，約650公尺。'
+                },
+                {
+                    id: 'DECATHLON',
+                    yaw: 131.26178024058544,
+                    pitch: -45.92716656280002,
+                    label: '迪卡儂',
+                    icon: '🛒',
+                    title: '迪卡儂',
+                    subtitle: 'DECATHLON',
+                    image: 'assets/images/DECATHLON.jpg',
+                    desc: '開車4分鐘，約1公里。'
+                },
+                {
+                    id: 'COSTCO',
+                    yaw: 158.3639758123871,
+                    pitch: -41.16005924357204,
+                    label: '好市多',
+                    icon: '🛒',
+                    title: '好市多',
+                    subtitle: 'COSTCO',
+                    image: 'assets/images/COSTCO.jpg',
+                    desc: '開車6分鐘，約1.3公里。'
+                },
+                {
+                    id: 'Sun Yat-sen Freeway',
+                    yaw: 84.58282271629714,
+                    pitch: -14.522709301521836,
+                    label: '國道一號',
+                    icon: '🚗',
+                    title: '國道一號',
+                    subtitle: 'Sun Yat-sen Freeway',
+                    image: 'assets/images/Sun Yat-sen Freeway.jpg',
+                    desc: '開車5分鐘，約1.5公里。'
+                }
+
+            ];
+
+            // 初始化 Pannellum
+            const viewer = pannellum.viewer('panorama', {
+                type: 'equirectangular',
+                panorama: 'assets/images/360pano.jpg',
+                autoLoad: true,
+                autoRotate: false,
+                compass: false,
+                showZoomCtrl: true,
+                showFullscreenCtrl: false,
+                mouseZoom: true,
+                hfov: 120,
+                minHfov: 50,
+                maxHfov: 120,
+                friction: 0.15,
+                yaw: 2.6775067496532836,
+                pitch: -32.9360348197727,
+                hotSpotDebug: true,
+                hotSpots: hotspots.map(hs => ({
+                    id: hs.id,
+                    pitch: hs.pitch,
+                    yaw: hs.yaw,
+                    type: 'info',
+                    text: hs.label,
+                    clickHandlerFunc: () => openPoiModal(hs)
+                }))
+            });
+
+            // ===== Modal 控制 =====
+            const modal = document.getElementById('poiModal');
+            const modalImg = document.getElementById('poiModalImg');
+            const modalTitle = document.getElementById('poiModalTitle');
+            const modalSubtitle = document.getElementById('poiModalSubtitle');
+            const modalDesc = document.getElementById('poiModalDesc');
+            const modalClose = document.getElementById('poiModalClose');
+
+            function openPoiModal(poi) {
+                modalImg.src = poi.image;
+                modalImg.alt = poi.title;
+                modalTitle.textContent = poi.title;
+                modalSubtitle.textContent = poi.subtitle;
+                modalDesc.textContent = poi.desc;
+                modal.classList.add('active');
+            }
+
+            function closePoiModal() {
+                modal.classList.remove('active');
+            }
+
+            modalClose.addEventListener('click', closePoiModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closePoiModal();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closePoiModal();
+            });
+        })();
+    </script>
+    <script src="js/spa-router.js"></script>
+</body>
+
+</html>

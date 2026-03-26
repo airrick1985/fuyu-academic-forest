@@ -1,0 +1,11 @@
+{
+  "name": "fuyu-academic-forest",
+  "version": "1.0.0",
+  "description": "富宇學森 The Academic Forest",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve ."
+  },
+  "author": "",
+  "license": "ISC"
+}

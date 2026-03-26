@@ -1,0 +1,200 @@
+/* css/hero.css */
+.hero {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-dark);
+}
+
+.hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.hero-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: bg-ken-burns 30s linear infinite alternate;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom,
+            rgba(10, 31, 10, 0.7) 0%,
+            rgba(10, 31, 10, 0.3) 30%,
+            rgba(10, 31, 10, 0.5) 70%,
+            rgba(10, 31, 10, 0.8) 100%);
+    z-index: 1;
+}
+
+.fireflies-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.bird {
+    position: absolute;
+    width: 30px;
+    height: 15px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40'%3E%3Cpath d='M0,20 Q25,-5 50,20 Q75,-5 100,20 Q75,10 50,30 Q25,10 0,20 Z' fill='rgba(255, 255, 255, 0.7)'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 5;
+    transform-origin: center center;
+    animation: flap 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes flap {
+    0% {
+        background-size: 100% 100%;
+    }
+
+    100% {
+        background-size: 100% 30%;
+    }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-logo {
+    opacity: 0;
+    transform: scale(0.9);
+    margin-bottom: 30px;
+    animation: logo-entrance 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    filter: drop-shadow(0 15px 30px rgba(10, 31, 10, 0.8)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.15));
+    position: relative;
+    display: inline-block;
+}
+
+.hero-logo img {
+    max-width: 600px;
+    height: auto;
+    display: block;
+}
+
+/* 反光特效層：完全利用 PNG/SVG 透明遮罩 */
+.logo-shine-layer {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 讓光層與 LOGO 圖案一模一樣 */
+    -webkit-mask-image: var(--logo-url);
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-image: var(--logo-url);
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+
+    /* 製作一條極致柔和的高光帶，光芒漸變更細膩 */
+    background: linear-gradient(-60deg,
+            transparent 35%,
+            rgba(255, 255, 255, 0.1) 40%,
+            rgba(255, 255, 255, 0.4) 45%,
+            rgba(255, 255, 255, 0.85) 50%,
+            rgba(255, 255, 255, 0.4) 55%,
+            rgba(255, 255, 255, 0.1) 60%,
+            transparent 65%);
+
+    /* 提升質感：放慢速度與滑動節奏 */
+    background-size: 250% 100%;
+    background-position: 150% 0;
+    animation: logo-shine 10s ease-in-out infinite;
+    animation-delay: 2.5s;
+    /* 與 LOGO 淡入錯開 */
+    pointer-events: none;
+    z-index: 10;
+}
+
+.hero-slogan {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 28px;
+    color: var(--color-text-primary);
+    letter-spacing: 24px;
+    margin-right: -24px;
+    /* 修正字距產生視覺偏移的問題 */
+    opacity: 0;
+    animation: text-entrance 1.5s ease-out 1.5s forwards;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+}
+
+@keyframes bg-ken-burns {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes logo-entrance {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+        filter: drop-shadow(0 0 0px rgba(10, 31, 10, 0)) drop-shadow(0 0 0px rgba(255, 215, 0, 0));
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        /* 深色實體陰影營造立體懸浮感 + 金色環境光暈營造奢華感 */
+        filter: drop-shadow(0 15px 30px rgba(10, 31, 10, 0.8)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.15));
+    }
+}
+
+@keyframes text-entrance {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes logo-shine {
+    0% {
+        background-position: 150% 0;
+    }
+
+    40%,
+    100% {
+        background-position: -50% 0;
+    }
+}
