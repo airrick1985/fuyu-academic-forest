@@ -198,3 +198,49 @@
         background-position: -50% 0;
     }
 }
+
+/* ===== 首頁專屬 ANXI 膠囊廣告按鈕 ===== */
+.anxi-home-capsule {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    padding: 8px 24px;
+    border-radius: 50px;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+    font-family: var(--font-english-sans), var(--font-sans, system-ui);
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.55);
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease;
+    opacity: 0;
+    animation: capsule-entrance 2s ease forwards 2.5s;
+    pointer-events: auto;
+}
+
+.anxi-home-capsule:hover {
+    background: rgba(10, 10, 10, 0.85);
+    color: rgba(255, 204, 0, 0.9);
+    border-color: rgba(255, 204, 0, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 204, 0, 0.2);
+    transform: translateX(-50%) translateY(-2px);
+}
+
+@keyframes capsule-entrance {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}

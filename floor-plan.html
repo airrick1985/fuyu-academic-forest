@@ -13,6 +13,10 @@
 </head>
 
 <body class="floor-plan-page">
+    <!-- ===== 動態靜態影像背景 ===== -->
+    <div class="fp-bg-image"></div>
+    <div class="fp-bg-overlay"></div>
+    <div class="fireflies-canvas"></div>
 
     <!-- Top Bar (由 topbar.js 統一注入) -->
     <div id="topbar-root"></div>
@@ -159,6 +163,8 @@
         <button class="fp-lightbox-close" id="fpLightboxClose" title="關閉">✕</button>
         <img src="" alt="" id="fpLightboxImg" draggable="false">
         <div class="fp-lightbox-hint">滾輪縮放 · 拖曳移動 · ESC 關閉</div>
+        <!-- 坪數資訊面板 -->
+        <div class="fp-lightbox-info" id="fpLightboxInfo"></div>
     </div>
 
     <!-- 常駐免責聲明 -->
@@ -232,6 +238,27 @@
             const lightbox = document.getElementById('fpLightbox');
             const lightboxImg = document.getElementById('fpLightboxImg');
             const lightboxClose = document.getElementById('fpLightboxClose');
+            const lightboxInfo = document.getElementById('fpLightboxInfo');
+
+            // 坪數資料
+            const areaData = {
+                '全區': [
+                    { unit: 'A1', area: 35.08 },
+                    { unit: 'A2', area: 35.08 },
+                    { unit: 'A3', area: 26.39 },
+                    { unit: 'A5', area: 31.31 },
+                    { unit: 'A6', area: 25.22 },
+                    { unit: 'A7', area: 35.08 },
+                    { unit: 'A8', area: 35.08 }
+                ],
+                'A1': { main: 20.58, balc: 2.29, pub: 12.21, total: 35.08 },
+                'A2': { main: 20.58, balc: 2.29, pub: 12.21, total: 35.08 },
+                'A3': { main: 15.64, balc: 1.57, pub:  9.18, total: 26.39 },
+                'A5': { main: 18.83, balc: 1.59, pub: 10.90, total: 31.31 },
+                'A6': { main: 14.82, balc: 1.63, pub:  8.78, total: 25.22 },
+                'A7': { main: 20.58, balc: 2.29, pub: 12.21, total: 35.08 },
+                'A8': { main: 20.58, balc: 2.29, pub: 12.21, total: 35.08 }
+            };
 
             let lbScale = 1, lbTx = 0, lbTy = 0;
             let lbDragging = false, lbStartX = 0, lbStartY = 0;
@@ -243,6 +270,50 @@
                 img.addEventListener('click', () => {
                     lightboxImg.src = img.src;
                     lightboxImg.alt = img.alt;
+                    
+                    // 判斷要顯示的資訊
+                    let infoHtml = '';
+                    if (img.alt.includes('4-14F')) {
+                        // 全區總坪數
+                        infoHtml = '<table class="area-table"><tbody>';
+                        areaData['全區'].forEach(row => {
+                            infoHtml += `<tr><td class="unit-name">${row.unit}</td><td class="unit-val">${row.area}</td><td class="unit-txt">坪</td></tr>`;
+                        });
+                        infoHtml += '</tbody></table>';
+                    } else {
+                        // 個別戶別坪數
+                        const match = img.alt.match(/A[1-8]/);
+                        if (match && areaData[match[0]]) {
+                            const d = areaData[match[0]];
+                            infoHtml = `
+                                <div class="area-detail">
+                                    <div class="area-row"><span>主建物</span><span>${d.main} 坪</span></div>
+                                    <div class="area-row"><span>附屬建物(陽台)</span><span>${d.balc} 坪</span></div>
+                                    <div class="area-row"><span>共有部分(公設)</span><span>${d.pub} 坪</span></div>
+                                    <div class="area-divider"></div>
+                                    <div class="area-row total"><span>權狀坪數</span><span>${d.total} 坪</span></div>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    if (infoHtml) {
+                        lightboxInfo.innerHTML = `
+                            <button class="info-toggle-btn" onmousedown="event.stopPropagation();" onclick="event.stopPropagation(); this.parentElement.classList.toggle('collapsed');">
+                                <span class="toggle-text-open">隱藏坪數</span>
+                                <span class="toggle-text-close">顯示坪數</span>
+                            </button>
+                            <div class="info-content-wrap">
+                                ${infoHtml}
+                            </div>
+                        `;
+                        lightboxInfo.classList.remove('collapsed');
+                        lightboxInfo.classList.add('visible');
+                    } else {
+                        lightboxInfo.innerHTML = '';
+                        lightboxInfo.classList.remove('visible');
+                    }
+
                     lbScale = 1; lbTx = 0; lbTy = 0;
                     updateLightboxTransform();
                     lightbox.classList.add('active');
@@ -276,6 +347,9 @@
             // 拖曳
             lightbox.addEventListener('mousedown', (e) => {
                 if (e.target.closest('.fp-lightbox-close')) return;
+                // 防止點擊到彈出資訊框也觸發背景圖案的拖曳
+                if (e.target.closest('.fp-lightbox-info')) return;
+                
                 e.preventDefault(); // 防止圖片的原生拖曳行為
                 lbDragging = true;
                 lbDragMoved = false;
@@ -341,8 +415,60 @@
                 fadeObserver.observe(wrapper);
             });
 
+            // ===== 懸浮立體流動光球 (Orb Background Effect) =====
+            // 動態生成 12 顆光球，在 3D 空間內緩慢旋轉，使用高級品牌配色
+            const colorsList = [
+                'rgba(215, 185, 125, 0.45)', // 亮金
+                'rgba(165, 180, 175, 0.35)', // 霧灰綠
+                'rgba(189, 152, 92, 0.4)',   // 深褐金
+                'rgba(235, 225, 210, 0.5)'   // 暖霜白
+            ];
+            const length = 12; // 光球數量
+
+            const orbContainer = document.createElement('div');
+            orbContainer.className = 'fp-orb-bg';
+            document.body.prepend(orbContainer);
+
+            let orbStyles = '';
+            for (let i = 1; i <= length; i++) {
+                const c = colorsList[Math.floor(Math.random() * colorsList.length)];
+                
+                // 此處模擬原作者 SCSS 中的特定隨機參數範圍
+                const top = Math.floor(Math.random() * 100);
+                const left = Math.floor(Math.random() * 100);
+                const duration = Math.floor(Math.random() * 35) + 25; // 25s - 60s
+                const delay = -(Math.floor(Math.random() * 45)); // 0s to -45s
+                const originX = Math.floor(Math.random() * 50) - 25; // -25vw to 25vw
+                const originY = Math.floor(Math.random() * 50) - 25; // -25vh to 25vh
+                
+                // box-shadow 形狀與擴散 (Dir: 1 或 -1，Blur 隨機模糊)
+                const dir = Math.random() > 0.5 ? 40 : -40;
+                const blur = (Math.random() * 2 + 4).toFixed(3); // 4vmin - 6vmin
+                
+                orbStyles += `
+                .fp-orb.b${i} {
+                    color: ${c};
+                    top: ${top}%;
+                    left: ${left}%;
+                    animation-duration: ${duration}s;
+                    animation-delay: ${delay}s;
+                    transform-origin: ${originX}vw ${originY}vh;
+                    box-shadow: ${dir}vmin 0 ${blur}vmin currentColor;
+                }
+                `;
+
+                const orb = document.createElement('div');
+                orb.className = `fp-orb b${i}`;
+                orbContainer.appendChild(orb);
+            }
+
+            const styleEl = document.createElement('style');
+            styleEl.innerHTML = orbStyles;
+            document.head.appendChild(styleEl);
+
         })();
     </script>
+    <script src="js/fireflies.js?v=2"></script>
     <script src="js/spa-router.js"></script>
 </body>
 

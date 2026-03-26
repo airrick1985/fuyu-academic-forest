@@ -1,53 +1,72 @@
 /* css/floor-plan.css — 平面規劃頁面 */
 
+:root {
+    /* ======= 【建案燈箱圖片尺寸設定區】 ======= */
+    /* ↓ 如果覺得家具配置圖稍微太大或太小，請直接修改以下兩個數值 ↓ */
+    --fp-lightbox-max-width: 95vw;
+    /* 原為 95vw，縮小為 80vw 讓左右留底白邊 */
+    --fp-lightbox-max-height: 95vh;
+    /* 原為 95vh，縮小為 80vh 讓上下留底白邊 */
+
+    /* ↓ 如果覺得左下角的坪數資訊面板太大或太小，請修改以下數值（1=100%, 0.5=50%, 1.5=150%） ↓ */
+    --fp-lightbox-info-scale: 0.6;
+    /* ========================================= */
+}
+
 /* ===== 淺色草紙紋理背景 ===== */
 body.floor-plan-page {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    /* 冷調淺灰底色，避免與 WEBP 暖色混淆 */
-    background-color: #e9ecf0;
-    /* 多層疊加營造紙質紋理 */
-    background-image:
-        /* 細微噪點紋理 */
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
-        /* 交叉纖維線條 */
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cline x1='0' y1='50' x2='100' y2='52' stroke='%23b8bcc4' stroke-width='0.3' opacity='0.25'/%3E%3Cline x1='30' y1='0' x2='32' y2='100' stroke='%23b8bcc4' stroke-width='0.2' opacity='0.15'/%3E%3C/svg%3E");
+    /* 劇院級底色，預防圖片讀取延遲時的閃爍 */
+    background-color: #1a1f1e;
     overflow-x: hidden;
 }
 
-/* 背景質感微光動畫 - 用偽元素疊加 */
-body.floor-plan-page::before {
-    content: '';
+/* 劇院級影像背景 (Cinematic Background Image) */
+.fp-bg-image {
     position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(ellipse at 30% 20%, rgba(180, 195, 215, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 70% 80%, rgba(160, 175, 200, 0.1) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(190, 200, 220, 0.08) 0%, transparent 60%);
-    animation: fp-ambientShift 20s ease-in-out infinite alternate;
-    z-index: 0;
-    pointer-events: none;
+    top: -5%;
+    left: -5%;
+    width: 110%;
+    height: 110%;
+    background-image: url('../assets/images/layout/background.webp');
+    background-size: cover;
+    background-position: center;
+    z-index: -2;
+    animation: fp-bg-pan 45s linear infinite alternate;
 }
 
-@keyframes fp-ambientShift {
+@keyframes fp-bg-pan {
     0% {
-        transform: translate(0, 0) rotate(0deg);
-    }
-
-    33% {
-        transform: translate(2%, -1%) rotate(0.5deg);
-    }
-
-    66% {
-        transform: translate(-1%, 2%) rotate(-0.3deg);
+        transform: scale(1) translate(0, 0);
     }
 
     100% {
-        transform: translate(1%, -2%) rotate(0.2deg);
+        transform: scale(1.05) translate(-1.5%, 1.5%);
     }
+}
+
+/* 背景透白與毛玻璃處理，確保原本的深色文字清晰可讀 */
+.fp-bg-overlay {
+    position: fixed;
+    inset: 0;
+    /* 降低透明度為 45%~35% 並降低模糊度，讓背景相片能清晰透出來，同時保持文字可讀性 */
+    background: linear-gradient(135deg, rgba(245, 247, 246, 0.45) 0%, rgba(233, 236, 240, 0.35) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* 螢火蟲畫布置於背景與內容之間 */
+.fireflies-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
 }
 
 /* 浮動微粒動畫 */
@@ -225,13 +244,13 @@ body.floor-plan-page::after {
     max-width: 100%;
     max-height: 80vh;
     object-fit: contain;
-    /* 帶有微微陰影讓平面圖「浮」在紙面上 */
-    filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.08));
-    transition: filter 0.3s ease;
+    /* 帶有明顯陰影讓平面圖「立體浮」在紙面上 */
+    filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.25));
+    transition: filter 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .fp-image-wrapper img:hover {
-    filter: drop-shadow(0 8px 30px rgba(0, 0, 0, 0.12));
+    filter: drop-shadow(0 15px 40px rgba(0, 0, 0, 0.35));
 }
 
 /* ===== 圖片燈箱 (Lightbox) ===== */
@@ -261,8 +280,8 @@ body.floor-plan-page::after {
 }
 
 .fp-lightbox img {
-    max-width: 95vw;
-    max-height: 95vh;
+    max-width: var(--fp-lightbox-max-width, 95vw);
+    max-height: var(--fp-lightbox-max-height, 95vh);
     object-fit: contain;
     pointer-events: none;
     transform-origin: center center;
@@ -328,6 +347,166 @@ body.floor-plan-page::after {
         opacity: 0;
         transform: translateX(-50%) translateY(10px);
     }
+}
+
+/* 坪數資訊面板 */
+.fp-lightbox-info {
+    position: absolute;
+    bottom: 60px;
+    left: 60px;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transform-origin: bottom left;
+    transform: scale(var(--fp-lightbox-info-scale, 1)) translateY(20px);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+    /* Let lightbox drag through when hidden */
+}
+
+.fp-lightbox-info.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(var(--fp-lightbox-info-scale, 1)) translateY(0);
+}
+
+/* 展開狀態的外觀 (寫在內容層，以方便收闔) */
+.info-content-wrap {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(180, 165, 130, 0.4);
+    border-radius: 20px;
+    padding: 30px 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s ease;
+    overflow: hidden;
+    pointer-events: auto;
+    /* 阻擋拖曳 */
+}
+
+/* 燈箱按鈕 */
+.info-toggle-btn {
+    position: absolute;
+    top: -65px;
+    left: 0;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(180, 165, 130, 0.5);
+    color: #8b6914;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: var(--font-sans);
+    padding: 12px 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    pointer-events: auto;
+    /* 按鈕永遠可以點擊 */
+    transition: background 0.3s;
+    letter-spacing: 2px;
+    z-index: 10;
+}
+
+.info-toggle-btn:hover {
+    background: #fff;
+}
+
+.toggle-text-close {
+    display: none;
+}
+
+/* 收闔狀態邏輯 */
+.fp-lightbox-info.collapsed .info-content-wrap {
+    opacity: 0;
+    max-height: 0;
+    padding: 0 40px;
+    border-width: 0;
+    transform: scaleY(0);
+}
+
+.fp-lightbox-info.collapsed .toggle-text-open {
+    display: none;
+}
+
+.fp-lightbox-info.collapsed .toggle-text-close {
+    display: inline;
+}
+
+/* 全區表格 (放大200%) */
+.area-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.area-table td {
+    padding: 16px 24px;
+    color: #4a4a4a;
+    font-size: 28px;
+    border-bottom: 2px dashed rgba(180, 165, 130, 0.3);
+}
+
+.area-table tr:last-child td {
+    border-bottom: none;
+}
+
+.unit-name {
+    font-weight: 700;
+    color: #8b6914;
+    font-family: var(--font-english-sans, 'Arial', sans-serif);
+    letter-spacing: 2px;
+}
+
+.unit-val {
+    text-align: right;
+    font-weight: 600;
+    font-family: var(--font-english-sans, 'Arial', sans-serif);
+    color: #333;
+}
+
+.unit-txt {
+    color: #888;
+    font-size: 20px !important;
+}
+
+/* 個別戶別細項 (放大200%) */
+.area-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 460px;
+}
+
+.area-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #666;
+    font-size: 28px;
+    letter-spacing: 2px;
+}
+
+.area-row span:last-child {
+    font-weight: 600;
+    font-family: var(--font-english-sans, 'Arial', sans-serif);
+    color: #222;
+}
+
+.area-divider {
+    height: 2px;
+    background: rgba(180, 165, 130, 0.6);
+    margin: 12px 0 6px 0;
+}
+
+.area-row.total {
+    font-size: 34px;
+    font-weight: 700;
+    color: #8b6914;
+    margin-top: 6px;
+}
+
+.area-row.total span:last-child {
+    color: #8b6914;
 }
 
 /* ===== 常駐免責聲明 ===== */
