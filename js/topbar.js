@@ -5,7 +5,7 @@
     <header class="topbar">
         <div class="topbar-logo">
             <a href="index.html">
-                <img src="assets/images/xuesen_logo.png" alt="富宇學森" class="topbar-logo-img">
+                <img src="assets/images/xuesen_logo.webp" alt="富宇學森" class="topbar-logo-img">
             </a>
         </div>
         <nav class="topbar-nav">

@@ -17,15 +17,15 @@
     <!-- Top Bar (由 topbar.js 統一注入) -->
     <div id="topbar-root"></div>
 
-    <!-- 全螢幕圖片輪播 -->
+    <!-- 全螢幕圖片檢視器 -->
     <div class="ext3d-viewer" id="ext3dViewer">
 
-        <!-- 幻燈片 -->
+        <!-- 圖片輪播 -->
         <div class="ext3d-slide active" data-index="0">
-            <img src="assets/images/3D-01.jpg" alt="富宇學森 外觀3D渲染圖 - 全景" draggable="false">
+            <img src="assets/images/3D-01.webp" alt="富宇學森 外觀3D透視圖 - 日景" draggable="false">
         </div>
         <div class="ext3d-slide" data-index="1">
-            <img src="assets/images/3D-02.jpg" alt="富宇學森 外觀3D渲染圖 - 入口特寫" draggable="false">
+            <img src="assets/images/3D-02.webp" alt="富宇學森 外觀3D透視圖 - 夜間光影" draggable="false">
         </div>
 
         <!-- 左右箭頭 -->
@@ -40,7 +40,7 @@
             </svg>
         </button>
 
-        <!-- 底部指標列 -->
+        <!-- 底部導航 -->
         <div class="ext3d-bottom-bar">
             <div class="ext3d-dots" id="ext3dDots"></div>
         </div>
@@ -54,13 +54,13 @@
         <!-- 計數器 -->
         <div class="ext3d-counter" id="ext3dCounter">1 / 2</div>
 
-        <!-- 3D渲染圖免責聲明 -->
-        <div class="ext3d-disclaimer">※ 此為3D渲染示意圖，僅供參考，與實際成屋外觀可能會有差異</div>
+        <!-- 3D透視圖免責聲明 -->
+        <div class="ext3d-disclaimer">本3D透視圖僅供參考，實際以建造變更核准圖面為準。</div>
 
         <!-- 操作提示 -->
         <div class="ext3d-hint">
-            <span>🖱️</span>
-            <span>滾輪縮放 · 拖曳移動 · 左右鍵切換</span>
+            <span>提示</span>
+            <span>滾輪縮放 · 拖曳移動 · 左右箭頭切換</span>
         </div>
 
     </div>
@@ -79,7 +79,7 @@
 
             let currentIndex = 0;
 
-            // ===== 建立圓點指標 =====
+            // ===== 建立圓點導航 =====
             slides.forEach((_, i) => {
                 const dot = document.createElement('div');
                 dot.className = 'ext3d-dot' + (i === 0 ? ' active' : '');
@@ -88,7 +88,7 @@
             });
 
             function goToSlide(index) {
-                // 切換幻燈片前，重設目前幻燈片的縮放與位移
+                // 切換圖片前，先重設目前圖片的縮放狀態
                 resetSlideTransform(currentIndex);
 
                 slides[currentIndex].classList.remove('active');
@@ -100,20 +100,20 @@
                 dotsContainer.children[currentIndex].classList.add('active');
                 counter.textContent = `${currentIndex + 1} / ${totalSlides}`;
 
-                // 重設新幻燈片的縮放狀態
+                // 確保新圖片的縮放也已重設
                 resetSlideTransform(currentIndex);
             }
 
             prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
             nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
 
-            // ===== 鍵盤左右鍵 =====
+            // ===== 鍵盤左右箭頭 =====
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowLeft') goToSlide(currentIndex - 1);
                 if (e.key === 'ArrowRight') goToSlide(currentIndex + 1);
             });
 
-            // ===== 每張幻燈片的獨立縮放/拖曳狀態 =====
+            // ===== 每張圖片獨立的縮放/拖曳 =====
             const slideStates = Array.from(slides).map(() => ({
                 scale: 1, translateX: 0, translateY: 0
             }));
@@ -131,7 +131,7 @@
                     s.translateX = 0;
                     s.translateY = 0;
                 } else {
-                    // 限制拖曳範圍
+                    // 限制範圍
                     const imgW = img.offsetWidth;
                     const imgH = img.offsetHeight;
                     const containerW = viewer.clientWidth;

@@ -7,7 +7,9 @@ if (!window._spaRouterInitialized) {
     async function navigate(url) {
         try {
             const response = await fetch(url);
-            const html = await response.text();
+            // 強制使用 UTF-8 解碼，避免繁體中文因編碼判斷錯誤而變成亂碼
+            const buffer = await response.arrayBuffer();
+            const html = new TextDecoder('utf-8').decode(buffer);
 
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');

@@ -1,4 +1,4 @@
-/* css/coming-soon.css */
+﻿/* css/coming-soon.css */
 .coming-soon-page {
     position: relative;
     width: 100vw;
@@ -6,7 +6,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: url('../assets/images/coming-soon-bg.png') no-repeat center center;
+    background: url('../assets/images/coming-soon-bg.webp') no-repeat center center;
     background-size: cover;
     overflow: hidden;
 }
