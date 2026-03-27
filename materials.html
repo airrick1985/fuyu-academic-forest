@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>建材設備 - 富宇學森 The Academic Forest</title>
+    <meta name="description" content="富宇學森建材設備介紹，包括玄關門、木地板、廚房、衛浴等精選建材配備。">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/topbar.css">
+    <link rel="stylesheet" href="css/materials.css">
+</head>
+
+<body class="materials-page">
+    <!-- 動態背景 -->
+    <div class="mat-bg-image"></div>
+    <div class="mat-bg-overlay"></div>
+
+    <!-- Top Bar -->
+    <div id="topbar-root"></div>
+
+    <div class="mat-container">
+        <!-- 頁面標題 -->
+        <div class="mat-page-header">
+            <h1>建材設備</h1>
+            <p class="mat-page-subtitle">BUILDING MATERIALS</p>
+        </div>
+
+        <!-- 平面圖 + Hotspot 區域 -->
+        <div class="mat-blueprint-wrapper" id="matBlueprint">
+            <img src="assets/images/layout/A1.webp" alt="A1 傢俱配置參考圖" class="mat-blueprint-img" id="matBlueprintImg"
+                draggable="false">
+            <!-- Hotspot 由 JS 動態生成 -->
+        </div>
+
+        <p class="mat-hint">👆 點擊紅色標記查看建材設備介紹</p>
+    </div>
+
+    <!-- 建材詳情 Modal -->
+    <div class="mat-modal-overlay" id="matModalOverlay">
+        <div class="mat-modal" id="matModal">
+            <button class="mat-modal-close" id="matModalClose" title="關閉">✕</button>
+            <div class="mat-modal-split">
+                <!-- 左側：圖片輪播 -->
+                <div class="mat-modal-left" id="matModalLeft">
+                    <button class="mat-gallery-arrow prev" id="matGalleryPrev">❮</button>
+                    <button class="mat-gallery-arrow next" id="matGalleryNext">❯</button>
+
+                    <div class="mat-modal-gallery" id="matModalGallery"></div>
+                    <div class="mat-gallery-dots" id="matGalleryDots"></div>
+                </div>
+
+                <!-- 右側：標題與文字介紹 -->
+                <div class="mat-modal-right">
+                    <div class="mat-modal-header">
+                        <h2 class="mat-modal-title" id="matModalTitle"></h2>
+                        <p class="mat-modal-subtitle" id="matModalSubtitle"></p>
+                    </div>
+
+                    <!-- 文字介紹 -->
+                    <div class="mat-modal-description" id="matModalDesc">
+                        <div class="mat-modal-loading">載入中...</div>
+                    </div>
+
+                    <p class="mat-modal-disclaimer">※ 以上照片皆為示意圖，建材設備以實際交屋為準。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 設備 Grid 覆蓋層 (點擊「廚房設備一覽」按鈕時使用) -->
+    <div class="equip-grid-overlay" id="equipGridOverlay">
+        <button class="equip-grid-overlay-close" id="equipGridClose">✕</button>
+        <div class="equip-grid-overlay-content">
+            <h2 class="equip-grid-overlay-title">廚房設備一覽</h2>
+            <p class="equip-grid-overlay-subtitle">精選國際頂級廚房設備，每一件都是為高品質生活而生。</p>
+            <div class="equip-grid" id="equipGridContainer"></div>
+            <p class="equip-grid-disclaimer">※ 以上照片皆為示意圖，建材設備以實際交屋為準。賣方保留建材設備品牌規格變更之權利。</p>
+        </div>
+    </div>
+
+    <!-- 設備燈箱 (點擊 Grid 設備卡片時使用) -->
+    <div class="equip-lightbox-overlay" id="equipLightboxOverlay">
+        <button class="equip-lightbox-close" id="equipLightboxClose">✕</button>
+        <div class="equip-lightbox-content">
+            <div class="equip-lightbox-img-wrap">
+                <img id="equipLightboxImg" src="" alt="設備圖片">
+            </div>
+            <div class="equip-lightbox-info">
+                <h3 id="equipLightboxName"></h3>
+                <div class="equip-lightbox-desc" id="equipLightboxDesc"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 免責聲明 -->
+    <div class="mat-disclaimer">
+        此房屋銷售平面圖僅供參考，實際規劃依建造變更核准圖面為依據。不動產經紀業：一研九鼎廣告策劃有限公司
+    </div>
+
+    <!-- Debug Toast 提示 (隱藏式開發者模式，快速連按 D 鍵 5 次進入) -->
+    <div class="mat-debug-toast" id="matDebugToast"></div>
+
+    <!-- Debug 面板 -->
+    <div class="mat-debug-panel" id="matDebugPanel">
+        <h3>🔴 Hotspot Debug 面板</h3>
+        <div class="mat-debug-list" id="matDebugList"></div>
+        <button class="mat-debug-export-btn" id="matDebugExport">📋 匯出座標 (複製到剪貼簿)</button>
+    </div>
+
+    <!-- JS -->
+    <script src="js/topbar.js"></script>
+    <script>
+        (() => {
+            // ===== Hotspot 資料定義 =====
+            // x, y 為百分比座標 (基於圖片寬高比)
+            const hotspots = [
+                {
+                    id: 'entrance-door',
+                    label: '玄關門及電子鎖',
+                    subtitle: 'ENTRANCE DOOR',
+                    x: 68.2,
+                    y: 93.3,
+                    images: [
+                        {
+                            src: 'assets/images/equipment/panasonic-door.webp',
+                            html: `
+                                <h2>Panasonic 日本進口玄關門</h2>
+                                <h3>守護家人的第一道防線</h3>
+                                <p>採用 <strong>Panasonic 智能防盜門鎖</strong>，內建精密晶片與多重安全防護機制，結合高強度防爆鋼板，不僅提供無與倫比的安全感，更展現低調奢華的美學品味。</p>
+                                <ul>
+                                    <li>支援指紋、密碼、卡片與手機多重解鎖</li>
+                                    <li>隱藏式把手設計，展現極致極簡美學</li>
+                                    <li>配備 <em>自動上鎖</em> 與防窺密碼功能，安全無漏洞</li>
+                                </ul>
+                            `
+                        }
+                    ]
+                },
+                {
+                    id: 'wood-floor',
+                    label: '木地板',
+                    subtitle: 'WOOD FLOORING',
+                    x: 64.8,
+                    y: 41.8,
+                    images: [
+                        {
+                            src: 'assets/images/equipment/kronotex.webp',
+                            html: `
+                                <h2>KRONOTEX 德國太格木地板</h2>
+                                <h3>為居家注入溫潤的自然氣息</h3>
+                                <p>全室採用德國原裝進口 <strong>KRONOTEX 頂級耐磨木地板</strong>，精選天然木材紋理，觸感溫潤踏實，無論是視覺或踩踏感皆為頂級享受。</p>
+                                <ul>
+                                    <li>符合歐洲 <strong>E1 級環保標準</strong>，居家健康無毒</li>
+                                    <li>表面獨特耐磨塗層，防刮抗污易清潔</li>
+                                    <li>專用靜音墊與 <em>專利扣型設計</em>，大幅降低室內回音</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            src: 'assets/images/equipment/kronotex-2.webp',
+                            html: `
+                                
+                            `
+                        }
+                    ]
+                },
+                {
+                    id: 'kitchen',
+                    label: '廚房',
+                    subtitle: 'KITCHEN',
+                    x: 57.5,
+                    y: 81.7,
+                    images: [
+                        {
+                            src: 'assets/images/equipment/LEICHT.webp',
+                            html: `
+                                <h2>德國頂級廚具品牌 LEICHT</h2>
+                                <h3>超越時間限制的極致經典</h3>
+                                <p>LEICHT 是世界領先的廚具品牌，已有近 <strong>90 年建廠歷史</strong>，遍布世界 50 多個國家及地區。每間 LEICHT 廚房都是獨一無二的，為層峰人士量身定製。</p>
+                                <p>為了滿足產品的複雜性，德廠藉由與 <strong>BENZ 同級的高精密設備</strong> 製造，再配合職人純手工研磨補整。將尖端工藝、技術與美學，在生產過程中 <em>完美配合</em>。</p>
+                                <ul>
+                                    <li>德國工藝百年淬鍊，細節處理無可挑剔</li>
+                                    <li>隱藏式收納與精品五金，讓下廚成為奢華享受</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            src: 'assets/images/equipment/LEICHT-2.webp',
+                            html: `<h2>德制美學 職人造詣</h2><p>展現卓越的工藝技術與耐用度，每一片門板、每一處紋理皆散發豪宅獨有的藝術氣質。</p>`
+                        },
+                        {
+                            src: 'assets/images/equipment/LEICHT-3.webp',
+                            html: `<h2>極簡流線的強大擴充</h2><p>順暢且符合人體工學的料理動線配置，並提供極大的隱形收納容量。</p>`
+                        },
+                        {
+                            src: 'assets/images/equipment/LEICHT-4.webp',
+                            html: `<h2>百種材質 完美契合</h2><p>豐富的高端面板材質可供搭配，無論是工業風、輕奢風或現代簡約，皆能完美呼應室內設計。</p>`
+                        }
+                    ]
+                },
+                {
+                    id: 'master-bathroom',
+                    label: '主衛浴',
+                    subtitle: 'MASTER BATHROOM',
+                    x: 33.6,
+                    y: 57.4,
+                    images: [
+                        {
+                            src: 'assets/images/equipment/ES41890.webp',
+                            html: `
+                                <h2>TOTO 日本頂級衛浴設備</h2>
+                                <h3>極致奢華的機能美學</h3>
+                                <p>主衛浴標準配備日本全新 <strong>TOTO 頂級全自動馬桶</strong>，除了自動掀蓋、溫水洗淨，更搭配抗菌抗污的專利陶瓷塗層，給您絕對衛生的私密時光。</p>
+                                <ul>
+                                    <li>無邊框水箱設計，空間視覺更開闊</li>
+                                    <li>獨家 <em>強效水龍捲洗淨技術</em>，安靜且省水</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            src: 'assets/images/equipment/ES41890_ID2.webp',
+                            html: `
+                                <h2>精密恆溫龍頭與雨淋花灑</h2>
+                                <p>搭載德國精品五金龍頭，精確控溫；搭配寬大雨林頂噴花灑，讓您在家就能享受如同 <strong>五星級飯店</strong> 般的極致沐浴體驗。</p>
+                            `
+                        }
+                    ]
+                },
+                {
+                    id: 'guest-bathroom',
+                    label: '次衛浴',
+                    subtitle: 'GUEST BATHROOM',
+                    x: 42.4,
+                    y: 57.4,
+                    images: [
+                        {
+                            src: 'assets/images/equipment/ES41890.webp',
+                            html: `
+                                <h2>高優質次衛浴空間設計</h2>
+                                <p>次衛浴同樣採用高等級進口衛浴品牌，不僅提供完美的舒適度，質感與風格也與主臥室相互輝映。</p>
+                            `
+                        },
+                        {
+                            src: 'assets/images/equipment/ES41890_ID2.webp',
+                            html: `
+                                <h2>實用與美感兼具</h2>
+                                <p>懸空式一體成型的面盆下櫃設計，不僅不易藏污納垢方便清潔，更能提供充足的備品收納空間。</p>
+                            `
+                        }
+                    ]
+                },
+                {
+                    id: 'aluminum-window',
+                    label: '鋁門窗',
+                    subtitle: 'ALUMINUM WINDOW',
+                    x: 65.6,
+                    y: 9.9,
+                    images: [
+                        {
+                            src: 'assets/images/equipment/knoica.webp',
+                            html: `
+                                <h2>YKK AP 高水密鋁門窗</h2>
+                                <h3>抵禦風暴，隔絕喧囂</h3>
+                                <p>全區迎風面皆採用日本窗業第一把交椅 <strong>YKK AP 氣密窗</strong>。具備絕佳的水密性、氣密性及隔音性能，有效抵擋狂風暴雨，同時還給室內一片絕對寧靜。</p>
+                                <ul>
+                                    <li>搭配高等級 <strong>Low-E 膠合玻璃</strong>，有效阻絕紫外線與戶外熱能</li>
+                                    <li>高剛性結構窗框，完美抗風壓不變形</li>
+                                </ul>
+                            `
+                        }
+                    ]
+                },
+                {
+                    id: 'clothes-dryer',
+                    label: '電動曬衣架',
+                    subtitle: 'ELECTRIC CLOTHES DRYER',
+                    x: 45.7,
+                    y: 82.7,
+                    images: []
+                },
+                {
+                    id: 'heat-exchanger',
+                    label: '全熱交換機',
+                    subtitle: 'TOTAL HEAT EXCHANGER',
+                    x: 52.6,
+                    y: 40.8,
+                    images: []
+                },
+                {
+                    id: 'interior-door',
+                    label: '室內門',
+                    subtitle: 'INTERIOR DOOR',
+                    x: 40.9,
+                    y: 41.7,
+                    images: []
+                }
+            ];
+
+            const blueprint = document.getElementById('matBlueprint');
+            const blueprintImg = document.getElementById('matBlueprintImg');
+            const debugPanel = document.getElementById('matDebugPanel');
+            const debugList = document.getElementById('matDebugList');
+            const debugExport = document.getElementById('matDebugExport');
+            const modalOverlay = document.getElementById('matModalOverlay');
+            const modal = document.getElementById('matModal');
+            const modalClose = document.getElementById('matModalClose');
+            const modalLeft = document.getElementById('matModalLeft');
+            const modalTitle = document.getElementById('matModalTitle');
+            const modalSubtitle = document.getElementById('matModalSubtitle');
+            const modalGallery = document.getElementById('matModalGallery');
+            const galleryDots = document.getElementById('matGalleryDots');
+            const galleryPrev = document.getElementById('matGalleryPrev');
+            const galleryNext = document.getElementById('matGalleryNext');
+            const modalDesc = document.getElementById('matModalDesc');
+
+            let debugMode = false;
+            let dragTarget = null;
+            let dragOffsetX = 0;
+            let dragOffsetY = 0;
+            let currentGalleryIndex = 0;
+            let currentGalleryImages = [];
+
+            // ===== 建立 Hotspot DOM =====
+            function createHotspots() {
+                hotspots.forEach(hs => {
+                    const el = document.createElement('div');
+                    el.className = 'mat-hotspot';
+                    el.dataset.id = hs.id;
+                    el.style.left = `${hs.x}%`;
+                    el.style.top = `${hs.y}%`;
+
+                    el.innerHTML = `
+                        <div class="hotspot-ring"></div>
+                        <div class="hotspot-ring-outer"></div>
+                        <div class="hotspot-core"></div>
+                        <span class="hotspot-label">${hs.label}</span>
+                    `;
+
+                    // 點擊事件
+                    el.addEventListener('click', (e) => {
+                        if (debugMode) return; // debug 模式下 click 不開 modal
+                        e.stopPropagation();
+                        openMaterialModal(hs);
+                    });
+
+                    blueprint.appendChild(el);
+                });
+            }
+
+            // ===== Debug 模式 (隱藏式開發者入口) =====
+            // 快速連按 D 鍵 5 次 (2 秒內) 進入/退出 Debug 模式
+            const debugToast = document.getElementById('matDebugToast');
+            let dKeyPresses = [];
+            const D_KEY_THRESHOLD = 5;      // 需要連按幾次
+            const D_KEY_TIME_WINDOW = 2000; // 時間窗口 (ms)
+
+            document.addEventListener('keydown', (e) => {
+                // 如果正在輸入框內，不觸發
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                // 如果 Modal 開著且按 Escape，優先關閉 Modal（不進入此邏輯）
+                if (e.key === 'Escape' && modalOverlay.classList.contains('active')) return;
+
+                // Escape 退出 Debug 模式
+                if (e.key === 'Escape' && debugMode) {
+                    toggleDebugMode(false);
+                    return;
+                }
+
+                // 偵測連按 D 鍵
+                if (e.key === 'd' || e.key === 'D') {
+                    const now = Date.now();
+                    dKeyPresses.push(now);
+                    // 只保留時間窗口內的按鍵記錄
+                    dKeyPresses = dKeyPresses.filter(t => now - t < D_KEY_TIME_WINDOW);
+
+                    if (dKeyPresses.length >= D_KEY_THRESHOLD) {
+                        dKeyPresses = []; // 重置
+                        toggleDebugMode(!debugMode);
+                    }
+                }
+            });
+
+            function toggleDebugMode(on) {
+                debugMode = on;
+                debugPanel.classList.toggle('active', debugMode);
+                document.body.classList.toggle('mat-debug-mode', debugMode);
+                updateDebugList();
+                showDebugToast(debugMode ? '🔧 開發者模式 已啟用' : '🔒 開發者模式 已關閉');
+            }
+
+            function showDebugToast(msg) {
+                debugToast.textContent = msg;
+                debugToast.classList.add('show');
+                clearTimeout(debugToast._timer);
+                debugToast._timer = setTimeout(() => {
+                    debugToast.classList.remove('show');
+                }, 2500);
+            }
+
+            function updateDebugList() {
+                debugList.innerHTML = '';
+                hotspots.forEach(hs => {
+                    const item = document.createElement('div');
+                    item.className = 'mat-debug-item';
+                    item.innerHTML = `
+                        <span class="debug-name">${hs.label}</span>
+                        <span class="debug-pos">x: ${hs.x.toFixed(1)}% y: ${hs.y.toFixed(1)}%</span>
+                    `;
+                    debugList.appendChild(item);
+                });
+            }
+
+            // 匯出座標
+            debugExport.addEventListener('click', () => {
+                const exportData = hotspots.map(hs => ({
+                    id: hs.id,
+                    label: hs.label,
+                    x: parseFloat(hs.x.toFixed(1)),
+                    y: parseFloat(hs.y.toFixed(1))
+                }));
+                const jsonStr = JSON.stringify(exportData, null, 2);
+                navigator.clipboard.writeText(jsonStr).then(() => {
+                    debugExport.textContent = '✅ 已複製！';
+                    setTimeout(() => {
+                        debugExport.textContent = '📋 匯出座標 (複製到剪貼簿)';
+                    }, 2000);
+                }).catch(() => {
+                    // 降級方案：使用 prompt
+                    prompt('請複製以下座標 JSON：', jsonStr);
+                });
+            });
+
+            // ===== 拖曳 Hotspot (Debug 模式) =====
+            blueprint.addEventListener('mousedown', (e) => {
+                if (!debugMode) return;
+                const hotspot = e.target.closest('.mat-hotspot');
+                if (!hotspot) return;
+                e.preventDefault();
+                dragTarget = hotspot;
+
+                const rect = blueprint.getBoundingClientRect();
+                const hsRect = hotspot.getBoundingClientRect();
+                dragOffsetX = e.clientX - (hsRect.left + hsRect.width / 2);
+                dragOffsetY = e.clientY - (hsRect.top + hsRect.height / 2);
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!dragTarget) return;
+                const rect = blueprint.getBoundingClientRect();
+                // 使用實際圖片尺寸來計算百分比
+                const imgRect = blueprintImg.getBoundingClientRect();
+
+                const x = ((e.clientX - dragOffsetX - imgRect.left) / imgRect.width) * 100;
+                const y = ((e.clientY - dragOffsetY - imgRect.top) / imgRect.height) * 100;
+
+                const clampedX = Math.max(0, Math.min(100, x));
+                const clampedY = Math.max(0, Math.min(100, y));
+
+                dragTarget.style.left = `${clampedX}%`;
+                dragTarget.style.top = `${clampedY}%`;
+
+                // 更新資料
+                const hsId = dragTarget.dataset.id;
+                const hs = hotspots.find(h => h.id === hsId);
+                if (hs) {
+                    hs.x = clampedX;
+                    hs.y = clampedY;
+                }
+
+                updateDebugList();
+            });
+
+            window.addEventListener('mouseup', () => {
+                dragTarget = null;
+            });
+
+            // ===== 廚房設備資料 (獨立於輪播之外) =====
+            const kitchenEquipments = [
+                {
+                    name: 'BOSCH 全嵌式洗碗機',
+                    src: 'assets/images/equipment/洗碗機.webp',
+                    desc: `<ul><li>Load sensor 洗滌水量自動偵測</li><li>BLDC 無碳刷節能靜音驅動馬達</li><li>內建洗滌水加熱原件，免另外安裝熱水進水</li><li>InfoLight 投影燈：顯示洗程進行中</li></ul>`
+                },
+                {
+                    name: 'BEST 隱藏式抽油煙機',
+                    src: 'assets/images/equipment/排油煙機.webp',
+                    desc: `<ul><li>排風降噪尖端靜音技術</li><li>高亮度 LED 照明裝置</li><li>易清可拆式高吸附濾網</li><li>搭配不鏽鋼油杯，使用更安心</li></ul>`
+                },
+                {
+                    name: 'BOSCH 嵌入式微波燒烤爐',
+                    src: 'assets/images/equipment/微波烤箱.webp',
+                    desc: `<ul><li>輕巧設計，快速解凍與加熱</li><li>自動烹程式 8：8 個預設自動程序</li><li>不銹鋼內腔光滑表面，易清潔</li><li>燒烤功能：完美燒烤效果</li></ul>`
+                },
+                {
+                    name: 'Rinnai 玻璃雙口爐',
+                    src: 'assets/images/equipment/瓦斯爐.webp',
+                    desc: `<ul><li>日本專利內焰爐頭，火焰更集中</li><li>一級能效，省能高熱效</li><li>不銹鋼雙層湯盤，方便易清潔</li><li>輕量化鑄鐵爐架</li><li>熄火安全裝置</li></ul>`
+                },
+                {
+                    name: 'Rinnai 懸掛式臭氧殺菌烘碗機',
+                    src: 'assets/images/equipment/烘碗機.webp',
+                    desc: `<ul><li>鏡面玻璃面板</li><li>快拆門板設計</li><li>抹布桿設計</li><li>開門斷電，門板開啟停止運轉</li><li>碗架加粗設計（材質：SUS#304）</li><li>機體下方加裝 LED 燈照明</li><li>隱藏式按鍵</li><li>一鍵啟動烘乾、臭氧抑菌</li></ul>`
+                },
+                {
+                    name: 'BEST 電器收納櫃',
+                    src: 'assets/images/equipment/電器收納櫃.webp',
+                    desc: `<ul><li>美觀收納好方便，炊飯美味零時差</li><li>強力抽風扇，抽走蒸氣，完美靜音</li><li>抽盤式設計，方便電器使用</li><li>上掀門省空間，避免兒童撞傷</li><li>可同時放入電鍋與電子鍋，魔術大空間</li><li>收起琳瑯滿目的廚具，兼具美感與優雅的質感廚房</li></ul>`
+                },
+                {
+                    name: 'Hansgrohe 廚房伸縮花灑龍頭',
+                    src: 'assets/images/equipment/水龍頭.webp',
+                    desc: `<ul><li>ComfortZone 150：150mm 龍頭空間，洗滌靈活不侷促</li><li>雙段出水模式：氣泡出水與花灑出水，按鍵鎖定，關閉自動復歸</li><li>sBox lite 專利收納：櫥櫃下方軟管收納箱，順暢安靜不糾結</li><li>50cm 抽拉長度：大幅延伸清潔範圍</li></ul>`
+                },
+                {
+                    name: 'PRIMY 不鏽鋼水槽',
+                    src: 'assets/images/equipment/水槽.webp',
+                    desc: `<ul><li>不銹鋼毛絲面大單槽</li></ul>`
+                }
+            ];
+
+            // ===== 建材 Modal =====
+            function openMaterialModal(hs) {
+                modalTitle.textContent = hs.label;
+                modalSubtitle.textContent = hs.subtitle;
+
+                // 過濾掉 grid 類型，只保留普通圖片
+                currentGalleryImages = (hs.images || []).filter(img => img.type !== 'grid');
+                currentGalleryIndex = 0;
+                renderGallery();
+
+                // 初次開啟，載入第一張圖片的 HTML
+                if (currentGalleryImages.length > 0) {
+                    renderTextForImage(currentGalleryImages[0]);
+                } else {
+                    modalDesc.innerHTML = '<p style="color: #999; text-align: center;">介紹內容準備中，敬請期待。</p>';
+                }
+
+                // 如果是廚房，在文字區下方加入「廚房設備一覽」按鈕
+                if (hs.id === 'kitchen') {
+                    const btnHtml = `
+                        <div style="margin-top: 32px; text-align: center;">
+                            <button class="equip-grid-btn" onclick="document.getElementById('equipGridOverlay').classList.add('active')">
+                                ▶ 廚房設備一覽
+                            </button>
+                        </div>
+                    `;
+                    modalDesc.innerHTML += btnHtml;
+                }
+
+                // 顯示 Modal
+                modalOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function renderTextForImage(imgObj) {
+                if (imgObj && imgObj.html && imgObj.html.trim()) {
+                    modalDesc.innerHTML = imgObj.html;
+                } else {
+                    modalDesc.innerHTML = ''; // 如果沒有文字設定則留白
+                }
+            }
+
+            function renderGallery() {
+                // 清除舊圖
+                modalGallery.innerHTML = '';
+                galleryDots.innerHTML = '';
+
+                if (currentGalleryImages.length === 0) {
+                    modalGallery.style.display = 'none';
+                    galleryDots.style.display = 'none';
+                    modalLeft.classList.add('single-image');
+                    return;
+                }
+
+                modalGallery.style.display = 'block';
+                galleryDots.style.display = 'flex';
+
+                // 單張圖判定
+                if (currentGalleryImages.length === 1) {
+                    modalLeft.classList.add('single-image');
+                    galleryDots.classList.add('single-image');
+                } else {
+                    modalLeft.classList.remove('single-image');
+                    galleryDots.classList.remove('single-image');
+                }
+
+                currentGalleryImages.forEach((imgObj, idx) => {
+                    const img = document.createElement('img');
+                    img.src = imgObj.src || imgObj;
+                    img.alt = `建材圖片 ${idx + 1}`;
+                    img.draggable = false;
+                    if (idx === 0) img.classList.add('active');
+                    modalGallery.appendChild(img);
+
+                    const dot = document.createElement('button');
+                    dot.className = 'mat-gallery-dot' + (idx === 0 ? ' active' : '');
+                    dot.addEventListener('click', () => goToSlide(idx));
+                    galleryDots.appendChild(dot);
+                });
+            }
+
+            function goToSlide(idx) {
+                if (currentGalleryImages.length === 0) return;
+                if (currentGalleryIndex === idx) return;
+                currentGalleryIndex = idx;
+
+                const allSlides = modalGallery.querySelectorAll(':scope > img');
+                const dots = galleryDots.querySelectorAll('.mat-gallery-dot');
+                allSlides.forEach((img, i) => img.classList.toggle('active', i === idx));
+                dots.forEach((dot, i) => dot.classList.toggle('active', i === idx));
+
+                // 重置縮放
+                resetImgZoom();
+
+                // 動態渲染這張圖片對應的 HTML 文本
+                renderTextForImage(currentGalleryImages[idx]);
+
+                // 如果是廚房，每次切換圖片都重新插入按鈕
+                const currentHsId = modalTitle.textContent;
+                // 檢查是否為廚房點位
+                const kitchenHs = hotspots.find(h => h.id === 'kitchen');
+                if (kitchenHs && modalTitle.textContent === kitchenHs.label) {
+                    const existingBtn = modalDesc.querySelector('.equip-grid-btn');
+                    if (!existingBtn) {
+                        modalDesc.innerHTML += `
+                            <div style="margin-top: 32px; text-align: center;">
+                                <button class="equip-grid-btn" onclick="document.getElementById('equipGridOverlay').classList.add('active')">
+                                    ▶ 廚房設備一覽
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            galleryPrev.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentGalleryImages.length <= 1) return;
+                const newIdx = (currentGalleryIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+                goToSlide(newIdx);
+            });
+
+            galleryNext.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentGalleryImages.length <= 1) return;
+                const newIdx = (currentGalleryIndex + 1) % currentGalleryImages.length;
+                goToSlide(newIdx);
+            });
+
+            // 關閉 Modal
+            function closeModal() {
+                modalOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+                resetImgZoom();
+            }
+
+            // ===== 設備 Grid 覆蓋層邏輯 =====
+            const equipGridOverlay = document.getElementById('equipGridOverlay');
+            const equipGridClose = document.getElementById('equipGridClose');
+            const equipGridContainer = document.getElementById('equipGridContainer');
+
+            // 初始化設備 Grid
+            kitchenEquipments.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'equip-card';
+                card.innerHTML = `
+                    <div class="equip-card-img-wrap">
+                        <img src="${item.src}" alt="${item.name}" draggable="false">
+                    </div>
+                    <p class="equip-card-name">${item.name}</p>
+                `;
+                card.addEventListener('click', () => openEquipLightbox(item));
+                equipGridContainer.appendChild(card);
+            });
+
+            equipGridClose.addEventListener('click', () => {
+                equipGridOverlay.classList.remove('active');
+            });
+            equipGridOverlay.addEventListener('click', (e) => {
+                if (e.target === equipGridOverlay) equipGridOverlay.classList.remove('active');
+            });
+
+            // ===== 設備燈箱邏輯 =====
+            const equipOverlay = document.getElementById('equipLightboxOverlay');
+            const equipClose = document.getElementById('equipLightboxClose');
+            const equipImg = document.getElementById('equipLightboxImg');
+            const equipName = document.getElementById('equipLightboxName');
+            const equipDesc = document.getElementById('equipLightboxDesc');
+
+            function openEquipLightbox(item) {
+                equipImg.src = item.src;
+                equipName.textContent = item.name;
+                equipDesc.innerHTML = item.desc || '';
+                equipOverlay.classList.add('active');
+            }
+
+            function closeEquipLightbox() {
+                equipOverlay.classList.remove('active');
+            }
+
+            equipClose.addEventListener('click', closeEquipLightbox);
+            equipOverlay.addEventListener('click', (e) => {
+                if (e.target === equipOverlay) closeEquipLightbox();
+            });
+
+            modalClose.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) closeModal();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (equipOverlay.classList.contains('active')) {
+                        closeEquipLightbox();
+                    } else if (equipGridOverlay.classList.contains('active')) {
+                        equipGridOverlay.classList.remove('active');
+                    } else if (modalOverlay.classList.contains('active')) {
+                        closeModal();
+                    }
+                }
+            });
+
+            // ===== 圖片縮放與拖曳邏輯 =====
+            let imgZoom = 1;
+            let imgPanX = 0;
+            let imgPanY = 0;
+            let isImgPanning = false;
+            let startImgX = 0;
+            let startImgY = 0;
+
+            function resetImgZoom() {
+                imgZoom = 1;
+                imgPanX = 0;
+                imgPanY = 0;
+                applyImgTransform();
+            }
+
+            function applyImgTransform() {
+                const images = modalGallery.querySelectorAll('img');
+                images.forEach(img => {
+                    if (img.classList.contains('active')) {
+                        img.style.transform = `translate(${imgPanX}px, ${imgPanY}px) scale(${imgZoom})`;
+                        img.style.cursor = imgZoom > 1 ? 'grab' : 'default';
+                        img.style.zIndex = '5'; // 拖曳時提高 z-index 避免被箭頭覆蓋
+                        img.style.transition = isImgPanning ? 'none' : 'transform 0.1s ease-out'; // 拖曳時無延遲
+                    } else {
+                        img.style.transform = 'translate(0, 0) scale(1)';
+                        img.style.cursor = 'default';
+                        img.style.zIndex = '1';
+                    }
+                });
+            }
+
+            modalGallery.addEventListener('wheel', (e) => {
+                const activeImg = modalGallery.querySelector('img.active');
+                if (!activeImg) return;
+                e.preventDefault();
+
+                const zoomFactor = 0.15;
+                if (e.deltaY < 0) imgZoom += zoomFactor;
+                else imgZoom -= zoomFactor;
+
+                imgZoom = Math.min(Math.max(1, imgZoom), 5); // 限制縮放比例 1x ~ 5x
+                if (imgZoom === 1) {
+                    imgPanX = 0;
+                    imgPanY = 0;
+                }
+                applyImgTransform();
+            });
+
+            modalGallery.addEventListener('mousedown', (e) => {
+                if (imgZoom <= 1) return;
+                e.preventDefault(); // 防止瀏覽器原生拖曳或文字選取干擾
+                isImgPanning = true;
+                startImgX = e.clientX - imgPanX;
+                startImgY = e.clientY - imgPanY;
+                const activeImg = modalGallery.querySelector('img.active');
+                if (activeImg) activeImg.style.cursor = 'grabbing';
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isImgPanning) return;
+                imgPanX = e.clientX - startImgX;
+                imgPanY = e.clientY - startImgY;
+                applyImgTransform();
+            });
+
+            window.addEventListener('mouseup', () => {
+                isImgPanning = false;
+                applyImgTransform();
+            });
+
+            // ===== 初始化 =====
+            createHotspots();
+        })();
+    </script>
+    <script src="js/spa-router.js"></script>
+</body>
+
+</html>

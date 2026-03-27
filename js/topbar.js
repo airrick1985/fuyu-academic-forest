@@ -32,7 +32,7 @@
                 </div>
             </div>
             <div class="nav-item">
-                <a href="coming-soon.html?page=materials" class="nav-link">建材設備</a>
+                <a href="materials.html" class="nav-link">建材設備</a>
             </div>
             <div class="nav-item">
                 <a href="coming-soon.html?page=construction" class="nav-link">工法介紹</a>

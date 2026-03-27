@@ -1,0 +1,1031 @@
+/* css/materials.css — 建材設備頁面 */
+
+/* ===== 頁面背景 ===== */
+body.materials-page {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #1a1f1e;
+    overflow-x: hidden;
+}
+
+.mat-bg-image {
+    position: fixed;
+    top: -5%;
+    left: -5%;
+    width: 110%;
+    height: 110%;
+    background-image: url('../assets/images/layout/background.webp');
+    background-size: cover;
+    background-position: center;
+    z-index: -2;
+    animation: mat-bg-pan 45s linear infinite alternate;
+}
+
+@keyframes mat-bg-pan {
+    0% { transform: scale(1) translate(0, 0); }
+    100% { transform: scale(1.05) translate(-1.5%, 1.5%); }
+}
+
+.mat-bg-overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(245, 247, 246, 0.45) 0%, rgba(233, 236, 240, 0.35) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ===== 主內容容器 ===== */
+.mat-container {
+    position: relative;
+    padding-top: calc(var(--topbar-height, 70px) + 20px);
+    padding-bottom: 100px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* ===== 頁面標題 ===== */
+.mat-page-header {
+    text-align: center;
+    padding: 40px 20px 20px;
+}
+
+.mat-page-header h1 {
+    font-size: 2.2rem;
+    color: #3a3228;
+    letter-spacing: 6px;
+    margin: 0 0 8px 0;
+    font-weight: 600;
+}
+
+.mat-page-header .mat-page-subtitle {
+    font-family: var(--font-english-serif, serif);
+    font-size: 0.95rem;
+    color: #9a8e7a;
+    letter-spacing: 4px;
+    margin: 0;
+}
+
+/* ===== 平面圖容器 (Hotspot Blueprint) ===== */
+.mat-blueprint-wrapper {
+    position: relative;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    user-select: none;
+}
+
+.mat-blueprint-wrapper img.mat-blueprint-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.2));
+}
+
+/* ===== Hotspot 紅色呼吸圓點 ===== */
+.mat-hotspot {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* 紅色實心核心 */
+.mat-hotspot .hotspot-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    background: radial-gradient(circle, #ff4444 0%, #cc0000 100%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 6px rgba(255, 0, 0, 0.6), 0 0 12px rgba(255, 0, 0, 0.3);
+    z-index: 2;
+    transition: transform 0.2s;
+}
+
+.mat-hotspot:hover .hotspot-core {
+    transform: translate(-50%, -50%) scale(1.3);
+}
+
+/* 呼吸擴散環 (第一層) */
+.mat-hotspot .hotspot-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 28px;
+    height: 28px;
+    border: 2px solid rgba(255, 68, 68, 0.6);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: hotspot-breathe 2s ease-in-out infinite;
+    z-index: 1;
+}
+
+/* 呼吸擴散環 (第二層，延遲) */
+.mat-hotspot .hotspot-ring-outer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 28px;
+    height: 28px;
+    border: 1.5px solid rgba(255, 68, 68, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: hotspot-breathe-outer 2s ease-in-out infinite 0.5s;
+    z-index: 0;
+}
+
+@keyframes hotspot-breathe {
+    0%, 100% {
+        width: 28px;
+        height: 28px;
+        opacity: 0.8;
+        border-color: rgba(255, 68, 68, 0.6);
+    }
+    50% {
+        width: 44px;
+        height: 44px;
+        opacity: 0.2;
+        border-color: rgba(255, 68, 68, 0.15);
+    }
+}
+
+@keyframes hotspot-breathe-outer {
+    0%, 100% {
+        width: 28px;
+        height: 28px;
+        opacity: 0.5;
+        border-color: rgba(255, 68, 68, 0.3);
+    }
+    50% {
+        width: 56px;
+        height: 56px;
+        opacity: 0;
+        border-color: rgba(255, 68, 68, 0);
+    }
+}
+
+/* Hotspot 標籤 (Hover 時顯示) */
+.mat-hotspot .hotspot-label {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 1; /* 改為常駐顯示 */
+    transition: all 0.25s;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.mat-hotspot .hotspot-label::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.8);
+}
+
+.mat-hotspot:hover .hotspot-label {
+    background: rgba(139, 105, 20, 0.95);
+    transform: translateX(-50%) translateY(-3px);
+}
+
+.mat-hotspot:hover .hotspot-label::after {
+    border-top-color: rgba(139, 105, 20, 0.95);
+}
+
+/* ===== Debug 模式 ===== */
+.mat-debug-panel {
+    position: fixed;
+    top: calc(var(--topbar-height, 70px) + 10px);
+    right: 20px;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(12px);
+    color: #f0f0f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-width: 280px;
+    display: none;
+}
+
+.mat-debug-panel.active {
+    display: block;
+}
+
+.mat-debug-panel h3 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: #ff6b6b;
+    font-family: var(--font-sans, sans-serif);
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: 8px;
+}
+
+.mat-debug-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.mat-debug-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.mat-debug-item span.debug-name {
+    color: #ffd93d;
+    font-weight: bold;
+}
+
+.mat-debug-item span.debug-pos {
+    color: #6bcb77;
+}
+
+/* Debug Toast 提示（隱藏式開發者模式通知） */
+.mat-debug-toast {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    z-index: 999999;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(12px);
+    color: #f0f0f0;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    white-space: nowrap;
+}
+
+.mat-debug-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Debug 模式下的 hotspot 拖曳效果 */
+body.mat-debug-mode .mat-hotspot {
+    cursor: grab;
+}
+
+body.mat-debug-mode .mat-hotspot:active {
+    cursor: grabbing;
+}
+
+body.mat-debug-mode .mat-hotspot .hotspot-label {
+    opacity: 1;
+    background: rgba(255, 107, 107, 0.85);
+}
+
+body.mat-debug-mode .mat-hotspot .hotspot-label::after {
+    border-top-color: rgba(255, 107, 107, 0.85);
+}
+
+/* 匯出按鈕 */
+.mat-debug-export-btn {
+    width: 100%;
+    margin-top: 12px;
+    background: #6bcb77;
+    border: none;
+    color: #1a1a1a;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.mat-debug-export-btn:hover {
+    background: #5abc67;
+}
+
+/* ===== 建材詳情 Modal ===== */
+.mat-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.mat-modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.mat-modal {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(180, 165, 130, 0.4);
+    border-radius: 20px;
+    padding: 0;
+    max-width: 1600px;
+    width: 96vw;
+    height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+    animation: mat-modal-enter 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes mat-modal-enter {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 分割排版結構 */
+.mat-modal-split {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+.mat-modal-left {
+    position: relative; /* 供外部按鈕對齊 */
+    flex: 1.8; /* 加大圖片區比例 */
+    min-width: 0;
+    padding: 40px 60px; /* 增加左右 padding 預留給外面按鈕 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #fdfdfc;
+}
+
+.mat-modal-right {
+    flex: 1;
+    min-width: 380px; /* 確保文字區即使在放大圖片時也不會過窄 */
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    border-left: 1px solid rgba(180, 165, 130, 0.2);
+    /* 自訂捲軸樣式 */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(180, 165, 130, 0.5) transparent;
+}
+
+.mat-modal-right::-webkit-scrollbar {
+    width: 6px;
+}
+.mat-modal-right::-webkit-scrollbar-thumb {
+    background-color: rgba(180, 165, 130, 0.5);
+    border-radius: 10px;
+}
+
+.mat-modal-header {
+    border-bottom: 1px dashed rgba(180, 165, 130, 0.4);
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.mat-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(180, 165, 130, 0.4);
+    background: rgba(0, 0, 0, 0.04);
+    color: #5a4e3e;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+.mat-modal-close:hover {
+    background: rgba(139, 105, 20, 0.15);
+    border-color: rgba(139, 105, 20, 0.5);
+    color: #8b6914;
+}
+
+/* Modal 標題 */
+.mat-modal-title {
+    font-size: 1.8rem;
+    color: #3a3228;
+    margin: 0 0 6px 0;
+    letter-spacing: 3px;
+    font-weight: 700;
+}
+
+.mat-modal-subtitle {
+    font-family: var(--font-english-serif, serif);
+    font-size: 0.85rem;
+    color: #9a8e7a;
+    letter-spacing: 3px;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+/* 圖片輪播區 */
+.mat-modal-gallery {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    background: #f0ece4;
+    height: 100%;
+    min-height: 350px;
+}
+
+.mat-modal-gallery > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: none;
+    animation: mat-img-fade 0.5s ease;
+}
+
+.mat-modal-gallery > img.active {
+    display: block;
+}
+
+@keyframes mat-img-fade {
+    0% { opacity: 0; transform: scale(1.02); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* 圖片輪播導航點 */
+.mat-gallery-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.mat-gallery-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #d0c8b8;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.mat-gallery-dot.active {
+    background: #8b6914;
+    transform: scale(1.2);
+}
+
+/* 圖片輪播箭頭 */
+.mat-gallery-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.8);
+    color: #3a3228;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mat-gallery-arrow:hover {
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.mat-gallery-arrow.prev {
+    left: 10px;
+}
+
+.mat-gallery-arrow.next {
+    right: 10px;
+}
+
+/* 單張圖片時隱藏箭頭與導航點 */
+.mat-modal-left.single-image .mat-gallery-arrow,
+.mat-gallery-dots.single-image {
+    display: none;
+}
+
+/* ===== 文字介紹區 - 質感排版優化 ===== */
+.mat-modal-description {
+    font-size: 1.05rem;
+    color: #444;
+    line-height: 2;
+    letter-spacing: 0.8px;
+    font-family: var(--font-sans, 'Noto Sans TC', sans-serif);
+    text-align: justify;
+}
+
+.mat-modal-description p {
+    margin-bottom: 20px;
+}
+
+.mat-modal-description h1,
+.mat-modal-description h2,
+.mat-modal-description h3 {
+    color: #332d25;
+    margin-top: 36px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+}
+
+.mat-modal-description h1 {
+    font-size: 1.6rem;
+    border-bottom: 1px dashed rgba(139, 105, 20, 0.3);
+    padding-bottom: 12px;
+}
+
+.mat-modal-description h2 {
+    font-size: 1.35rem;
+    color: #8b6914;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mat-modal-description h2::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 1.2rem;
+    background: #8b6914;
+    border-radius: 4px;
+}
+
+.mat-modal-description h3 {
+    font-size: 1.15rem;
+}
+
+/* 列表優化 */
+.mat-modal-description ul {
+    padding-left: 24px;
+    list-style: none;
+    margin-bottom: 24px;
+    margin-top: 10px;
+}
+
+.mat-modal-description li {
+    position: relative;
+    margin-bottom: 12px;
+}
+
+.mat-modal-description li::before {
+    content: "◇";
+    color: #8b6914;
+    position: absolute;
+    left: -20px;
+    font-size: 0.85rem;
+    top: 2px;
+}
+
+/* 強調文字優化 */
+.mat-modal-description strong {
+    color: #4a3605;
+    font-weight: 700;
+    background: linear-gradient(transparent 65%, rgba(139, 105, 20, 0.15) 0);
+    padding: 0 2px;
+    letter-spacing: 1px;
+}
+
+.mat-modal-description em {
+    color: #777;
+    font-style: normal;
+    font-weight: 300;
+    border-left: 3px solid #d0c8b8;
+    padding-left: 10px;
+    margin-left: 4px;
+    display: inline-block;
+}
+
+/* 載入中提示 */
+.mat-modal-loading {
+    text-align: center;
+    padding: 40px;
+    color: #9a8e7a;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+/* ===== 免責聲明 ===== */
+.mat-disclaimer {
+    position: fixed;
+    bottom: 15px;
+    left: 20px;
+    z-index: 90;
+    font-size: 12px;
+    color: rgba(100, 90, 70, 0.5);
+    line-height: 1.6;
+    text-align: left;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* ===== 操作提示 ===== */
+.mat-hint {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(100, 90, 70, 0.5);
+    letter-spacing: 1px;
+    animation: mat-hint-pulse 3s ease-in-out infinite;
+}
+
+@keyframes mat-hint-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.mat-modal-disclaimer {
+    margin-top: auto;
+    padding-top: 16px;
+    font-size: 0.72rem;
+    color: #b0a594;
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+    flex-shrink: 0;
+}
+
+/* 響應式：手機板切換為垂直疊加 */
+@media (max-width: 991px) {
+    .mat-modal {
+        width: 100%;
+        height: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+        overflow-y: auto;
+    }
+    .mat-modal-split {
+        flex-direction: column;
+    }
+    .mat-modal-left {
+        padding: 50px 20px 20px; /* 手機板左右 padding 回歸正常 */
+        min-height: 50vh;
+    }
+    .mat-modal-right {
+        min-width: 0;
+        padding: 24px 20px;
+        border-left: none;
+        border-top: 1px solid rgba(180, 165, 130, 0.2);
+        overflow-y: visible;
+    }
+    .mat-modal-close {
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+}
+
+/* ===== 「廚房設備一覽」按鈕 ===== */
+.equip-grid-btn {
+    display: inline-block;
+    padding: 14px 36px;
+    background: linear-gradient(135deg, #8b6914, #c9a84c);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(139, 105, 20, 0.3);
+}
+
+.equip-grid-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 8px 28px rgba(139, 105, 20, 0.45);
+    background: linear-gradient(135deg, #a07a1a, #d4b55c);
+}
+
+/* ===== 設備 Grid 覆蓋層 ===== */
+.equip-grid-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(245, 242, 236, 0.97);
+    z-index: 1000000; /* 在 Modal(999999) 之上 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s;
+}
+
+.equip-grid-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.equip-grid-overlay-close {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(180, 165, 130, 0.4);
+    background: rgba(0, 0, 0, 0.04);
+    color: #5a4e3e;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+.equip-grid-overlay-close:hover {
+    background: rgba(139, 105, 20, 0.15);
+    border-color: rgba(139, 105, 20, 0.5);
+    color: #8b6914;
+}
+
+.equip-grid-overlay-content {
+    text-align: center;
+    max-width: 900px;
+    width: 90vw;
+    animation: mat-modal-enter 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.equip-grid-overlay-title {
+    font-size: 1.8rem;
+    color: #3a3228;
+    letter-spacing: 5px;
+    margin: 0 0 8px 0;
+    font-weight: 700;
+}
+
+.equip-grid-overlay-subtitle {
+    font-size: 0.95rem;
+    color: #9a8e7a;
+    letter-spacing: 2px;
+    margin: 0 0 40px 0;
+}
+
+.equip-grid-disclaimer {
+    margin-top: 28px;
+    font-size: 0.75rem;
+    color: #b0a594;
+    letter-spacing: 0.5px;
+    line-height: 1.6;
+}
+
+.equip-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+}
+
+.equip-card {
+    background: transparent;
+    border-radius: 0;
+    overflow: visible;
+    cursor: pointer;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    border: none;
+    box-shadow: none;
+    outline: none;
+}
+
+.equip-card:hover {
+    cursor: pointer;
+}
+
+.equip-card-img-wrap {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: visible;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.equip-card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s ease;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.equip-card:hover .equip-card-img-wrap img {
+    transform: scale(1.12);
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.25));
+    cursor: zoom-in;
+}
+
+.equip-card-name {
+    font-size: 0.9rem;
+    text-align: center;
+    color: #3a3228;
+    padding: 12px 8px;
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    transition: color 0.3s;
+}
+
+.equip-card:hover .equip-card-name {
+    color: #8b6914;
+}
+
+/* ===== 設備燈箱 ===== */
+.equip-lightbox-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.88);
+    z-index: 2000000; /* 確保在所有層級之上 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s;
+}
+
+.equip-lightbox-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.equip-lightbox-close {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+.equip-lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.equip-lightbox-content {
+    display: flex;
+    flex-direction: row;
+    max-width: 700px;
+    width: 80vw;
+    max-height: 65vh;
+    gap: 32px;
+    align-items: center;
+    animation: mat-modal-enter 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.equip-lightbox-img-wrap {
+    flex: 1.2;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.equip-lightbox-img-wrap img {
+    max-width: 100%;
+    max-height: 55vh;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+.equip-lightbox-info {
+    flex: 1;
+    min-width: 260px;
+    color: #fff;
+    background: rgba(30, 28, 24, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 32px;
+    max-height: 55vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+.equip-lightbox-info h3 {
+    font-size: 1.6rem;
+    margin: 0 0 20px 0;
+    letter-spacing: 2px;
+    font-weight: 700;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+    padding-bottom: 16px;
+}
+
+.equip-lightbox-desc {
+    font-size: 1rem;
+    line-height: 2;
+    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 0.8px;
+}
+
+.equip-lightbox-desc ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.equip-lightbox-desc li {
+    position: relative;
+    padding-left: 22px;
+    margin-bottom: 10px;
+}
+
+.equip-lightbox-desc li::before {
+    content: "◇";
+    position: absolute;
+    left: 0;
+    color: #c9a84c;
+    font-size: 0.85rem;
+}
+
+/* 設備燈箱響應式 */
+@media (max-width: 768px) {
+    .equip-lightbox-content {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    .equip-lightbox-info {
+        min-width: 0;
+    }
+    .equip-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+}
