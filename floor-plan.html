@@ -408,10 +408,15 @@
                     lightboxHint.offsetHeight; // 強制 reflow
                     lightboxHint.style.animation = '';
 
-                    // 重設丈量工具狀態
+                    // 重設丈量工具狀態與清除之前的標記
                     if (measureActive) {
                         btnMeasureToggle.click(); // 若開啟則自動關閉
                     }
+                    const clearBtn = document.getElementById('btnMeasureClear');
+                    if (clearBtn) clearBtn.click();
+                    pxPerCm = 0; // 每個圖面比例不同，強迫重設
+                    const caliBtn = document.getElementById('btnMeasureModeCalibrate');
+                    if (caliBtn) caliBtn.click();
                     setTimeout(() => { resetCanvasSize() }, 100);
                 });
             });
@@ -420,6 +425,14 @@
                 lightbox.classList.remove('active');
                 document.body.classList.remove('lightbox-active');
                 document.body.style.overflow = '';
+
+                // 退出燈箱時，清除所有測量標記與比例尺狀態
+                const clearBtn = document.getElementById('btnMeasureClear');
+                if (clearBtn) clearBtn.click();
+
+                pxPerCm = 0; // 重置比例尺
+                const caliBtn = document.getElementById('btnMeasureModeCalibrate');
+                if (caliBtn) caliBtn.click();
             }
 
             lightboxClose.addEventListener('click', closeLightbox);

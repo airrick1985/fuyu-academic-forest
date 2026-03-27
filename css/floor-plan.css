@@ -152,7 +152,10 @@ body.floor-plan-page::after {
 
 /* 當進入燈箱模式時，導覽列往上平滑吸附到螢幕頂端 */
 body.lightbox-active .fp-nav {
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 100000;
     background: rgba(233, 236, 240, 0.95);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 增加一點陰影，讓它更突出 */
