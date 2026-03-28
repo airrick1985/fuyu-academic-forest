@@ -64,7 +64,7 @@
                         <div class="mat-modal-loading">載入中...</div>
                     </div>
 
-                    <p class="mat-modal-disclaimer">※ 以上照片皆為示意圖，建材設備以實際交屋為準。</p>
+                    <p class="mat-modal-disclaimer">※ 以上建材設備圖文介紹皆為示意，以實際交屋為準。</p>
                 </div>
             </div>
         </div>
@@ -77,7 +77,18 @@
             <h2 class="equip-grid-overlay-title">廚房設備一覽</h2>
             <p class="equip-grid-overlay-subtitle">精選國際頂級廚房設備，每一件都是為高品質生活而生。</p>
             <div class="equip-grid" id="equipGridContainer"></div>
-            <p class="equip-grid-disclaimer">※ 以上照片皆為示意圖，建材設備以實際交屋為準。賣方保留建材設備品牌規格變更之權利。</p>
+            <p class="equip-grid-disclaimer">※ 以上建材設備圖文介紹皆為示意，以實際交屋為準。賣方保留建材設備品牌規格變更之權利。</p>
+        </div>
+    </div>
+
+    <!-- 主衛浴設備 Grid 覆蓋層 (點擊「主衛浴設備一覽」按鈕時使用) -->
+    <div class="equip-grid-overlay" id="bathGridOverlay">
+        <button class="equip-grid-overlay-close" id="bathGridClose">✕</button>
+        <div class="equip-grid-overlay-content">
+            <h2 class="equip-grid-overlay-title">主衛浴設備一覽</h2>
+            <p class="equip-grid-overlay-subtitle">TOTO 日本精品衛浴，以獨有潔淨科技打造極致舒適的衛浴空間。</p>
+            <div class="equip-grid" id="bathGridContainer"></div>
+            <p class="equip-grid-disclaimer">※ 以上建材設備圖文介紹皆為示意，以實際交屋為準。賣方保留建材設備品牌規格變更之權利。</p>
         </div>
     </div>
 
@@ -120,20 +131,32 @@
                 {
                     id: 'entrance-door',
                     label: '玄關門及電子鎖',
-                    subtitle: 'ENTRANCE DOOR',
+                    subtitle: 'ENTRANCE DOOR / Electronic lock',
                     x: 68.2,
                     y: 93.3,
                     images: [
                         {
-                            src: 'assets/images/equipment/panasonic-door.webp',
+                            src: 'assets/images/equipment/玄關門.webp',
                             html: `
-                                <h2>Panasonic 日本進口玄關門</h2>
+                                <h2>精銳甲種鑄鋁鋼木防暴防火門</h2>
                                 <h3>守護家人的第一道防線</h3>
-                                <p>採用 <strong>Panasonic 智能防盜門鎖</strong>，內建精密晶片與多重安全防護機制，結合高強度防爆鋼板，不僅提供無與倫比的安全感，更展現低調奢華的美學品味。</p>
+                                <p>門扇採用堅固的鋼板及內骨架構，室外側貼鑄鋁板，室內側為木飾板，造型典雅並凸顯尊貴大戶之高貴與尊榮；通過 CNS11227-1_60A 防火認證，使居家安全更上一層之安全保障，敬請安心使用。</p>
+                                <ul>
+                                    <li>採用德國研發設計插座式三度空間重力鉸鍊：在歐美地區此項鉸鍊普遍用於保險庫大門，承受力達 120kg/片以上。</li>
+                                    <li>加裝上中下共三支牛角栓：宵小無法破壞及撬開門扇，安全更有保障。</li>                                
+                                </ul>
+                            `
+                        },
+                        {
+                            src: 'assets/images/equipment/維夫拉克電子鎖.webp',
+                            html: `
+                                <h2>Waferlock 維夫拉克電子鎖</h2>
+                                <h3>專屬於你的解鎖風格</h3>
+                                <p>擁有最新指紋辨識、卡片感應、密碼輸入、App，等多種便利開門方式。還附加機械鑰匙，可當緊急時最後的備用選擇，而鑰匙孔使用滑蓋式設計隱藏於電子鎖的內部，以保持優美的外觀。擁有以上5種解鎖模式，絕對符合所有年齡及各種開門解鎖情況。</p>
                                 <ul>
                                     <li>支援指紋、密碼、卡片與手機多重解鎖</li>
                                     <li>隱藏式把手設計，展現極致極簡美學</li>
-                                    <li>配備 <em>自動上鎖</em> 與防窺密碼功能，安全無漏洞</li>
+                                    <li>配備<strong>自動上鎖</strong>與<strong>防窺密碼</strong>功能，安全無漏洞</li>
                                 </ul>
                             `
                         }
@@ -142,20 +165,20 @@
                 {
                     id: 'wood-floor',
                     label: '木地板',
-                    subtitle: 'WOOD FLOORING',
+                    subtitle: 'Laminate Flooring',
                     x: 64.8,
                     y: 41.8,
                     images: [
                         {
                             src: 'assets/images/equipment/kronotex.webp',
                             html: `
-                                <h2>KRONOTEX 德國太格木地板</h2>
+                                <h2>KRONOTEX 德國耐磨木地板</h2>
                                 <h3>為居家注入溫潤的自然氣息</h3>
                                 <p>全室採用德國原裝進口 <strong>KRONOTEX 頂級耐磨木地板</strong>，精選天然木材紋理，觸感溫潤踏實，無論是視覺或踩踏感皆為頂級享受。</p>
                                 <ul>
                                     <li>符合歐洲 <strong>E1 級環保標準</strong>，居家健康無毒</li>
                                     <li>表面獨特耐磨塗層，防刮抗污易清潔</li>
-                                    <li>專用靜音墊與 <em>專利扣型設計</em>，大幅降低室內回音</li>
+                                    <li>專用靜音墊與專利扣型設計，大幅降低室內回音</li>
                                 </ul>
                             `
                         },
@@ -179,8 +202,8 @@
                             html: `
                                 <h2>德國頂級廚具品牌 LEICHT</h2>
                                 <h3>超越時間限制的極致經典</h3>
-                                <p>LEICHT 是世界領先的廚具品牌，已有近 <strong>90 年建廠歷史</strong>，遍布世界 50 多個國家及地區。每間 LEICHT 廚房都是獨一無二的，為層峰人士量身定製。</p>
-                                <p>為了滿足產品的複雜性，德廠藉由與 <strong>BENZ 同級的高精密設備</strong> 製造，再配合職人純手工研磨補整。將尖端工藝、技術與美學，在生產過程中 <em>完美配合</em>。</p>
+                                <p>LEICHT 是世界領先的廚具品牌，已有近90年建廠歷史，遍布世界 50 多個國家及地區。每間 LEICHT 廚房都是獨一無二的，為層峰人士量身定製。</p>
+                                <p>為了滿足產品的複雜性，德廠藉由與BENZ 同級的高精密設備製造，再配合職人純手工研磨補整。將尖端工藝、技術與美學，在生產過程中完美配合。</p>
                                 <ul>
                                     <li>德國工藝百年淬鍊，細節處理無可挑剔</li>
                                     <li>隱藏式收納與精品五金，讓下廚成為奢華享受</li>
@@ -189,15 +212,26 @@
                         },
                         {
                             src: 'assets/images/equipment/LEICHT-2.webp',
-                            html: `<h2>德制美學 職人造詣</h2><p>展現卓越的工藝技術與耐用度，每一片門板、每一處紋理皆散發豪宅獨有的藝術氣質。</p>`
+                            html: `<h2>德制美學 職人造詣</h2>
+                            <h3>抽屜</h3>
+                            <p>該項產品榮獲德國北威設計中心所舉辦的<strong>Red Dot Award( 紅點設計獎)</strong>。</p>
+                            <p>LEICHT 使用最先進<strong>GRASS 自動定位式抽軌</strong>，小抽可承受40kg，大抽可承受 70kg 之重量。</p>
+                            <p>抽屜內部為清玻結合塑鋼材質，並加上獨有<  strong>LEICHT玻璃側牆</strong>除更能放置固定較高物品外，整體質感倍能提升。</p>
+                            
+                            `
                         },
                         {
-                            src: 'assets/images/equipment/LEICHT-3.webp',
-                            html: `<h2>極簡流線的強大擴充</h2><p>順暢且符合人體工學的料理動線配置，並提供極大的隱形收納容量。</p>`
-                        },
-                        {
-                            src: 'assets/images/equipment/LEICHT-4.webp',
-                            html: `<h2>百種材質 完美契合</h2><p>豐富的高端面板材質可供搭配，無論是工業風、輕奢風或現代簡約，皆能完美呼應室內設計。</p>`
+                            src: 'assets/images/equipment/GRASS.webp',
+                            html: `
+                            <h3>GRASS鉸鍊</h3>
+                            <p>使用世界最先進之鉸鍊廠商 GRASS 所代工生產， 易拆裝，可上下左右調整， 開啟 110 度或 160 度，鉸鍊上並附有緩衝功能。</p>
+                            <h3>水槽底板</h3>
+                            <p>採用鋁板，不怕水槽因漏水而脫膠、膨脹。</p>
+                            <h3>隔板托</h3>
+                            <p>全系列為金屬成型隔板托，不因荷重或時間長久而變型脫落或斷裂。</p>
+                            <h3>吊櫃懸吊系統</h3>
+                            <p>採用隱藏式懸掛器，可調整左右與仰角，單一懸掛器可承載重量高達 50KG；每一吊櫃搭配兩組懸掛器使其可承受 100KG 之重量，提供了整體更好的強度與安全。</p>
+                            `
                         }
                     ]
                 },
@@ -209,49 +243,16 @@
                     y: 57.4,
                     images: [
                         {
-                            src: 'assets/images/equipment/ES41890.webp',
+                            src: 'assets/images/equipment/TOTO-1.webp',
                             html: `
-                                <h2>TOTO 日本頂級衛浴設備</h2>
-                                <h3>極致奢華的機能美學</h3>
-                                <p>主衛浴標準配備日本全新 <strong>TOTO 頂級全自動馬桶</strong>，除了自動掀蓋、溫水洗淨，更搭配抗菌抗污的專利陶瓷塗層，給您絕對衛生的私密時光。</p>
-                                <ul>
-                                    <li>無邊框水箱設計，空間視覺更開闊</li>
-                                    <li>獨家 <em>強效水龍捲洗淨技術</em>，安靜且省水</li>
-                                </ul>
-                            `
-                        },
-                        {
-                            src: 'assets/images/equipment/ES41890_ID2.webp',
-                            html: `
-                                <h2>精密恆溫龍頭與雨淋花灑</h2>
-                                <p>搭載德國精品五金龍頭，精確控溫；搭配寬大雨林頂噴花灑，讓您在家就能享受如同 <strong>五星級飯店</strong> 般的極致沐浴體驗。</p>
+                                <h2>TOTO 日本精品衛浴設備</h2>
+                                <h3>在全世界實現潔淨與舒適</h3>
+                                <p>為了提供顧客更加潔淨・舒適與健康的衛浴空間，開發了一系列 TOTO 獨有的潔淨科技，如電解除菌水技術、喜貼心抗污釉、緣弧設計、水龍捲洗淨和零接觸的感應式設計。TOTO 淨美革新（TOTO CLEANOVATION）結合了「潔淨」和「革新」兩個詞，基於這個構想，將向世界各地的顧客傳達持續致力於潔淨與革新的三大價值觀。</p>
                             `
                         }
                     ]
                 },
-                {
-                    id: 'guest-bathroom',
-                    label: '次衛浴',
-                    subtitle: 'GUEST BATHROOM',
-                    x: 42.4,
-                    y: 57.4,
-                    images: [
-                        {
-                            src: 'assets/images/equipment/ES41890.webp',
-                            html: `
-                                <h2>高優質次衛浴空間設計</h2>
-                                <p>次衛浴同樣採用高等級進口衛浴品牌，不僅提供完美的舒適度，質感與風格也與主臥室相互輝映。</p>
-                            `
-                        },
-                        {
-                            src: 'assets/images/equipment/ES41890_ID2.webp',
-                            html: `
-                                <h2>實用與美感兼具</h2>
-                                <p>懸空式一體成型的面盆下櫃設計，不僅不易藏污納垢方便清潔，更能提供充足的備品收納空間。</p>
-                            `
-                        }
-                    ]
-                },
+
                 {
                     id: 'aluminum-window',
                     label: '鋁門窗',
@@ -260,34 +261,112 @@
                     y: 9.9,
                     images: [
                         {
-                            src: 'assets/images/equipment/knoica.webp',
+                            src: 'assets/images/equipment/YKK-1.webp',
                             html: `
-                                <h2>YKK AP 高水密鋁門窗</h2>
-                                <h3>抵禦風暴，隔絕喧囂</h3>
-                                <p>全區迎風面皆採用日本窗業第一把交椅 <strong>YKK AP 氣密窗</strong>。具備絕佳的水密性、氣密性及隔音性能，有效抵擋狂風暴雨，同時還給室內一片絕對寧靜。</p>
-                                <ul>
-                                    <li>搭配高等級 <strong>Low-E 膠合玻璃</strong>，有效阻絕紫外線與戶外熱能</li>
-                                    <li>高剛性結構窗框，完美抗風壓不變形</li>
-                                </ul>
+                                <h2>YKK AP 超高水密窗</h2>
+                                <h2>6+6膠合玻璃</h2>
+                                <h3>新水密結構品質，高於日本國家標準，直達3倍</h3>
+                                <p>台灣地處亞熱帶，屬海島型潮濕氣候，經年累月的強風豪雨，易造成雨水經由鋁窗滲入室內的情形。因應這樣的嚴苛氣候條件，YKK AP 應用等氣壓理論，獨自研發出新水密結構，通過 1500Pa 水壓測試，以遠超過 JIS 基準的<strong>「高水密性」</strong>持續自我要求。即使在長時間的暴風雨中，也能讓雨水不易滲透，實現理想中的「生活水密」。</p>
+                                <p><strong>「水密性」</strong>是指在風雨中，門窗能抵抗多大的風壓，以防止雨水滲入室內的性能。</p>
                             `
+                        }, {
+                            src: 'assets/images/equipment/YKK-2.webp',
+                            html: `
+                                <h2>YKK AP 超高水密窗</h2>
+                                <h3>運用新等壓原理開發高水密性能，颱風天在家也能安穩舒適的生活</h3>
+                                <p>運用精密計算，於外框或內扇設置外氣導入流路，形成等壓空間。讓窗框及窗扇內的壓力，約等同於外氣壓力，如此便能將雨滴的動能封鎖在滴水線外，以確保高水密性。YKK AP 應用了這個理論，開發出獨自的水密構造，讓 YRB-A 系列實現了前所未有的超高水密性。</p>                   
+                                        
+                                `
+                        }, {
+                            src: 'assets/images/equipment/YKK-3.webp',
+                            html: `
+                                <h2>YKK AP 超高水密窗</h2>
+                                <h3>嚴苛氣候下，確保「生活水密」，守護生活環境</h3>
+                                <p>以台灣嚴苛氣候條件，特別是颱風長時間滯留為假想敵，進行嚴苛試驗。透過 YKK AP 獨創水密結構，依 CNS11528 及 JIS A 1517 規範之水密性能試驗方法，測試可達中央值 1000Pa 及 180 分鐘的水密性能外，更可達到中央值 1500Pa、10 分鐘的水密性能。這就是 YKK AP 獨家開發的生活水密新基準。</p>                   
+                                        
+                                `
+                        }, {
+                            src: 'assets/images/equipment/YKK-4.webp',
+                            html: `
+                                <h2>YKK AP 超高水密窗</h2>
+                                <h3>「高耐風壓性能」受強風吹襲也不擔憂</h3>
+                                <p>YRB-A 系列窗型，在製造範圍內皆可達到 3600Pa 的高耐風壓性能（相當於可耐 16 級風的「強烈颱風」程度）。不需擔心颱風等強風吹襲時可能造成之窗框變形或鋁窗被拉走等情形發生。</p>                   
+                                        
+                                `
+                        }, {
+                            src: 'assets/images/equipment/YKK-5.webp',
+                            html: `
+                                <h2>YKK AP 超高水密窗</h2>
+                                <h3>優異的「隔音性能」確保舒適的生活環境</h3>
+                                <p>日常生活中較舒適的噪音程度為 <strong>40 ~ 60dB</strong></p>   
+                                <p>YRB-A 系列鋁窗具出色的隔音效果，可依居住環境選擇窗框隔音為 <strong>30 等級</strong>或 <strong>35 等級</strong>（即平均隔絕 <strong>30dB</strong> 或 <strong>35dB</strong> 噪音）。</p>  
+                                <p>YKK AP 為業界唯一取得 6 大窗型高性能防音綠建材標章之鋁窗品牌，故若搭配 <strong>6mm + 6mm 膠合玻璃</strong>，則整體可達到 <strong>35 等級</strong>之高隔音性能。即使生活在車水馬龍的交通幹線兩側，也能享有舒適的居住品質。</p>                   
+                                        
+                                `
                         }
                     ]
                 },
                 {
                     id: 'clothes-dryer',
                     label: '電動曬衣架',
-                    subtitle: 'ELECTRIC CLOTHES DRYER',
+                    subtitle: 'Automatic Clothesline',
                     x: 45.7,
                     y: 82.7,
-                    images: []
+                    images: [
+                        {
+                            src: 'assets/images/equipment/電動曬衣架.webp',
+                            html: `
+                                <h3>超大承載 · 電動升降 · LED三段式調光 · 無線遙控</h3>
+                                <ul>
+                                    <li>全機身採用<strong>超輕巧鋁合金材質</strong>，耐磨、防鏽</li>
+                                    <li>LED節能照明燈具，獨家3段式調光，讓您每次曬衣都有不同的風情。</li>
+                                    <li>下降遇障礙物自動停止功能，安全、憂慮跑光光。</li>
+                                    <li>承載重量約 <strong>35 公斤內</strong>，相當於 70 脫水後的POLO衫。</li>
+                                    <li>無線遙控操作，操作簡單、方便省力。</li>
+                                </ul>
+                            `
+                        }
+                    ]
                 },
                 {
                     id: 'heat-exchanger',
-                    label: '全熱交換機',
-                    subtitle: 'TOTAL HEAT EXCHANGER',
+                    label: '全熱交換器',
+                    subtitle: 'Energy Recovery Ventilator',
                     x: 52.6,
                     y: 40.8,
-                    images: []
+                    images: [
+                        {
+                            src: 'assets/images/equipment/全熱交換機-1.webp',
+                            html: `
+                                <h2>三菱電機全熱交換器</h2>
+                                <h3>RVX系列 全新搭載高效 DC 馬達，節能技術再進化</h3>
+                                <p>利用紙張傳遞熱氣的特性，三菱電機的開發者於 1970 年以紙材製成核心，世界首創先驅開發 Lossnay 全熱交換器。</p>
+                                <p>為了改善高氣密性建築的室內空氣品質，必須讓室內外空氣交互流通，但夏天太熱、冬天太冷，直接引進室外空氣會增加空調設備耗電，空氣汙染物質引入室內亦會導致健康傷害的問題。為了解決這兩難，三菱電機於 1970 年首創開發出 Lossany 全熱交換器，歷經 30 多年來不斷鑽研精進，以高效能源回收的節能技術，達到室內外通風換氣改善空氣品質，並降低因引進室外空氣所造成的空調負荷，讓您可以享受安心健康的生活。</p>
+                                <p>Lossnay 是由英文「loss（損失）」及日文「ない（沒有）」的文字所組成的商品名稱，意即：無損失。</p>
+                            `
+                        },
+                        {
+                            src: 'assets/images/equipment/全熱交換機-2.webp',
+                            html: `
+                                
+                                <h3>加強換氣循環，維持新鮮空氣與濕度</h3>
+                                <p>安裝全熱交換器進行室內外換氣，即使在密閉空間裡面也能讓室內時時充滿新鮮空氣，保有合宜濕度，提供使用者良好的活動環境，不再感到頭暈或不適。</p>
+                                <h3>低噪音設計</h3>
+                                <p>在都市中戶外的噪音容易從傳統的換氣扇通風口侵入室內，無法有效降低噪音。針對高氣密式與需要安靜的場所（例如美術館、圖書館等），全熱交換器具有良好的遮音性，並防止冷暖氣外流造成浪費。</p>
+                            `
+                        },
+                        {
+                            src: 'assets/images/equipment/全熱交換機-3.webp',
+                            html: `
+                                
+                                <h3>降低空調負荷，提升節電效能</h3>
+                                <p>室內空氣排到室外前，可有效回收高達 80% 的熱能，用於加熱（降溫）由室外導入的空氣，減少空調負荷；搭配使用相輔相成，節能效果更佳。</p>
+                                <h3>防止室外污染物侵入</h3>
+                                <p>透過過濾網過濾室外空氣，有效阻擋灰塵、花粉等污染物侵入室內，讓您呼吸更安心。</p>
+
+                            `
+                        }
+                    ]
                 },
                 {
                     id: 'interior-door',
@@ -295,7 +374,58 @@
                     subtitle: 'INTERIOR DOOR',
                     x: 40.9,
                     y: 41.7,
-                    images: []
+                    images: [
+                        {
+                            src: 'assets/images/equipment/panasonic室內門.webp',
+                            html: `
+                                <h2>Panasonic室內門</h2>
+                                <ul>
+                                    <li>獨特加工技術</li>
+                                    <li>LVL合板芯</li>
+                                    <li>消音鎖舌，門擋緩衝條</li>
+                                    <li>F★★★★等級與低揮發性有機化合物材質</li>
+                                </ul>
+                            `
+                        }, {
+                            src: 'assets/images/equipment/panasonic室內門-2.webp',
+                            html: `
+                            <h2>耐污性、耐傷性</h2>
+                                <h3>使用EB塗裝技術，常保門扇美觀耐用</h3>
+                                <p>日本原裝室內門的門扇，整體表面採用耐刮、耐磨、抗污的EB塗裝技術。</p>
+                                <h3>耐污</h3>
+                                <p>油性筆的污漬也難以滲入，一下就可以擦拭乾淨。</p>
+                                <h3>耐傷</h3>
+                                <p>用鋼絲絨擦拭也幾乎不留下傷痕。</p>
+                                
+                            `
+                        }, {
+                            src: 'assets/images/equipment/panasonic室內門-3.webp',
+                            html: `
+                            <h2>耐久性</h2>
+                                <h3>獨特加工技術 貼皮不易翹起</h3>
+                                <p>門片邊緣圓角設計。加上斷面捲入門扇中心特殊構造，所以能夠避免以往收邊蓋板脫落問題，常年使用也能保持優美外觀。</p>
+                                <h3>LVL合板芯</h3>
+                                <p>LVL合板芯能防止門板變形，即使是最大的門，隨著時間消逝也能完美無瑕。表面的特殊防潮貼皮，可防止因受潮造成的變形。</p>
+                                <h3>房門構造</h3>
+                                <p>房門構造為LVL（Laminated Veneer Lumber）單板積成材（平行夾板）。順紋抗彎曲性能好，其厚度方向不易變形，作為櫃體、門板等主蕊材，可展現其良好的抗彎強度性能。</p>
+                                <h3>附蓋可調鉸鏈</h3>
+                                <p>鉸鏈軸心附修飾套蓋，讓鉸鏈的外觀更加平整美觀，並且增加耐久性。</p>
+                                
+                            `
+                        }, {
+                            src: 'assets/images/equipment/panasonic室內門-4.webp',
+                            html: `
+                            <h2>機能性</h2>
+                                <h3>特殊鉸鏈設計 讓開門關門變得比以往更輕</h3>
+                                <p>採用特殊鉸鏈設計以一根手指就能開關，安裝後還可透過螺絲起子調整至任何方向完成精確的成果，日本設計為所有不同年齡層提供卓越的耐用性並且提供友善的用戶操作模式。</p>
+                                <h3>鎖芯、鎖舌、鎖舌座</h3>
+                                <p>鎖舌可旋轉，無需區分左右。鎖舌座也可以前後微調+2 mm。</p>
+                                <h3>消音鎖舌，門擋緩衝條</h3>
+                                <p>雙層構造防撞消音鎖舌，搭配門擋緩衝條，開關門更安靜，與門擋一體成型的緩衝條，不易剝落、更加美觀。</p>
+                                
+                            `
+                        }
+                    ]
                 }
             ];
 
@@ -521,6 +651,30 @@
                 }
             ];
 
+            // ===== 主衛浴設備資料 (獨立於輪播之外) =====
+            const masterBathroomEquipments = [
+                {
+                    name: '全自動馬桶',
+                    src: 'assets/images/equipment/TOTO馬桶.webp',
+                    desc: `<ul><li><strong>前噴霧</strong> 馬桶使用前，自動噴出自來水霧，使馬桶表面濕潤，讓污物不易沾黏。</li><li><strong>自動掀蓋/洗淨</strong> 採用非接觸式的感應設計，使用步驟更簡單便利，容易保持清潔，帶來更舒適、輕鬆的享受。(自動掀蓋/自動洗淨功能，依各機種設定為主。)</li><li><strong>溫熱便座</strong> 溫水洗淨便座的溫熱便座功能，溫度可自由調節，冬天也能舒適如廁。</li><li><strong>暖風烘乾</strong> 暖風烘乾功能以舒服的溫風，將水氣吹乾，讓臀部倍感乾爽，如廁後更舒適。</li><li><strong>除臭</strong> 吸走令人尷尬的異味，強力消除惡臭，使如廁空間隨時保持空氣清新。</li><li><strong>喜貼心抗污釉</strong> 應用於陶瓷類商品(馬桶、小便斗、臉盆)，創新研發的陶瓷用藥，超越奈米尺度的超平滑表面，不給污垢容納的空隙，讓污垢難以黏附，清潔更輕鬆。</li><li><strong>水龍捲洗淨</strong> 獨創的龍捲水流，延無稜內壁持續迴旋數回，漩渦式加速而下，強勁沖洗馬桶內壁的同時，也達到靜音的要求，實現沖洗品質的突破</li></ul>`
+                },
+                {
+                    name: '下嵌式臉盆',
+                    src: 'assets/images/equipment/主浴面盆.webp',
+                    desc: `<ul><li><strong>喜貼心抗污釉</strong> 應用於陶瓷類商品(馬桶、小便斗、臉盆)，創新研發的陶瓷用藥，超越奈米尺度的超平滑表面，不給污垢容納的空隙，讓污垢難以黏附，清潔更輕鬆。</li></ul>`
+                },
+                {
+                    name: '淋浴用控溫龍頭',
+                    src: 'assets/images/equipment/TOTO蓮蓬頭.webp',
+                    desc: `<ul><li><strong>安心觸</strong> TOTO 獨特創新技術讓水龍頭表面維持冷卻狀態，當不小心觸碰到淋浴用單槍龍頭時，安心觸能夠有效地預防燙傷。</li><li><strong>SMA控溫技術</strong> TOTO 記憶合金線圈能更即時的偵測水溫變化，對熱水的反應時間相較一般蠟製線圈，約達6倍快的速度 (一般家庭用水比較效果)。</li></ul>`
+                },
+                {
+                    name: '臉盆用單槍龍頭',
+                    src: 'assets/images/equipment/面盆龍頭.webp',
+                    desc: `<ul><li><strong>高耐久陶瓷心</strong> 獨特的高耐久陶瓷心，它能隨著碰觸開關時啟動，讓使用感受更加輕鬆流暢！透過這樣一個細微設計，影響使用的舒適感受。</li></ul>`
+                }
+            ];
+
             // ===== 建材 Modal =====
             function openMaterialModal(hs) {
                 modalTitle.textContent = hs.label;
@@ -544,6 +698,18 @@
                         <div style="margin-top: 32px; text-align: center;">
                             <button class="equip-grid-btn" onclick="document.getElementById('equipGridOverlay').classList.add('active')">
                                 ▶ 廚房設備一覽
+                            </button>
+                        </div>
+                    `;
+                    modalDesc.innerHTML += btnHtml;
+                }
+
+                // 如果是主衛浴，在文字區下方加入「主衛浴設備一覽」按鈕
+                if (hs.id === 'master-bathroom') {
+                    const btnHtml = `
+                        <div style="margin-top: 32px; text-align: center;">
+                            <button class="equip-grid-btn" onclick="document.getElementById('bathGridOverlay').classList.add('active')">
+                                ▶ 主衛浴設備一覽
                             </button>
                         </div>
                     `;
@@ -634,6 +800,21 @@
                         `;
                     }
                 }
+
+                // 檢查是否為主衛浴點位
+                const bathHs = hotspots.find(h => h.id === 'master-bathroom');
+                if (bathHs && modalTitle.textContent === bathHs.label) {
+                    const existingBtn = modalDesc.querySelector('.equip-grid-btn');
+                    if (!existingBtn) {
+                        modalDesc.innerHTML += `
+                            <div style="margin-top: 32px; text-align: center;">
+                                <button class="equip-grid-btn" onclick="document.getElementById('bathGridOverlay').classList.add('active')">
+                                    ▶ 主衛浴設備一覽
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
             }
 
             galleryPrev.addEventListener('click', (e) => {
@@ -683,6 +864,32 @@
                 if (e.target === equipGridOverlay) equipGridOverlay.classList.remove('active');
             });
 
+            // ===== 主衛浴設備 Grid 覆蓋層邏輯 =====
+            const bathGridOverlay = document.getElementById('bathGridOverlay');
+            const bathGridClose = document.getElementById('bathGridClose');
+            const bathGridContainer = document.getElementById('bathGridContainer');
+
+            // 初始化主衛浴設備 Grid
+            masterBathroomEquipments.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'equip-card';
+                card.innerHTML = `
+                    <div class="equip-card-img-wrap">
+                        <img src="${item.src}" alt="${item.name}" draggable="false">
+                    </div>
+                    <p class="equip-card-name">${item.name}</p>
+                `;
+                card.addEventListener('click', () => openEquipLightbox(item));
+                bathGridContainer.appendChild(card);
+            });
+
+            bathGridClose.addEventListener('click', () => {
+                bathGridOverlay.classList.remove('active');
+            });
+            bathGridOverlay.addEventListener('click', (e) => {
+                if (e.target === bathGridOverlay) bathGridOverlay.classList.remove('active');
+            });
+
             // ===== 設備燈箱邏輯 =====
             const equipOverlay = document.getElementById('equipLightboxOverlay');
             const equipClose = document.getElementById('equipLightboxClose');
@@ -714,6 +921,8 @@
                 if (e.key === 'Escape') {
                     if (equipOverlay.classList.contains('active')) {
                         closeEquipLightbox();
+                    } else if (bathGridOverlay.classList.contains('active')) {
+                        bathGridOverlay.classList.remove('active');
                     } else if (equipGridOverlay.classList.contains('active')) {
                         equipGridOverlay.classList.remove('active');
                     } else if (modalOverlay.classList.contains('active')) {
