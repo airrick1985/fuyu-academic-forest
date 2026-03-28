@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工法介紹 - 富宇學森 The Academic Forest</title>
+    <meta name="description" content="富宇學森工法介紹，包括衛浴防水、窗框防水、樑柱綁筋、智慧設備等精密施工工法展示。">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/topbar.css">
+    <link rel="stylesheet" href="css/construction.css">
+</head>
+
+<body class="construction-page">
+    <!-- 背景遮罩 -->
+    <div class="con-bg-overlay"></div>
+
+    <!-- Top Bar -->
+    <div id="topbar-root"></div>
+
+    <!-- 主展示區 -->
+    <main class="con-showcase" id="conShowcase">
+
+        <!-- 側邊工法導航 -->
+        <nav class="con-sidebar" id="conSidebar">
+            <div class="con-sidebar-header">
+                <span class="con-sidebar-icon">🏗️</span>
+                <span class="con-sidebar-title">工法介紹</span>
+            </div>
+            <ul class="con-nav-list" id="conNavList">
+                <!-- 由 JS 動態生成 -->
+            </ul>
+        </nav>
+
+        <!-- 圖文分離展示區 -->
+        <div class="con-display" id="conDisplay">
+
+            <!-- 左側：圖片展示區（淺色底） -->
+            <div class="con-image-area" id="conImageArea">
+                <!-- 圖片容器（雙層交替 crossfade） -->
+                <div class="con-image-layer con-image-front" id="conImgFront"></div>
+                <div class="con-image-layer con-image-back" id="conImgBack"></div>
+
+                <!-- 點擊放大提示 -->
+                <div class="con-zoom-hint" id="conZoomHint">🔍 點擊圖片可放大查看</div>
+
+            </div>
+
+            <!-- 右側：說明面板 -->
+            <div class="con-info-panel entrance" id="conInfoPanel">
+                <!-- 步驟編號指示器 -->
+                <div class="con-step-indicator entrance" id="conStepIndicator">
+                    <div class="con-step-current" id="conStepCurrent">01</div>
+                    <div class="con-step-total" id="conStepTotal">/ 10</div>
+                </div>
+
+                <!-- 可捲動內容區 -->
+                <div class="con-info-content entrance" id="conInfoContent">
+                    <div class="con-category-badge" id="conCategoryBadge" data-cat="waterproof">防水工法</div>
+                    <h1 class="con-info-title" id="conInfoTitle">衛浴防水</h1>
+                    <p class="con-info-subtitle" id="conInfoSubtitle">BATHROOM WATERPROOFING</p>
+                    <div class="con-info-divider"></div>
+                    <div class="con-info-desc" id="conInfoDesc">載入中...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 圖片放大 Lightbox -->
+    <div class="con-lightbox-overlay" id="conLightbox">
+        <button class="con-lightbox-close" id="conLightboxClose">✕</button>
+        <img id="conLightboxImg" src="" alt="工法圖片放大">
+        <div class="con-lightbox-hint">點擊任意處關閉</div>
+    </div>
+
+    <!-- 免責聲明 -->
+    <div class="con-disclaimer">
+        ※ 以上工法圖片為3D示意，僅供參考，。
+    </div>
+
+    <!-- JS -->
+    <script src="js/topbar.js"></script>
+    <script>
+        (() => {
+            // ===== 工法資料定義 =====
+            const methods = [
+                {
+                    id: 'bathroom-waterproof',
+                    title: '衛浴防水',
+                    subtitle: 'BATHROOM WATERPROOFING',
+                    category: 'waterproof',
+                    categoryLabel: '防水工法',
+                    image: 'assets/images/construction method/衛浴防水.webp',
+                    description: '使用防水材佈塗在地面及牆面，淋浴間防水塗佈 180cm，非淋浴間 120cm。淋浴間四周皆有洩水孔蓋，能迅速排水，防止積水現象。',
+                    isStepList: false
+                },
+                {
+                    id: 'water-dam',
+                    title: '衛浴止水墩',
+                    subtitle: 'WATER DAM BARRIER',
+                    category: 'waterproof',
+                    categoryLabel: '防水工法',
+                    image: 'assets/images/construction method/衛浴止水墩.webp',
+                    description: '浴室內框下角入口門檻放置止水墩，有效防止水滲入房間地坪。',
+                    isStepList: false
+                },
+                {
+                    id: 'window-waterproof',
+                    title: '窗框防水',
+                    subtitle: 'WINDOW FRAME WATERPROOFING',
+                    category: 'waterproof',
+                    categoryLabel: '防水工法',
+                    image: 'assets/images/construction method/窗框防水.webp',
+                    description: '',
+                    isStepList: true,
+                    steps: [
+                        '水泥砂漿崁縫',
+                        '窗角45°角貼不織布',
+                        '泥作粉刷',
+                        '窗框防水施作',
+                        '矽利康塞水路',
+                        '黏著劑+貼磚'
+                    ]
+                },
+                {
+                    id: 'floor-joint',
+                    title: '樓層接縫防水',
+                    subtitle: 'FLOOR JOINT WATERPROOFING',
+                    category: 'waterproof',
+                    categoryLabel: '防水工法',
+                    image: 'assets/images/construction method/樓層接縫防水.webp',
+                    description: '',
+                    isStepList: true,
+                    steps: [
+                        '接縫修打V溝清理',
+                        '益膠泥填塞',
+                        '接縫防水',
+                        '粉刷打底',
+                        '黏著劑+貼磚'
+                    ]
+                },
+                {
+                    id: 'balcony-waterproof',
+                    title: '陽台露臺防水',
+                    subtitle: 'BALCONY WATERPROOFING',
+                    category: 'waterproof',
+                    categoryLabel: '防水工法',
+                    image: 'assets/images/construction method/陽台露臺防水.webp',
+                    description: '',
+                    isStepList: true,
+                    steps: [
+                        '底塗',
+                        '第一道防水',
+                        '角隅不織布補強',
+                        '第二道防水',
+                        '益膠泥',
+                        '鋪貼磁磚'
+                    ]
+                },
+                {
+                    id: 'rooftop-waterproof',
+                    title: '頂樓防水',
+                    subtitle: 'ROOFTOP WATERPROOFING',
+                    category: 'waterproof',
+                    categoryLabel: '防水工法',
+                    image: 'assets/images/construction method/頂樓防水.webp',
+                    description: '屋頂防水處理採 PU 防水層，地坪以隔熱磚鋪設，同時配合溢排管排水處理，以確實達到防水隔熱效果。',
+                    isStepList: false
+                },
+                {
+                    id: 'courtyard-waterproof',
+                    title: '中庭植栽防水',
+                    subtitle: 'COURTYARD PLANTING WATERPROOFING',
+                    category: 'waterproof',
+                    categoryLabel: '防水工法',
+                    image: 'assets/images/construction method/中庭植栽防水.webp',
+                    description: '採用 PU 防水層處理，鋪設透水不織布、排水板，回填土後，再進行植栽以達最佳中庭防水效果。',
+                    isStepList: false
+                },
+                {
+                    id: 'rebar-binding',
+                    title: '樑柱綁筋',
+                    subtitle: 'REBAR BINDING STRUCTURE',
+                    category: 'structure',
+                    categoryLabel: '結構工法',
+                    image: 'assets/images/construction method/樑柱綁筋.webp',
+                    description: '',
+                    isStepList: true,
+                    steps: [
+                        'SA級高拉力鋼筋續接器。',
+                        '柱外箍筋採用雙135度標準彎鉤四向錯開配置。',
+                        '柱內繫筋採用90度與180度標準彎鉤，上下左右交錯擺放不易鬆脫。',
+                        '柱上下端圍束緊密間距10cm，施作柱樑接頭之箍筋。',
+                        '預先規劃設計穿樑管線位置，不讓結構有被破壞之處，並於穿樑處結構進行補強，做到萬無一失。'
+                    ]
+                },
+                {
+                    id: 'etag-access',
+                    title: 'E-TAG 感應門禁',
+                    subtitle: 'E-TAG ACCESS CONTROL',
+                    category: 'smart',
+                    categoryLabel: '智慧設備',
+                    image: 'assets/images/construction method/ETAG 感應門禁.webp',
+                    description: '導入 E-TAG 長距離感應停車場系統，供社區完美整合管理軟體與停車場設備透過電腦內建程式，與高速公路 ETC 採用的 E-TAG 同款標籤作連動，即時進行停車場監控，有效管理出入來車。',
+                    isStepList: false
+                },
+                {
+                    id: 'ems-busbar',
+                    title: '匯流排EMS',
+                    subtitle: 'EV CHARGING BUSBAR & EMS',
+                    category: 'smart',
+                    categoryLabel: '智慧設備',
+                    image: 'assets/images/construction method/匯流排EMS.webp',
+                    description: '地下室各層車道預留電動車充電專用匯流排（Busway），整合 EMS 智慧電能管理系統。未來住戶擴充個人充電樁時，可直接由匯流排引電，並由 EMS 系統進行即時電力監控與負載調控，防止尖峰過載，實現社區配電智慧化。',
+                    isStepList: false
+                }
+            ];
+
+            // ===== DOM 參照 =====
+            const navList = document.getElementById('conNavList');
+            const imgFront = document.getElementById('conImgFront');
+            const imgBack = document.getElementById('conImgBack');
+            const infoPanel = document.getElementById('conInfoPanel');
+            const infoContent = document.getElementById('conInfoContent');
+            const categoryBadge = document.getElementById('conCategoryBadge');
+            const infoTitle = document.getElementById('conInfoTitle');
+            const infoSubtitle = document.getElementById('conInfoSubtitle');
+            const infoDesc = document.getElementById('conInfoDesc');
+            const stepCurrent = document.getElementById('conStepCurrent');
+            const stepTotal = document.getElementById('conStepTotal');
+            const lightbox = document.getElementById('conLightbox');
+            const lightboxImg = document.getElementById('conLightboxImg');
+            const lightboxClose = document.getElementById('conLightboxClose');
+            const conDisplay = document.getElementById('conDisplay');
+            const conImageArea = document.getElementById('conImageArea');
+            const zoomHint = document.getElementById('conZoomHint');
+
+            let currentIndex = 0;
+            let isTransitioning = false;
+            let isFrontActive = true; // 追蹤哪一層在前
+            let kenBurnsCounter = 0;
+
+            // ===== 初始化 =====
+            function init() {
+                buildNavList();
+                loadMethodImage(methods[0], imgFront, true);
+                updateInfoPanel(methods[0], false);
+                updateStepIndicator(0);
+                stepTotal.textContent = `/ ${String(methods.length).padStart(2, '0')}`;
+
+                // 預載相鄰圖片
+                preloadImage(methods[1].image);
+
+                // 入場動畫延遲隱藏提示
+                setTimeout(() => {
+                    zoomHint.classList.add('fade-out');
+                }, 200);
+            }
+
+            // ===== 建立側邊導航列 =====
+            function buildNavList() {
+                let lastCategory = '';
+                const categoryNames = {
+                    waterproof: 'WATERPROOF',
+                    structure: 'STRUCTURE',
+                    smart: 'SMART SYSTEM'
+                };
+
+                methods.forEach((m, i) => {
+                    // 分類分隔線
+                    if (m.category !== lastCategory) {
+                        const divider = document.createElement('li');
+                        divider.className = 'con-nav-divider';
+                        divider.innerHTML = `
+                            <span class="con-nav-divider-line"></span>
+                            <span class="con-nav-divider-text">${categoryNames[m.category]}</span>
+                            <span class="con-nav-divider-line"></span>
+                        `;
+                        navList.appendChild(divider);
+                        lastCategory = m.category;
+                    }
+
+                    const li = document.createElement('li');
+                    li.className = 'con-nav-item entrance' + (i === 0 ? ' active' : '');
+                    li.style.animationDelay = `${0.3 + i * 0.06}s`;
+                    li.dataset.index = i;
+                    li.innerHTML = `
+                        <span class="con-nav-dot" data-cat="${m.category}"></span>
+                        <span class="con-nav-label">${m.title}</span>
+                    `;
+                    li.addEventListener('click', () => goToMethod(i));
+                    navList.appendChild(li);
+                });
+            }
+
+
+            // ===== 核心：切換工法 =====
+            function goToMethod(index) {
+                if (isTransitioning || index === currentIndex) return;
+                if (index < 0 || index >= methods.length) return;
+
+                isTransitioning = true;
+                const method = methods[index];
+                currentIndex = index;
+
+                // 取得目前顯示的圖層
+                const activeLayer = isFrontActive ? imgFront : imgBack;
+                const hiddenLayer = isFrontActive ? imgBack : imgFront;
+
+                // 1. 確保隱藏層完全不可見並清空
+                hiddenLayer.style.transition = 'none';
+                hiddenLayer.style.opacity = '0';
+                hiddenLayer.innerHTML = '';
+
+                // 2. 舊圖淡出
+                activeLayer.style.transition = 'opacity 0.45s ease-out';
+                activeLayer.style.opacity = '0';
+
+                // 3. 面板內容退場動畫
+                infoContent.classList.add('exit');
+                infoContent.classList.remove('enter');
+
+                // 4. 更新導航列 / dots / 步驟
+                updateNavActive(index);
+                updateStepIndicator(index);
+
+                // 5. 舊圖淡出完成後，載入新圖到隱藏層並淡入
+                setTimeout(() => {
+                    // 清空舊的活躍層
+                    activeLayer.style.transition = 'none';
+                    activeLayer.style.opacity = '0';
+                    activeLayer.style.zIndex = '2';
+                    activeLayer.innerHTML = '';
+
+                    // 在隱藏層載入新圖片
+                    loadMethodImage(method, hiddenLayer, false);
+                    hiddenLayer.style.zIndex = '3';
+
+                    // 強制重繪
+                    void hiddenLayer.offsetWidth;
+
+                    // 新圖淡入
+                    hiddenLayer.style.transition = 'opacity 0.5s ease-in';
+                    hiddenLayer.style.opacity = '1';
+
+                    // 切換活躍層指標
+                    isFrontActive = !isFrontActive;
+                }, 480);
+
+                // 6. 更新面板內容（配合新圖淡入時序）
+                setTimeout(() => {
+                    updateInfoPanel(method, true);
+                    infoContent.classList.remove('exit');
+                    infoContent.classList.add('enter');
+
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            infoContent.classList.remove('enter');
+                        });
+                    });
+                }, 550);
+
+                // 7. 轉場完成
+                setTimeout(() => {
+                    isTransitioning = false;
+
+                    // 預載相鄰圖片
+                    if (index > 0) preloadImage(methods[index - 1].image);
+                    if (index < methods.length - 1) preloadImage(methods[index + 1].image);
+                }, 1050);
+            }
+
+            // ===== 載入圖片到圖層 =====
+            function loadMethodImage(method, layer, isEntrance) {
+                kenBurnsCounter++;
+                const kbClass = kenBurnsCounter % 2 === 0 ? 'ken-burns-1' : 'ken-burns-2';
+
+                const img = document.createElement('img');
+                img.src = method.image;
+                img.alt = method.title;
+                img.draggable = false;
+                img.className = kbClass;
+
+                if (isEntrance) {
+                    layer.classList.add('entrance');
+                }
+
+                layer.innerHTML = '';
+                layer.appendChild(img);
+
+                // 圖片點擊放大
+                img.style.cursor = 'zoom-in';
+                img.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openLightbox(method.image, method.title);
+                });
+            }
+
+            // ===== 更新說明面板 =====
+            function updateInfoPanel(method, animated) {
+                categoryBadge.textContent = method.categoryLabel;
+                categoryBadge.dataset.cat = method.category;
+                infoTitle.textContent = method.title;
+                infoSubtitle.textContent = method.subtitle;
+
+                if (method.isStepList && method.steps) {
+                    const stepsHtml = method.steps.map(s => `<li>${s}</li>`).join('');
+                    infoDesc.innerHTML = `<ol class="con-step-list">${stepsHtml}</ol>`;
+                } else {
+                    infoDesc.innerHTML = `<p>${method.description}</p>`;
+                }
+            }
+
+            // ===== 更新導航列 Active =====
+            function updateNavActive(index) {
+                const items = navList.querySelectorAll('.con-nav-item');
+                items.forEach((item, i) => {
+                    item.classList.toggle('active', parseInt(item.dataset.index) === index);
+                });
+
+                // 滾動到可視範圍
+                const activeItem = navList.querySelector('.con-nav-item.active');
+                if (activeItem) {
+                    activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+
+
+            // ===== 更新步驟指示器 =====
+            function updateStepIndicator(index) {
+                stepCurrent.style.opacity = '0';
+                setTimeout(() => {
+                    stepCurrent.textContent = String(index + 1).padStart(2, '0');
+                    stepCurrent.style.opacity = '1';
+                }, 250);
+            }
+
+            // ===== Lightbox =====
+            function openLightbox(src, alt) {
+                lightboxImg.src = src;
+                lightboxImg.alt = alt;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                // 隱藏 topbar
+                const topbar = document.getElementById('topbar-root');
+                if (topbar) topbar.style.display = 'none';
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+                // 恢復 topbar
+                const topbar = document.getElementById('topbar-root');
+                if (topbar) topbar.style.display = '';
+            }
+
+            lightboxClose.addEventListener('click', closeLightbox);
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox || e.target === lightboxImg) {
+                    closeLightbox();
+                }
+            });
+
+            // ===== 上一個 / 下一個 =====
+            function goPrev() {
+                const newIndex = currentIndex > 0 ? currentIndex - 1 : methods.length - 1;
+                goToMethod(newIndex);
+            }
+
+            function goNext() {
+                const newIndex = currentIndex < methods.length - 1 ? currentIndex + 1 : 0;
+                goToMethod(newIndex);
+            }
+
+
+            // ===== 鍵盤控制 =====
+            document.addEventListener('keydown', (e) => {
+                // Lightbox 開著時只處理 Escape
+                if (lightbox.classList.contains('active')) {
+                    if (e.key === 'Escape') closeLightbox();
+                    return;
+                }
+
+                switch (e.key) {
+                    case 'ArrowLeft':
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        goPrev();
+                        break;
+                    case 'ArrowRight':
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        goNext();
+                        break;
+                    case 'Home':
+                        e.preventDefault();
+                        goToMethod(0);
+                        break;
+                    case 'End':
+                        e.preventDefault();
+                        goToMethod(methods.length - 1);
+                        break;
+                    case 'Escape':
+                        // 無操作（交給 topbar 或其他邏輯）
+                        break;
+                    default:
+                        // 數字鍵快速跳轉 1~9, 0=10
+                        if (e.key >= '1' && e.key <= '9') {
+                            const idx = parseInt(e.key) - 1;
+                            if (idx < methods.length) goToMethod(idx);
+                        } else if (e.key === '0' && methods.length >= 10) {
+                            goToMethod(9);
+                        }
+                        break;
+                }
+            });
+
+            // ===== 滑鼠滾輪控制（帶防抖） =====
+            let wheelTimeout = null;
+            let wheelLocked = false;
+
+            conImageArea.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                if (wheelLocked || isTransitioning) return;
+
+                wheelLocked = true;
+
+                if (e.deltaY > 0) {
+                    goNext();
+                } else {
+                    goPrev();
+                }
+
+                wheelTimeout = setTimeout(() => {
+                    wheelLocked = false;
+                }, 1200);
+            }, { passive: false });
+
+            // ===== 觸控滑動控制 =====
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            conImageArea.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].clientX;
+                touchStartY = e.changedTouches[0].clientY;
+            }, { passive: true });
+
+            conImageArea.addEventListener('touchend', (e) => {
+                const deltaX = e.changedTouches[0].clientX - touchStartX;
+                const deltaY = e.changedTouches[0].clientY - touchStartY;
+
+                // 只有水平滑動距離大於閾值才觸發
+                if (Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                    if (deltaX < 0) {
+                        goNext();
+                    } else {
+                        goPrev();
+                    }
+                }
+            }, { passive: true });
+
+            // ===== 圖片預載 =====
+            const preloadedImages = new Set();
+            function preloadImage(src) {
+                if (preloadedImages.has(src)) return;
+                preloadedImages.add(src);
+                const img = new Image();
+                img.src = src;
+            }
+
+            // ===== 啟動 =====
+            init();
+        })();
+    </script>
+    <script src="js/spa-router.js"></script>
+</body>
+
+</html>
