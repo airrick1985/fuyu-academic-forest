@@ -55,8 +55,13 @@
                 <!-- 右側：標題與文字介紹 -->
                 <div class="mat-modal-right">
                     <div class="mat-modal-header">
-                        <h2 class="mat-modal-title" id="matModalTitle"></h2>
-                        <p class="mat-modal-subtitle" id="matModalSubtitle"></p>
+                        <div class="mat-modal-header-top">
+                            <div>
+                                <h2 class="mat-modal-title" id="matModalTitle"></h2>
+                                <p class="mat-modal-subtitle" id="matModalSubtitle"></p>
+                            </div>
+                            <span id="matHeaderBtnSlot"></span>
+                        </div>
                     </div>
 
                     <!-- 文字介紹 -->
@@ -81,11 +86,11 @@
         </div>
     </div>
 
-    <!-- 主衛浴設備 Grid 覆蓋層 (點擊「主衛浴設備一覽」按鈕時使用) -->
+    <!-- 主衛浴設備 Grid 覆蓋層 (點擊「衛浴設備一覽」按鈕時使用) -->
     <div class="equip-grid-overlay" id="bathGridOverlay">
         <button class="equip-grid-overlay-close" id="bathGridClose">✕</button>
         <div class="equip-grid-overlay-content">
-            <h2 class="equip-grid-overlay-title">主衛浴設備一覽</h2>
+            <h2 class="equip-grid-overlay-title">衛浴設備一覽</h2>
             <p class="equip-grid-overlay-subtitle">TOTO 日本精品衛浴，以獨有潔淨科技打造極致舒適的衛浴空間。</p>
             <div class="equip-grid" id="bathGridContainer"></div>
             <p class="equip-grid-disclaimer">※ 以上建材設備圖文介紹皆為示意，以實際交屋為準。賣方保留建材設備品牌規格變更之權利。</p>
@@ -237,7 +242,7 @@
                 },
                 {
                     id: 'master-bathroom',
-                    label: '主衛浴',
+                    label: '衛浴',
                     subtitle: 'MASTER BATHROOM',
                     x: 33.6,
                     y: 57.4,
@@ -248,6 +253,47 @@
                                 <h2>TOTO 日本精品衛浴設備</h2>
                                 <h3>在全世界實現潔淨與舒適</h3>
                                 <p>為了提供顧客更加潔淨・舒適與健康的衛浴空間，開發了一系列 TOTO 獨有的潔淨科技，如電解除菌水技術、喜貼心抗污釉、緣弧設計、水龍捲洗淨和零接觸的感應式設計。TOTO 淨美革新（TOTO CLEANOVATION）結合了「潔淨」和「革新」兩個詞，基於這個構想，將向世界各地的顧客傳達持續致力於潔淨與革新的三大價值觀。</p>
+                            `
+                        }
+                    ]
+                },
+                {
+                    id: 'bathroom-heater',
+                    label: '浴室暖風機',
+                    subtitle: 'BATHROOM HEATER',
+                    x: 34.3,
+                    y: 66.6,
+                    images: [
+                        {
+                            src: 'assets/images/equipment/浴室暖風機.webp',
+                            html: `
+                                <h2>台達暖風機</h2>
+                                <h3>寵愛尊榮，溫暖．搖曳風</h3>
+                                <ul>
+                                    <li>暖房/涼風/乾燥/換氣</li>
+                                    <li>八重安全防護</li>
+                                    <li>PTC陶瓷加熱器</li>
+                                    <li>省電DC直流馬達</li>
+                                    <li>六段定時使用方便</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            src: 'assets/images/equipment/浴室暖風機-2.webp',
+                            html: `
+                                <h2>台達暖風機</h2>
+                                <h3>PTC 陶瓷加熱器 更高效 更節能</h3>
+                                <p>採用高性能的 PTC 陶瓷發熱體，強勁高效供暖，在短時間內將您的浴室溫度上升到適宜狀態，即便在寒冬的浴室內也可以盡情享受舒適的沐浴時光。</p>
+                               
+                            `
+                        },
+                        {
+                            src: 'assets/images/equipment/浴室暖風機-3.webp',
+                            html: `
+                                <h2>台達暖風機</h2>
+                                <h3>感應換氣 / 小夜燈設計</h3>
+                                <p>智能體感與光感小夜燈設計，當夜晚您走進浴室，自動啟動燈光，讓您的生活更加舒適、安全。</p>
+                               
                             `
                         }
                     ]
@@ -614,11 +660,7 @@
                     src: 'assets/images/equipment/洗碗機.webp',
                     desc: `<ul><li>Load sensor 洗滌水量自動偵測</li><li>BLDC 無碳刷節能靜音驅動馬達</li><li>內建洗滌水加熱原件，免另外安裝熱水進水</li><li>InfoLight 投影燈：顯示洗程進行中</li></ul>`
                 },
-                {
-                    name: 'BEST 隱藏式抽油煙機',
-                    src: 'assets/images/equipment/排油煙機.webp',
-                    desc: `<ul><li>排風降噪尖端靜音技術</li><li>高亮度 LED 照明裝置</li><li>易清可拆式高吸附濾網</li><li>搭配不鏽鋼油杯，使用更安心</li></ul>`
-                },
+
                 {
                     name: 'BOSCH 嵌入式微波燒烤爐',
                     src: 'assets/images/equipment/微波烤箱.webp',
@@ -633,6 +675,11 @@
                     name: 'Rinnai 懸掛式臭氧殺菌烘碗機',
                     src: 'assets/images/equipment/烘碗機.webp',
                     desc: `<ul><li>鏡面玻璃面板</li><li>快拆門板設計</li><li>抹布桿設計</li><li>開門斷電，門板開啟停止運轉</li><li>碗架加粗設計（材質：SUS#304）</li><li>機體下方加裝 LED 燈照明</li><li>隱藏式按鍵</li><li>一鍵啟動烘乾、臭氧抑菌</li></ul>`
+                },
+                {
+                    name: 'BEST 隱藏式抽油煙機',
+                    src: 'assets/images/equipment/排油煙機.webp',
+                    desc: `<ul><li>排風降噪尖端靜音技術</li><li>高亮度 LED 照明裝置</li><li>易清可拆式高吸附濾網</li><li>搭配不鏽鋼油杯，使用更安心</li></ul>`
                 },
                 {
                     name: 'BEST 電器收納櫃',
@@ -654,22 +701,27 @@
             // ===== 主衛浴設備資料 (獨立於輪播之外) =====
             const masterBathroomEquipments = [
                 {
-                    name: '全自動馬桶',
+                    name: '全自動馬桶(主浴、次浴)',
                     src: 'assets/images/equipment/TOTO馬桶.webp',
                     desc: `<ul><li><strong>前噴霧</strong> 馬桶使用前，自動噴出自來水霧，使馬桶表面濕潤，讓污物不易沾黏。</li><li><strong>自動掀蓋/洗淨</strong> 採用非接觸式的感應設計，使用步驟更簡單便利，容易保持清潔，帶來更舒適、輕鬆的享受。(自動掀蓋/自動洗淨功能，依各機種設定為主。)</li><li><strong>溫熱便座</strong> 溫水洗淨便座的溫熱便座功能，溫度可自由調節，冬天也能舒適如廁。</li><li><strong>暖風烘乾</strong> 暖風烘乾功能以舒服的溫風，將水氣吹乾，讓臀部倍感乾爽，如廁後更舒適。</li><li><strong>除臭</strong> 吸走令人尷尬的異味，強力消除惡臭，使如廁空間隨時保持空氣清新。</li><li><strong>喜貼心抗污釉</strong> 應用於陶瓷類商品(馬桶、小便斗、臉盆)，創新研發的陶瓷用藥，超越奈米尺度的超平滑表面，不給污垢容納的空隙，讓污垢難以黏附，清潔更輕鬆。</li><li><strong>水龍捲洗淨</strong> 獨創的龍捲水流，延無稜內壁持續迴旋數回，漩渦式加速而下，強勁沖洗馬桶內壁的同時，也達到靜音的要求，實現沖洗品質的突破</li></ul>`
                 },
                 {
-                    name: '下嵌式臉盆',
+                    name: '下嵌式臉盆(主浴)',
                     src: 'assets/images/equipment/主浴面盆.webp',
                     desc: `<ul><li><strong>喜貼心抗污釉</strong> 應用於陶瓷類商品(馬桶、小便斗、臉盆)，創新研發的陶瓷用藥，超越奈米尺度的超平滑表面，不給污垢容納的空隙，讓污垢難以黏附，清潔更輕鬆。</li></ul>`
                 },
                 {
-                    name: '淋浴用控溫龍頭',
+                    name: '下嵌式臉盆(次浴)',
+                    src: 'assets/images/equipment/次浴面盆.webp',
+                    desc: `<ul><li><strong>喜貼心抗污釉</strong> 應用於陶瓷類商品(馬桶、小便斗、臉盆)，創新研發的陶瓷用藥，超越奈米尺度的超平滑表面，不給污垢容納的空隙，讓污垢難以黏附，清潔更輕鬆。</li></ul>`
+                },
+                {
+                    name: '淋浴用控溫龍頭(主浴、次浴)',
                     src: 'assets/images/equipment/TOTO蓮蓬頭.webp',
                     desc: `<ul><li><strong>安心觸</strong> TOTO 獨特創新技術讓水龍頭表面維持冷卻狀態，當不小心觸碰到淋浴用單槍龍頭時，安心觸能夠有效地預防燙傷。</li><li><strong>SMA控溫技術</strong> TOTO 記憶合金線圈能更即時的偵測水溫變化，對熱水的反應時間相較一般蠟製線圈，約達6倍快的速度 (一般家庭用水比較效果)。</li></ul>`
                 },
                 {
-                    name: '臉盆用單槍龍頭',
+                    name: '臉盆用單槍龍頭(主浴、次浴)',
                     src: 'assets/images/equipment/面盆龍頭.webp',
                     desc: `<ul><li><strong>高耐久陶瓷心</strong> 獨特的高耐久陶瓷心，它能隨著碰觸開關時啟動，讓使用感受更加輕鬆流暢！透過這樣一個細微設計，影響使用的舒適感受。</li></ul>`
                 }
@@ -692,28 +744,22 @@
                     modalDesc.innerHTML = '<p style="color: #999; text-align: center;">介紹內容準備中，敬請期待。</p>';
                 }
 
-                // 如果是廚房，在文字區下方加入「廚房設備一覽」按鈕
+                // 在 header 旁邊插入「設備一覽」按鈕
+                const headerBtnSlot = document.getElementById('matHeaderBtnSlot');
+                headerBtnSlot.innerHTML = '';
                 if (hs.id === 'kitchen') {
-                    const btnHtml = `
-                        <div style="margin-top: 32px; text-align: center;">
-                            <button class="equip-grid-btn" onclick="document.getElementById('equipGridOverlay').classList.add('active')">
-                                ▶ 廚房設備一覽
-                            </button>
-                        </div>
+                    headerBtnSlot.innerHTML = `
+                        <button class="equip-grid-btn equip-grid-btn-header" onclick="document.getElementById('equipGridOverlay').classList.add('active')">
+                            ▶ 廚房設備一覽
+                        </button>
                     `;
-                    modalDesc.innerHTML += btnHtml;
                 }
-
-                // 如果是主衛浴，在文字區下方加入「主衛浴設備一覽」按鈕
                 if (hs.id === 'master-bathroom') {
-                    const btnHtml = `
-                        <div style="margin-top: 32px; text-align: center;">
-                            <button class="equip-grid-btn" onclick="document.getElementById('bathGridOverlay').classList.add('active')">
-                                ▶ 主衛浴設備一覽
-                            </button>
-                        </div>
+                    headerBtnSlot.innerHTML = `
+                        <button class="equip-grid-btn equip-grid-btn-header" onclick="document.getElementById('bathGridOverlay').classList.add('active')">
+                            ▶ 衛浴設備一覽
+                        </button>
                     `;
-                    modalDesc.innerHTML += btnHtml;
                 }
 
                 // 顯示 Modal
@@ -784,37 +830,7 @@
                 // 動態渲染這張圖片對應的 HTML 文本
                 renderTextForImage(currentGalleryImages[idx]);
 
-                // 如果是廚房，每次切換圖片都重新插入按鈕
-                const currentHsId = modalTitle.textContent;
-                // 檢查是否為廚房點位
-                const kitchenHs = hotspots.find(h => h.id === 'kitchen');
-                if (kitchenHs && modalTitle.textContent === kitchenHs.label) {
-                    const existingBtn = modalDesc.querySelector('.equip-grid-btn');
-                    if (!existingBtn) {
-                        modalDesc.innerHTML += `
-                            <div style="margin-top: 32px; text-align: center;">
-                                <button class="equip-grid-btn" onclick="document.getElementById('equipGridOverlay').classList.add('active')">
-                                    ▶ 廚房設備一覽
-                                </button>
-                            </div>
-                        `;
-                    }
-                }
-
-                // 檢查是否為主衛浴點位
-                const bathHs = hotspots.find(h => h.id === 'master-bathroom');
-                if (bathHs && modalTitle.textContent === bathHs.label) {
-                    const existingBtn = modalDesc.querySelector('.equip-grid-btn');
-                    if (!existingBtn) {
-                        modalDesc.innerHTML += `
-                            <div style="margin-top: 32px; text-align: center;">
-                                <button class="equip-grid-btn" onclick="document.getElementById('bathGridOverlay').classList.add('active')">
-                                    ▶ 主衛浴設備一覽
-                                </button>
-                            </div>
-                        `;
-                    }
-                }
+                // 按鈕已在 header 中，goToSlide 切換圖片時無需重新插入
             }
 
             galleryPrev.addEventListener('click', (e) => {
