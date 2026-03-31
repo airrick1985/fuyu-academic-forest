@@ -549,21 +549,29 @@ body.lightbox-active .fp-nav {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 1px solid rgba(180, 165, 130, 0.4);
-    background: rgba(0, 0, 0, 0.06);
-    color: #5a4e3e;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
     font-size: 24px;
+    font-weight: 300;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 .fp-lightbox-close:hover {
-    background: rgba(139, 105, 20, 0.15);
-    border-color: rgba(139, 105, 20, 0.5);
-    color: #8b6914;
+    background: #ffd700;
+    border-color: #ffd700;
+    color: #000;
+    text-shadow: none;
+    transform: rotate(90deg);
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5);
 }
 
 .fp-lightbox-print {
