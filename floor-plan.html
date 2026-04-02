@@ -37,45 +37,47 @@
             <div class="fp-nav-inner">
                 <!-- 樓層平面 -->
                 <div class="fp-nav-group">
-                    <span class="fp-nav-group-label">樓層平面</span>
-                    <a href="#plan-1F" class="fp-nav-link active" data-target="plan-1F">1F</a>
-                    <a href="#plan-2F" class="fp-nav-link" data-target="plan-2F">2F</a>
-                    <a href="#plan-3F" class="fp-nav-link" data-target="plan-3F">3F</a>
-                    <a href="#plan-4-14F" class="fp-nav-link" data-target="plan-4-14F">4-14F</a>
+                    <button class="fp-nav-group-toggle" aria-expanded="false">樓層平面 ▼</button>
+                    <div class="fp-nav-items" style="display: none;">
+                        <a href="#plan-1F" class="fp-nav-link active" data-target="plan-1F">1F</a>
+                        <a href="#plan-2F" class="fp-nav-link" data-target="plan-2F">2F</a>
+                        <a href="#plan-3F" class="fp-nav-link" data-target="plan-3F">3F</a>
+                        <a href="#plan-4-14F" class="fp-nav-link" data-target="plan-4-14F">4-14F</a>
+                    </div>
                 </div>
-
-                <div class="fp-nav-divider"></div>
 
                 <!-- 傢俱配置圖 -->
                 <div class="fp-nav-group">
-                    <span class="fp-nav-group-label">傢俱配置圖</span>
-                    <a href="#plan-A1" class="fp-nav-link" data-target="plan-A1">A1</a>
-                    <a href="#plan-A2" class="fp-nav-link" data-target="plan-A2">A2</a>
-                    <a href="#plan-A3" class="fp-nav-link" data-target="plan-A3">A3</a>
-                    <a href="#plan-A5" class="fp-nav-link" data-target="plan-A5">A5</a>
-                    <a href="#plan-A6" class="fp-nav-link" data-target="plan-A6">A6</a>
-                    <a href="#plan-A7" class="fp-nav-link" data-target="plan-A7">A7</a>
-                    <a href="#plan-A8" class="fp-nav-link" data-target="plan-A8">A8</a>
+                    <button class="fp-nav-group-toggle" aria-expanded="false">傢俱配置圖 ▼</button>
+                    <div class="fp-nav-items" style="display: none;">
+                        <a href="#plan-A1" class="fp-nav-link" data-target="plan-A1">A1</a>
+                        <a href="#plan-A2" class="fp-nav-link" data-target="plan-A2">A2</a>
+                        <a href="#plan-A3" class="fp-nav-link" data-target="plan-A3">A3</a>
+                        <a href="#plan-A5" class="fp-nav-link" data-target="plan-A5">A5</a>
+                        <a href="#plan-A6" class="fp-nav-link" data-target="plan-A6">A6</a>
+                        <a href="#plan-A7" class="fp-nav-link" data-target="plan-A7">A7</a>
+                        <a href="#plan-A8" class="fp-nav-link" data-target="plan-A8">A8</a>
+                    </div>
                 </div>
-
-                <div class="fp-nav-divider"></div>
 
                 <!-- 樓層環景 (360) -->
                 <div class="fp-nav-group">
-                    <span class="fp-nav-group-label">樓層環景</span>
-                    <a href="#" class="fp-nav-link pano-link" data-src="assets/images/layout/low.webp">2-6F</a>
-                    <a href="#" class="fp-nav-link pano-link" data-src="assets/images/layout/midum.webp">7-11F</a>
-                    <a href="#" class="fp-nav-link pano-link" data-src="assets/images/layout/high.webp">12-14F</a>
+                    <button class="fp-nav-group-toggle" aria-expanded="false">樓層環景 ▼</button>
+                    <div class="fp-nav-items" style="display: none;">
+                        <a href="#" class="fp-nav-link pano-link" data-src="assets/images/layout/low.webp">2-6F</a>
+                        <a href="#" class="fp-nav-link pano-link" data-src="assets/images/layout/midum.webp">7-11F</a>
+                        <a href="#" class="fp-nav-link pano-link" data-src="assets/images/layout/high.webp">12-14F</a>
+                    </div>
                 </div>
-
-                <div class="fp-nav-divider"></div>
 
                 <!-- 地下室車位-->
                 <div class="fp-nav-group">
-                    <span class="fp-nav-group-label">地下室車位</span>
-                    <a href="#plan-B1" class="fp-nav-link" data-target="plan-B1">B1</a>
-                    <a href="#plan-B2" class="fp-nav-link" data-target="plan-B2">B2</a>
-                    <a href="#plan-B3" class="fp-nav-link" data-target="plan-B3">B3</a>
+                    <button class="fp-nav-group-toggle" aria-expanded="false">地下室車位 ▼</button>
+                    <div class="fp-nav-items" style="display: none;">
+                        <a href="#plan-B1" class="fp-nav-link" data-target="plan-B1">B1</a>
+                        <a href="#plan-B2" class="fp-nav-link" data-target="plan-B2">B2</a>
+                        <a href="#plan-B3" class="fp-nav-link" data-target="plan-B3">B3</a>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -251,6 +253,46 @@
     <script src="js/topbar.js"></script>
     <script>
         (() => {
+            // ===== 導覽列折叠/展開功能 =====
+            const toggleButtons = document.querySelectorAll('.fp-nav-group-toggle');
+            const navGroups = document.querySelectorAll('.fp-nav-group');
+
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const group = button.closest('.fp-nav-group');
+                    const itemsContainer = group.querySelector('.fp-nav-items');
+                    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+                    // 關閉其他展開的菜單
+                    navGroups.forEach(g => {
+                        if (g !== group) {
+                            const toggle = g.querySelector('.fp-nav-group-toggle');
+                            const items = g.querySelector('.fp-nav-items');
+                            if (toggle.getAttribute('aria-expanded') === 'true') {
+                                toggle.setAttribute('aria-expanded', 'false');
+                                items.style.display = 'none';
+                            }
+                        }
+                    });
+
+                    // 切換目前菜單
+                    button.setAttribute('aria-expanded', !isExpanded);
+                    itemsContainer.style.display = isExpanded ? 'none' : 'block';
+                });
+            });
+
+            // 點擊菜單項目後自動關閉菜單
+            document.querySelectorAll('.fp-nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    const group = link.closest('.fp-nav-group');
+                    const button = group.querySelector('.fp-nav-group-toggle');
+                    const itemsContainer = group.querySelector('.fp-nav-items');
+                    button.setAttribute('aria-expanded', 'false');
+                    itemsContainer.style.display = 'none';
+                });
+            });
+
             // ===== 導覽列滾動高亮 =====
             const navLinks = document.querySelectorAll('.fp-nav-link');
             const sections = document.querySelectorAll('.fp-section');

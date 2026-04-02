@@ -138,11 +138,8 @@ body.floor-plan-page::after {
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(160, 170, 185, 0.3);
     border-top: 1px solid rgba(160, 170, 185, 0.15);
-    padding: 0 20px;
-    overflow-x: auto;
-    /* 隱藏滾動條但保持可滑動 */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    padding: 0 15px;
+    overflow: visible;
     transition: top 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.4s ease, box-shadow 0.4s ease;
 }
 
@@ -159,56 +156,60 @@ body.lightbox-active .fp-nav {
     z-index: 100000;
     background: rgba(233, 236, 240, 0.95);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 增加一點陰影，讓它更突出 */
+    overflow: visible;
+}
+
+body.lightbox-active .fp-nav-items {
+    z-index: 100001;
 }
 
 .fp-nav-inner {
     display: flex;
-    gap: 0;
+    gap: 8px;
     justify-content: center;
-    min-width: max-content;
+    flex-wrap: nowrap;
+    align-items: center;
     margin: 0 auto;
+    padding: 0;
+    min-width: max-content;
+    overflow-y: visible;
 }
 
 .fp-nav-group {
-    display: flex;
-    align-items: center;
-    gap: 0;
+    position: relative;
+    display: inline-block;
+    z-index: 1;
 }
 
-.fp-nav-group-label {
-    font-size: 11px;
-    color: #b0a48e;
-    letter-spacing: 2px;
-    padding: 14px 8px 14px 16px;
-    white-space: nowrap;
-    font-weight: 500;
-    border-right: 1px solid rgba(180, 165, 130, 0.2);
-}
-
-.fp-nav-link {
-    display: block;
-    padding: 14px 18px;
-    font-size: 15px;
+/* 標題按鈕 */
+.fp-nav-group-toggle {
+    background: none;
+    border: none;
+    font-size: clamp(12px, 2.5vw, 15px);
     color: #6b5e4e;
-    white-space: nowrap;
+    padding: 12px 16px;
+    cursor: pointer;
     transition: all 0.25s ease;
     text-decoration: none;
-    position: relative;
     font-weight: 500;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    font-family: inherit;
+    position: relative;
 }
 
-.fp-nav-link:hover {
+.fp-nav-group-toggle:hover {
     color: #3a3228;
     background: rgba(180, 165, 130, 0.12);
+    border-radius: 4px;
 }
 
-.fp-nav-link.active {
+.fp-nav-group-toggle[aria-expanded="true"] {
     color: #8b6914;
     font-weight: 600;
 }
 
-.fp-nav-link.active::after {
+.fp-nav-group-toggle[aria-expanded="true"]::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -220,12 +221,60 @@ body.lightbox-active .fp-nav {
     border-radius: 1px;
 }
 
-.fp-nav-divider {
-    width: 1px;
-    height: 20px;
-    background: rgba(180, 165, 130, 0.3);
-    align-self: center;
-    margin: 0 4px;
+/* 項目容器（下拉菜單） */
+.fp-nav-items {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: rgba(245, 240, 232, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(180, 165, 130, 0.3);
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    min-width: 140px;
+    z-index: 1001;
+    padding: 6px 0;
+    margin-top: 6px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+}
+
+.fp-nav-items[style*="display: block"] {
+    display: block !important;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.fp-nav-link {
+    display: block;
+    padding: 10px 16px;
+    font-size: clamp(11px, 1.8vw, 14px);
+    color: #6b5e4e;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    position: relative;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border-left: 3px solid transparent;
+}
+
+.fp-nav-link:hover {
+    color: #3a3228;
+    background: rgba(180, 165, 130, 0.12);
+    border-left-color: #8b6914;
+}
+
+.fp-nav-link.active {
+    color: #8b6914;
+    font-weight: 600;
+    border-left-color: #8b6914;
+    background: rgba(139, 105, 20, 0.08);
 }
 
 /* ===== 圖面展示區 ===== */
