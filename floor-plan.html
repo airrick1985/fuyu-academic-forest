@@ -224,6 +224,7 @@
     <!-- 列印設定 Modal 對話框 -->
     <div class="fp-print-modal-overlay" id="fpPrintModalOverlay" style="display: none;">
         <div class="fp-print-modal">
+            <button class="fp-print-modal-close" id="fpPrintModalClose" title="關閉">✕</button>
             <h3>列印設定</h3>
             <p>是否要包含面積資訊?</p>
             <div class="fp-print-modal-options">
@@ -499,27 +500,42 @@
                         const modalOverlay = document.getElementById('fpPrintModalOverlay');
                         const btnInclude = document.getElementById('fpPrintIncludeArea');
                         const btnExclude = document.getElementById('fpPrintExcludeArea');
+                        const btnClose = document.getElementById('fpPrintModalClose');
 
                         modalOverlay.style.display = 'flex';
 
-                        // 處理「包含面積」按鈕
-                        const handleInclude = () => {
+                        // 關閉 modal 函數
+                        const closeModal = () => {
                             modalOverlay.style.display = 'none';
-                            doPrint(true);
                             btnInclude.removeEventListener('click', handleInclude);
                             btnExclude.removeEventListener('click', handleExclude);
+                            btnClose.removeEventListener('click', closeModal);
+                            modalOverlay.removeEventListener('click', handleOverlayClick);
+                        };
+
+                        // 處理「包含面積」按鈕
+                        const handleInclude = () => {
+                            closeModal();
+                            doPrint(true);
                         };
 
                         // 處理「只列印圖面」按鈕
                         const handleExclude = () => {
-                            modalOverlay.style.display = 'none';
+                            closeModal();
                             doPrint(false);
-                            btnInclude.removeEventListener('click', handleInclude);
-                            btnExclude.removeEventListener('click', handleExclude);
+                        };
+
+                        // 點擊背景關閉 modal
+                        const handleOverlayClick = (e) => {
+                            if (e.target === modalOverlay) {
+                                closeModal();
+                            }
                         };
 
                         btnInclude.addEventListener('click', handleInclude);
                         btnExclude.addEventListener('click', handleExclude);
+                        btnClose.addEventListener('click', closeModal);
+                        modalOverlay.addEventListener('click', handleOverlayClick);
                     } else {
                         // 沒有面積資訊，直接列印
                         doPrint(true);

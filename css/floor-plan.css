@@ -911,9 +911,11 @@ body.floor-plan-page .topbar .refresh-btn:hover {
     align-items: center;
     justify-content: center;
     z-index: 1000000;
+    cursor: pointer;
 }
 
 .fp-print-modal {
+    position: relative;
     background: white;
     border-radius: 12px;
     padding: 30px;
@@ -921,6 +923,30 @@ body.floor-plan-page .topbar .refresh-btn:hover {
     max-width: 400px;
     text-align: center;
     font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+    cursor: default;
+}
+
+.fp-print-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+    padding: 0;
+    line-height: 1;
+}
+
+.fp-print-modal-close:hover {
+    color: #333;
 }
 
 .fp-print-modal h3 {

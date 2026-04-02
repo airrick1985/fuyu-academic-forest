@@ -128,7 +128,7 @@
   if (!window._globalBGM) {
     window._globalBGM = new Audio('assets/sound/BGM.mp3');
     window._globalBGM.loop = true;
-    window._globalBGM.volume = 0.5; // 預設音量 50%
+    window._globalBGM.volume = 0.2; // 預設音量 20%
 
     // 嘗試自動播放
     const playPromise = window._globalBGM.play();
