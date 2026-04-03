@@ -4,8 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href="/fuyu-academic-forest/">
     <meta name="app-version" content="1.0.0">
+    <script>
+      if (!window.location.hostname.includes('localhost') && window.location.hostname !== '127.0.0.1') {
+        document.write('<base href="/fuyu-academic-forest/">');
+      }
+    </script>
     <title>建材設備 - 富宇學森 The Academic Forest</title>
     <meta name="description" content="富宇學森建材設備介紹，包括玄關門、木地板、廚房、衛浴等精選建材配備。">
     <!-- Favicon -->

@@ -4,8 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href="/fuyu-academic-forest/">
     <meta name="app-version" content="1.0.0">
+    <script>
+      if (!window.location.hostname.includes('localhost') && window.location.hostname !== '127.0.0.1') {
+        document.write('<base href="/fuyu-academic-forest/">');
+      }
+    </script>
     <title>工法介紹 - 富宇學森 The Academic Forest</title>
     <meta name="description" content="富宇學森工法介紹，包括衛浴防水、窗框防水、樑柱綁筋、智慧設備等精密施工工法展示。">
     <!-- Favicon -->
