@@ -1019,15 +1019,16 @@ body.floor-plan-page .topbar .refresh-btn:hover {
 }
 
 .fp-print-modal-btn {
-    padding: 10px 25px;
+    padding: 12px 28px;
     border: none;
     border-radius: 6px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    flex: 1;
+    flex: 0 1 auto;
     font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+    white-space: nowrap;
 }
 
 .fp-print-modal-btn-confirm {
