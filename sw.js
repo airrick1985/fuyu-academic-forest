@@ -1,6 +1,8 @@
-/* Service Worker for PWA offline functionality */
+/* Service Worker for PWA offline functionality with auto-versioning */
 
-const CACHE_NAME = 'fuyu-forest-v1';
+// Version is read from HTML meta tag and cached here
+let CACHE_VERSION = '1.0.0';
+let CACHE_NAME = `fuyu-forest-${CACHE_VERSION}`;
 
 // Core assets to pre-cache on install
 const CORE_ASSETS = [
@@ -30,13 +32,16 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and update version
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
+      console.log(`[SW] Activating with cache version: ${CACHE_VERSION}`);
       return Promise.all(
         cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
+          // Delete caches that don't match current version
+          if (!cacheName.includes(CACHE_VERSION)) {
+            console.log(`[SW] Deleting old cache: ${cacheName}`);
             return caches.delete(cacheName);
           }
         })
@@ -44,6 +49,20 @@ self.addEventListener('activate', event => {
     })
   );
   self.clients.claim();
+});
+
+// Message event - handle version update from client
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'CHECK_VERSION') {
+    const newVersion = event.data.version;
+    if (newVersion !== CACHE_VERSION) {
+      console.log(`[SW] Version update detected: ${CACHE_VERSION} → ${newVersion}`);
+      CACHE_VERSION = newVersion;
+      CACHE_NAME = `fuyu-forest-${CACHE_VERSION}`;
+      // Trigger activation to clean up old caches
+      self.skipWaiting();
+    }
+  }
 });
 
 // Fetch event - implement caching strategies
