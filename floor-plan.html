@@ -602,7 +602,7 @@
                     function doPrint(includeArea) {
                         // 建構面積信息欄的 HTML（根據用戶選擇）
                         const infoCellHtml = (infoHtml && includeArea)
-                            ? `<div style="width:22%;padding:20px;border-left:2px solid #ddd;font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;display:flex;flex-direction:column;justify-content:flex-start;overflow-y:auto;">${infoHtml}</div>`
+                            ? `<div style="padding:15px;">${infoHtml}</div>`
                             : '';
 
                         // 開新視窗寫入完整的列印 HTML
@@ -621,49 +621,72 @@
                                     * { margin: 0; padding: 0; box-sizing: border-box; }
                                     html, body {
                                         width: 100%;
-                                        height: 100%;
+                                        height: auto;
                                         background: #fff;
                                     }
                                     .print-container {
                                         display: flex;
                                         width: 100%;
-                                        height: 100%;
                                         page-break-inside: avoid;
                                     }
                                     .print-image-area {
-                                        width: ${(infoHtml && includeArea) ? '78%' : '100%'};
+                                        width: ${(infoHtml && includeArea) ? '75%' : '100%'};
                                         display: flex;
                                         align-items: center;
                                         justify-content: center;
-                                        padding: 10mm;
+                                        padding: 15mm;
+                                        page-break-inside: avoid;
                                     }
                                     .print-image-area img {
                                         max-width: 100%;
-                                        max-height: 100%;
+                                        max-height: 800px;
                                         object-fit: contain;
                                         page-break-inside: avoid;
                                     }
                                     .print-info-area {
-                                        ${(infoHtml && includeArea) ? 'display: flex;' : 'display: none;'}
+                                        ${(infoHtml && includeArea) ? 'width: 25%; display: block;' : 'display: none;'}
+                                        border-left: 2px solid #ddd;
+                                        font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+                                        font-size: 14px;
                                         page-break-inside: avoid;
+                                        overflow: visible;
                                     }
                                     .print-info-area h3 {
-                                        margin: 0 0 15px 0;
-                                        font-size: 16px;
+                                        margin: 0 0 12px 0;
+                                        font-size: 15px;
                                         color: #8b6914;
                                         border-bottom: 2px solid #8b6914;
-                                        padding-bottom: 10px;
+                                        padding-bottom: 8px;
                                         letter-spacing: 2px;
-                                        width: 100%;
+                                        text-align: center;
                                     }
                                     .print-info-area table {
                                         width: 100%;
                                         border-collapse: collapse;
-                                        font-size: 13px;
+                                    }
+                                    .print-info-area tr {
+                                        page-break-inside: avoid;
                                     }
                                     .print-info-area td {
-                                        padding: 6px 8px;
-                                        border-bottom: 1px dashed #ddd;
+                                        padding: 5px 8px;
+                                        border-bottom: 1px dashed #ccc;
+                                        font-size: 12px;
+                                    }
+                                    .print-info-area td:first-child {
+                                        font-weight: 700;
+                                        color: #8b6914;
+                                        width: 40%;
+                                    }
+                                    .print-info-area td:nth-child(2) {
+                                        text-align: right;
+                                        font-weight: 600;
+                                        color: #333;
+                                        width: 40%;
+                                    }
+                                    .print-info-area td:nth-child(3) {
+                                        text-align: center;
+                                        color: #888;
+                                        width: 20%;
                                     }
                                 </style>
                             </head>
