@@ -1,0 +1,20 @@
+{
+  "name": "富宇學森 The Academic Forest",
+  "short_name": "富宇學森",
+  "description": "富宇學森建案銷售資訊平台",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0A1F0A",
+  "theme_color": "#2D5016",
+  "lang": "zh-TW",
+  "icons": [
+    {
+      "src": "assets/images/fuyu-logo.webp",
+      "sizes": "any",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -5,6 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>平面規劃 - 富宇學森 The Academic Forest</title>
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2D5016">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="富宇學森">
+    <link rel="apple-touch-icon" href="/assets/images/fuyu-logo.webp">
     <!-- CSS -->
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/global.css">
@@ -12,7 +22,7 @@
     <link rel="stylesheet" href="css/floor-plan.css">
     <!-- 加入 Pannellum 360 全景套件 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
-    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js" defer></script>
 </head>
 
 <body class="floor-plan-page">
@@ -1153,6 +1163,16 @@
                         panoViewer.destroy();
                     }
 
+                    // 檢查 Pannellum 是否已加載
+                    if (typeof pannellum === 'undefined') {
+                        console.error('Pannellum 庫未加載。請檢查 CDN 連接或刷新頁面。');
+                        alert('360 環景功能暫時無法使用，請稍後再試或刷新頁面。');
+                        fpPanoLightbox.classList.remove('active');
+                        document.body.classList.remove('lightbox-active');
+                        document.body.style.overflow = '';
+                        return;
+                    }
+
                     // 初始化 Pannellum 360
                     panoViewer = pannellum.viewer('panoramaViewer', {
                         "type": "equirectangular",
@@ -1246,6 +1266,7 @@
     </script>
     <script src="js/fireflies.js?v=2"></script>
     <script src="js/spa-router.js"></script>
+    <script src="js/pwa-register.js" defer></script>
 </body>
 
 </html>
