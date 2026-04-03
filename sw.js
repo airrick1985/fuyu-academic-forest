@@ -15,7 +15,9 @@ const CORE_ASSETS = [
   '/js/spa-router.js',
   '/js/pwa-register.js',
   '/assets/images/fuyu-logo.webp',
-  '/assets/images/hero-forest.webp'
+  '/assets/images/hero-forest.webp',
+  '/assets/pannellum/pannellum.min.js',
+  '/assets/pannellum/pannellum.min.css'
 ];
 
 // Install event - pre-cache core assets
