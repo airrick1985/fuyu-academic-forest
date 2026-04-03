@@ -602,7 +602,7 @@
                     function doPrint(includeArea) {
                         // 建構面積信息欄的 HTML（根據用戶選擇）
                         const infoCellHtml = (infoHtml && includeArea)
-                            ? `<div style="width:22%;padding:25px;border-left:2px solid #ddd;font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;display:flex;align-items:center;justify-content:flex-start;">${infoHtml}</div>`
+                            ? `<div style="width:100%;padding:20px;border-bottom:2px solid #ddd;font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;">${infoHtml}</div>`
                             : '';
 
                         // 開新視窗寫入完整的列印 HTML
@@ -626,16 +626,24 @@
                                     }
                                     .print-container {
                                         display: flex;
+                                        flex-direction: column;
                                         width: 100%;
                                         height: 100%;
                                         page-break-inside: avoid;
                                     }
+                                    .print-info-area {
+                                        ${(infoHtml && includeArea) ? 'height: auto; display: flex; padding: 0;' : 'display: none; height: 0;'}
+                                        width: 100%;
+                                        page-break-inside: avoid;
+                                    }
                                     .print-image-area {
-                                        width: ${(infoHtml && includeArea) ? '78%' : '100%'};
+                                        width: 100%;
+                                        flex: 1;
                                         display: flex;
                                         align-items: center;
                                         justify-content: center;
                                         padding: 10mm;
+                                        page-break-inside: avoid;
                                     }
                                     .print-image-area img {
                                         max-width: 100%;
@@ -643,18 +651,15 @@
                                         object-fit: contain;
                                         page-break-inside: avoid;
                                     }
-                                    .print-info-area {
-                                        ${(infoHtml && includeArea) ? 'display: flex;' : 'display: none;'}
-                                    }
                                 </style>
                             </head>
                             <body>
                                 <div class="print-container">
-                                    <div class="print-image-area">
-                                        <img src="${imgSrc}" alt="${imgAlt}">
-                                    </div>
                                     <div class="print-info-area">
                                         ${infoCellHtml}
+                                    </div>
+                                    <div class="print-image-area">
+                                        <img src="${imgSrc}" alt="${imgAlt}">
                                     </div>
                                 </div>
                                 <script>
