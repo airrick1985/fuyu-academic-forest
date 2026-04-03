@@ -1143,8 +1143,29 @@
             const fpPanoTitleText = document.getElementById('fpPanoTitleText');
             let panoViewer = null;
 
+            // 等待 Pannellum 加載的輔助函數
+            const waitForPannellum = (timeout = 5000) => {
+                return new Promise((resolve) => {
+                    if (typeof pannellum !== 'undefined') {
+                        resolve(true);
+                        return;
+                    }
+
+                    const startTime = Date.now();
+                    const checkInterval = setInterval(() => {
+                        if (typeof pannellum !== 'undefined') {
+                            clearInterval(checkInterval);
+                            resolve(true);
+                        } else if (Date.now() - startTime > timeout) {
+                            clearInterval(checkInterval);
+                            resolve(false); // 超時
+                        }
+                    }, 100);
+                });
+            };
+
             panoLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
+                link.addEventListener('click', async (e) => {
                     e.preventDefault();
                     const src = link.getAttribute('data-src');
                     const titleStr = link.textContent.trim(); // 取得 2-6F, 7-11F 等文字內容
@@ -1164,15 +1185,21 @@
                     document.body.classList.add('lightbox-active');
                     document.body.style.overflow = 'hidden';
 
+                    // 顯示加載中的提示（替代錯誤警告）
+                    const panoramaViewer = document.getElementById('panoramaViewer');
+                    panoramaViewer.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 16px; color: #888;">加載中...</div>';
+
                     // 銷毀舊的 instance 避免記憶體洩漏
                     if (panoViewer) {
                         panoViewer.destroy();
                     }
 
-                    // 檢查 Pannellum 是否已加載
-                    if (typeof pannellum === 'undefined') {
-                        console.error('Pannellum 庫未加載。請檢查 CDN 連接或刷新頁面。');
-                        alert('360 環景功能暫時無法使用，請稍後再試或刷新頁面。');
+                    // 等待 Pannellum 加載完成
+                    const pannellumReady = await waitForPannellum();
+
+                    if (!pannellumReady) {
+                        console.error('Pannellum 庫加載逾時。');
+                        panoramaViewer.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 14px; color: #ef4444;">加載失敗，請刷新頁面重試</div>';
                         fpPanoLightbox.classList.remove('active');
                         document.body.classList.remove('lightbox-active');
                         document.body.style.overflow = '';
