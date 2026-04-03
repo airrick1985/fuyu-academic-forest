@@ -28,7 +28,24 @@
     <link rel="stylesheet" href="css/floor-plan.css">
     <!-- 加入 Pannellum 360 全景套件 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
-    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js" defer></script>
+    <script>
+      // 標記 Pannellum 加載狀態
+      window.pannellumLoadingPromise = new Promise((resolve) => {
+        window.onPannellumLoad = () => {
+          console.log('[Pannellum] 庫加載完成');
+          resolve(true);
+        };
+
+        // 設置加載超時檢查（防止 CDN 無回應）
+        setTimeout(() => {
+          if (typeof window.pannellum === 'undefined') {
+            console.warn('[Pannellum] CDN 加載超時，嘗試備用方案');
+          }
+          resolve(false);
+        }, 8000);
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js" onload="window.onPannellumLoad && window.onPannellumLoad()"></script>
 </head>
 
 <body class="floor-plan-page">
@@ -1144,24 +1161,25 @@
             let panoViewer = null;
 
             // 等待 Pannellum 加載的輔助函數
-            const waitForPannellum = (timeout = 5000) => {
-                return new Promise((resolve) => {
-                    if (typeof pannellum !== 'undefined') {
-                        resolve(true);
-                        return;
-                    }
+            const waitForPannellum = async (timeout = 10000) => {
+                // 如果已加載，直接返回
+                if (typeof pannellum !== 'undefined') {
+                    return true;
+                }
 
-                    const startTime = Date.now();
-                    const checkInterval = setInterval(() => {
-                        if (typeof pannellum !== 'undefined') {
-                            clearInterval(checkInterval);
-                            resolve(true);
-                        } else if (Date.now() - startTime > timeout) {
-                            clearInterval(checkInterval);
-                            resolve(false); // 超時
-                        }
-                    }, 100);
-                });
+                // 使用 Promise.race 實現超時
+                try {
+                    const result = await Promise.race([
+                        window.pannellumLoadingPromise || Promise.resolve(false),
+                        new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error('加載超時')), timeout)
+                        )
+                    ]);
+                    return result && typeof pannellum !== 'undefined';
+                } catch (err) {
+                    console.error('[Pannellum]', err.message);
+                    return false;
+                }
             };
 
             panoLinks.forEach(link => {
@@ -1198,8 +1216,18 @@
                     const pannellumReady = await waitForPannellum();
 
                     if (!pannellumReady) {
-                        console.error('Pannellum 庫加載逾時。');
-                        panoramaViewer.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 14px; color: #ef4444;">加載失敗，請刷新頁面重試</div>';
+                        console.error('[Pannellum] 庫加載失敗，可能是 CDN 連線問題或網路延遲');
+                        console.log('[Pannellum] 檢查 CDN 狀態或稍後重試');
+                        panoramaViewer.innerHTML = `
+                            <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; flex-direction: column; gap: 20px;">
+                                <div style="font-size: 14px; color: #ef4444; text-align: center; padding: 0 20px;">
+                                    ⚠️ 加載失敗，可能是網路連線問題
+                                </div>
+                                <button style="padding: 10px 20px; background: #2D5016; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;" onclick="location.reload()">
+                                    刷新頁面重試
+                                </button>
+                            </div>
+                        `;
                         fpPanoLightbox.classList.remove('active');
                         document.body.classList.remove('lightbox-active');
                         document.body.style.overflow = '';
