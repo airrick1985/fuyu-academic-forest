@@ -91,7 +91,44 @@ function updateVersionJson(newVersion) {
     'utf-8'
   );
 
-  console.log(`✅ version.json 已更新：${newVersion} (${new Date().toISOString()})`);
+  console.log(`✅ version.json 已更新：${newVersion}`);
+}
+
+/**
+ * 更新所有 HTML 檔案中的版本號
+ */
+function updateHtmlVersions(oldVersion, newVersion) {
+  const projectRoot = path.join(__dirname, '..');
+  const htmlFiles = [
+    'index.html', 'floor-plan.html', 'materials.html', 'location.html',
+    'brand-fuyu.html', 'construction.html', 'brand-team.html',
+    'exterior-3d.html', 'panorama.html', 'public-3d.html', 'coming-soon.html'
+  ];
+
+  let updated = 0;
+
+  htmlFiles.forEach(file => {
+    const filePath = path.join(projectRoot, file);
+    if (fs.existsSync(filePath)) {
+      let content = fs.readFileSync(filePath, 'utf-8');
+      const originalContent = content;
+
+      // 更新版本號
+      content = content.replace(
+        `content="${oldVersion}"`,
+        `content="${newVersion}"`
+      );
+
+      if (content !== originalContent) {
+        fs.writeFileSync(filePath, content, 'utf-8');
+        updated++;
+      }
+    }
+  });
+
+  if (updated > 0) {
+    console.log(`✅ 已更新 ${updated} 個 HTML 檔案的版本號`);
+  }
 }
 
 /**
@@ -150,7 +187,10 @@ function main() {
     // 5. 更新 version.json
     updateVersionJson(newVersion);
 
-    // 6. 保存新的 hash
+    // 6. 更新所有 HTML 檔案中的版本號（確保同步！）
+    updateHtmlVersions(currentVersion, newVersion);
+
+    // 7. 保存新的 hash
     saveHash(currentHash);
     console.log('💾 已保存資源 hash');
 

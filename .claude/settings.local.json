@@ -12,7 +12,9 @@
       "Bash(git add:*)",
       "Bash(git commit -m ':*)",
       "Bash(git push:*)",
-      "Bash(git commit -m '升級 GitHub Actions 至最新版本以支持 Node.js 24:*)"
+      "Bash(git commit -m '升級 GitHub Actions 至最新版本以支持 Node.js 24:*)",
+      "Bash(git commit -m '修正 GitHub Actions 版本號：actions/deploy-pages@v4.1.0 → v4:*)",
+      "Bash(grep -r \"A1.webp\" *.html)"
     ]
   }
 }
