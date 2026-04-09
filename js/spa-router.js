@@ -63,6 +63,15 @@ if (!window._spaRouterInitialized) {
                 }
             }
 
+            // 強制隱藏 PWA 加載覆蓋層（防止卡住）
+            setTimeout(() => {
+              const overlay = document.getElementById('pwa-loading-overlay');
+              if (overlay && !overlay.classList.contains('hidden')) {
+                overlay.classList.add('hidden');
+                console.log('[SPA] 強制隱藏加載覆蓋層');
+              }
+            }, 100);
+
             // 清除可能殘留的滾動鎖定 (例如從 pano-page 或 lightbox 離開)
             document.documentElement.style.overflow = '';
             document.body.style.overflow = '';
