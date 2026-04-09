@@ -1,10 +1,48 @@
-/* PWA Service Worker Registration with Auto-Versioning */
+/* PWA Service Worker Registration with Active Update Check */
 
 if ('serviceWorker' in navigator) {
-  // Get app version from meta tag
+  // 獲取當前版本
   const getAppVersion = () => {
     const meta = document.querySelector('meta[name="app-version"]');
     return meta ? meta.getAttribute('content') : '1.0.0';
+  };
+
+  // 隱藏加載覆蓋層
+  const hideLoadingOverlay = () => {
+    const overlay = document.getElementById('pwa-loading-overlay');
+    if (overlay) {
+      overlay.classList.add('hidden');
+      setTimeout(() => overlay.remove(), 500);
+    }
+  };
+
+  // 顯示加載覆蓋層
+  const showLoadingOverlay = (text = '正在檢查更新...') => {
+    const overlay = document.getElementById('pwa-loading-overlay');
+    if (overlay) {
+      const textEl = overlay.querySelector('.pwa-loading-text');
+      if (textEl) textEl.textContent = text;
+      overlay.classList.remove('hidden');
+    }
+  };
+
+  // 檢查遠端版本（帶離線降級）
+  const checkRemoteVersion = async () => {
+    try {
+      // Use relative path to be compatible with both localhost and GitHub Pages deployment
+      const versionUrl = new URL('version.json', window.location.href).href;
+      const response = await fetch(versionUrl + '?t=' + Date.now(), {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return data.version;
+      }
+    } catch (error) {
+      console.log('[PWA] 無法檢查遠端版本（可能離線）:', error.message);
+    }
+    return null;
   };
 
   // 顯示更新提示 Banner + 倒計時
@@ -141,6 +179,62 @@ if ('serviceWorker' in navigator) {
     console.log(`[PWA] 顯示更新提示：${oldVersion} → ${newVersion}`);
   };
 
+  // 主動更新檢查（在頁面加載前執行）
+  const performInitialUpdateCheck = async () => {
+    try {
+      const currentVersion = getAppVersion();
+      const remoteVersion = await checkRemoteVersion();
+
+      if (remoteVersion && remoteVersion !== currentVersion) {
+        console.log(`[PWA] 檢測到版本更新：${currentVersion} → ${remoteVersion}`);
+        showLoadingOverlay('正在下載新版本...');
+
+        // 等待一段時間以確保 Service Worker 已註冊
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // 更新 meta 版本號
+        const meta = document.querySelector('meta[name="app-version"]');
+        if (meta) {
+          meta.setAttribute('content', remoteVersion);
+        }
+
+        // 通知 Service Worker 更新
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'CHECK_VERSION',
+            version: remoteVersion
+          });
+        }
+
+        // 等待 Service Worker 更新完成
+        await new Promise(resolve => {
+          const timeout = setTimeout(resolve, 2000);
+          navigator.serviceWorker?.addEventListener('message', (event) => {
+            if (event.data?.type === 'UPDATE_COMPLETE') {
+              clearTimeout(timeout);
+              resolve();
+            }
+          }, { once: true });
+        });
+
+        // 完成後隱藏加載界面並重新加載
+        hideLoadingOverlay();
+        console.log('[PWA] 版本已更新，重新加載頁面');
+        setTimeout(() => location.reload(), 100);
+      } else {
+        hideLoadingOverlay();
+        if (remoteVersion) {
+          console.log('[PWA] 已是最新版本:', currentVersion);
+        } else {
+          console.log('[PWA] 離線狀態，使用快取版本:', currentVersion);
+        }
+      }
+    } catch (error) {
+      console.error('[PWA] 初始更新檢查失敗:', error);
+      hideLoadingOverlay();
+    }
+  };
+
   // Store version in sessionStorage for comparison
   const currentVersion = getAppVersion();
   const previousVersion = sessionStorage.getItem('app-version');
@@ -148,18 +242,34 @@ if ('serviceWorker' in navigator) {
   // Update version in session
   sessionStorage.setItem('app-version', currentVersion);
 
+  // 在頁面加載時執行初始檢查
+  if (document.readyState === 'loading') {
+    // 文件仍在加載中
+    document.addEventListener('DOMContentLoaded', () => {
+      performInitialUpdateCheck();
+    });
+  } else {
+    // 文件已加載完成
+    performInitialUpdateCheck();
+  }
+
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('./sw.js')
       .then(registration => {
         console.log('[PWA] Service Worker registered successfully');
 
-        // Check for updates periodically (every 5 hours)
+        // 立即檢查 Service Worker 更新
+        registration.update().catch(err => {
+          console.error('[PWA] Initial update check failed:', err);
+        });
+
+        // 檢查更新間隔改為 1 小時
         setInterval(() => {
           registration.update().catch(err => {
             console.error('[PWA] Update check failed:', err);
           });
-        }, 5 * 60 * 60 * 1000);
+        }, 60 * 60 * 1000);
 
         // Notify SW about current version
         if (navigator.serviceWorker.controller) {
@@ -172,15 +282,18 @@ if ('serviceWorker' in navigator) {
         // Listen for messages from Service Worker
         navigator.serviceWorker.addEventListener('message', event => {
           if (event.data && event.data.type === 'VERSION_UPDATED') {
-            console.log('[PWA] App version updated, reload on next visit');
+            console.log('[PWA] App version updated, will prompt on next load');
           }
         });
 
-        // If version changed, show update banner with countdown
+        // 如果在載入期間版本改變，在頁面完全加載後顯示更新提示
         if (previousVersion && previousVersion !== currentVersion) {
-          console.log(`[PWA] Version change detected: ${previousVersion} → ${currentVersion}`);
-          showUpdateBanner(previousVersion, currentVersion);
-          // Notify all tabs about update
+          console.log(`[PWA] Version change detected after load: ${previousVersion} → ${currentVersion}`);
+          setTimeout(() => {
+            showUpdateBanner(previousVersion, currentVersion);
+          }, 500);
+
+          // 通知所有分頁
           navigator.serviceWorker.controller?.postMessage({
             type: 'CHECK_VERSION',
             version: currentVersion
@@ -192,15 +305,20 @@ if ('serviceWorker' in navigator) {
       });
   });
 
-  // Check for updates when page becomes visible
+  // 頁面重新獲得焦點時檢查更新
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden && navigator.serviceWorker.controller) {
       const newVersion = getAppVersion();
       const storedVersion = sessionStorage.getItem('app-version');
-      if (storedVersion && storedVersion !== newVersion) {
-        showUpdateBanner(storedVersion, newVersion);
-        sessionStorage.setItem('app-version', newVersion);
-      }
+
+      checkRemoteVersion().then(remoteVersion => {
+        if (remoteVersion && storedVersion && storedVersion !== remoteVersion) {
+          console.log(`[PWA] 後台版本更新檢測：${storedVersion} → ${remoteVersion}`);
+          showUpdateBanner(storedVersion, remoteVersion);
+          sessionStorage.setItem('app-version', remoteVersion);
+        }
+      });
+
       navigator.serviceWorker.controller.postMessage({
         type: 'CHECK_VERSION',
         version: newVersion

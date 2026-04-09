@@ -2,7 +2,19 @@
   "permissions": {
     "allow": [
       "Bash(npm run:*)",
-      "Bash(node scripts/generate-manifest-only.js)"
+      "Bash(chmod +x update_html_files.sh)",
+      "Bash(./update_html_files.sh)",
+      "Bash(git checkout:*)",
+      "Bash(chmod +x add_pwa.sh)",
+      "Bash(./add_pwa.sh)",
+      "Bash(python3)",
+      "Bash(PYTHONIOENCODING=utf-8 python3)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(git commit -m '升級 GitHub Actions 至最新版本以支持 Node.js 24:*)",
+      "Bash(git commit -m '修正 GitHub Actions 版本號：actions/deploy-pages@v4.1.0 → v4:*)",
+      "Bash(grep -r \"A1.webp\" *.html)"
     ]
   }
 }

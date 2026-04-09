@@ -8,9 +8,9 @@ let CACHE_NAME = `fuyu-forest-${CACHE_VERSION}`;
 const MANIFEST_CACHE_NAME = 'fuyu-asset-manifest-v1';
 
 // Core assets to pre-cache on install
+// Note: HTML files are NOT pre-cached to ensure users always get the latest version
+// HTML will be cached on demand using Network First strategy
 const CORE_ASSETS = [
-  '/',
-  '/index.html',
   '/css/variables.css',
   '/css/global.css',
   '/css/topbar.css',
@@ -48,13 +48,17 @@ self.addEventListener('activate', event => {
           // Delete caches that don't match current version, but preserve manifest cache
           if (!cacheName.includes(CACHE_VERSION) && cacheName !== MANIFEST_CACHE_NAME) {
             console.log(`[SW] Deleting old cache: ${cacheName}`);
-            return caches.delete(cacheName);
+            return caches.delete(cacheName).then(() => {
+              console.log(`[SW] Successfully deleted: ${cacheName}`);
+            });
           }
         })
       );
+    }).then(() => {
+      // Ensure new SW takes control immediately
+      return self.clients.claim();
     })
   );
-  self.clients.claim();
 });
 
 // ================== 資源清單和雜湊驗證 ==================
@@ -159,6 +163,17 @@ self.addEventListener('message', event => {
       CACHE_NAME = `fuyu-forest-${CACHE_VERSION}`;
       // Trigger activation to clean up old caches
       self.skipWaiting();
+
+      // Notify client that update is complete
+      if (event.ports && event.ports[0]) {
+        event.ports[0].postMessage({ type: 'UPDATE_COMPLETE' });
+      }
+      // Broadcast to all clients
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({ type: 'UPDATE_COMPLETE', version: newVersion });
+        });
+      });
     }
   } else if (event.data && event.data.type === 'UPDATE_ASSETS') {
     // 資源更新請求
@@ -276,26 +291,54 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Static assets (CSS, JS, images, fonts) - Cache First strategy
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) {
-        return cached;
-      }
-      return fetch(event.request).then(response => {
-        // Clone and cache successful responses
-        const clone = response.clone();
-        if (response.status === 200) {
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, clone);
+  // Static assets (CSS, JS, images, fonts) - Network First for JS, Cache First for others
+  const isJavaScript = event.request.url.endsWith('.js');
+
+  if (isJavaScript) {
+    // JavaScript files - Network First to ensure latest code is always loaded
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const clone = response.clone();
+          if (response.status === 200) {
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, clone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request).then(cached => {
+            if (cached) {
+              return cached;
+            }
+            console.warn('Fetch failed for:', event.request.url);
+            return new Response('Network error', { status: 503 });
           });
+        })
+    );
+  } else {
+    // Other assets - Cache First strategy
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) {
+          return cached;
         }
-        return response;
-      }).catch(() => {
-        // Graceful fallback for failed requests
-        console.warn('Fetch failed for:', event.request.url);
-        return new Response('Network error', { status: 503 });
-      });
-    })
-  );
+        return fetch(event.request).then(response => {
+          // Clone and cache successful responses
+          const clone = response.clone();
+          if (response.status === 200) {
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, clone);
+            });
+          }
+          return response;
+        }).catch(() => {
+          // Graceful fallback for failed requests
+          console.warn('Fetch failed for:', event.request.url);
+          return new Response('Network error', { status: 503 });
+        });
+      })
+    );
+  }
 });

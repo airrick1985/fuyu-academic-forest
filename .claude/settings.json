@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r \"app-version\" c:/Project/fuyu-academic-forest/*.html)"
+    ]
+  }
+}

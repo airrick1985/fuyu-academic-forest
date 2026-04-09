@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="app-version" content="1.0.1">
+    <meta name="app-version" content="1.0.2">
     <script>
       if (!window.location.hostname.includes('localhost') && window.location.hostname !== '127.0.0.1') {
         document.write('<base href="/fuyu-academic-forest/">');
@@ -22,14 +22,63 @@
     <meta name="apple-mobile-web-app-title" content="富宇學森">
     <link rel="apple-touch-icon" href="assets/images/fuyu-logo.webp">
     <!-- CSS -->
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/topbar.css">
-    <link rel="stylesheet" href="css/brand.css">
+    <link rel="stylesheet" href="css/variables.css?v=1.0.2">
+    <link rel="stylesheet" href="css/global.css?v=1.0.2">
+    <link rel="stylesheet" href="css/topbar.css?v=1.0.2">
+    <link rel="stylesheet" href="css/brand.css?v=1.0.2">
+    <!-- PWA Update Loading Screen -->
+    <style id="pwa-loading-style">
+      #pwa-loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #0A1F0A 0%, #1a3a1a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        opacity: 1;
+        transition: opacity 0.5s ease-out;
+      }
+      #pwa-loading-overlay.hidden {
+        pointer-events: none;
+        opacity: 0;
+      }
+      .pwa-loading-content {
+        text-align: center;
+        color: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      .pwa-loading-spinner {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 20px;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        border-top-color: #2D5016;
+        border-radius: 50%;
+        animation: pwa-spin 1s linear infinite;
+      }
+      @keyframes pwa-spin {
+        to { transform: rotate(360deg); }
+      }
+      .pwa-loading-text {
+        font-size: 16px;
+        font-weight: 500;
+        color: #ccc;
+      }
+    </style>
 </head>
 
 <body class="brand-page">
-
+    <!-- PWA Loading Overlay -->
+    <div id="pwa-loading-overlay">
+      <div class="pwa-loading-content">
+        <div class="pwa-loading-spinner"></div>
+        <div class="pwa-loading-text">正在檢查更新...</div>
+      </div>
+    </div>
     <!-- Top Bar (由 topbar.js 統一注入) -->
     <div id="topbar-root"></div>
 
@@ -126,10 +175,10 @@
     <script src="js/topbar.js"></script>
     <script src="js/animations.js"></script>
 
-    <script src="js/spa-router.js"></script>
+    <script src="js/spa-router.js?v=1.0.2"></script>
     <!-- Asset Update Manager -->
     <script src="js/asset-update-manager.js"></script>
-    <script src="js/pwa-register.js" defer></script>
+    <script src="js/pwa-register.js?v=1.0.2" defer></script>
 </body>
 
 </html>
