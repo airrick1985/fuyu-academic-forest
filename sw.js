@@ -109,20 +109,26 @@ async function downloadAssets(updateList, maxParallel = 3, hashVerify = true) {
  */
 async function downloadAndCacheAsset(asset, cache, hashVerify, results) {
   try {
+    console.log(`[SW] 開始下載: ${asset.path}, 預期雜湊: ${asset.hash}`);
+
     const response = await fetch(asset.path + '?t=' + Date.now(), {
       cache: 'no-store'
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      throw new Error(`HTTP ${response.status} at ${asset.path}`);
     }
 
     const blob = await response.blob();
+    console.log(`[SW] 下載成功，文件大小: ${blob.size} 字節 (預期: ${asset.size})`);
+
     const buffer = await blob.arrayBuffer();
 
     // 驗證雜湊值
     if (hashVerify) {
       const calculatedHash = await calculateSHA256(buffer);
+      console.log(`[SW] 雜湊驗證: 計算值=${calculatedHash}, 預期值=${asset.hash}`);
+
       if (calculatedHash !== asset.hash) {
         throw new Error(
           `Hash mismatch: expected ${asset.hash}, got ${calculatedHash}`
@@ -149,7 +155,10 @@ async function downloadAndCacheAsset(asset, cache, hashVerify, results) {
       path: asset.path,
       error: error.message
     });
-    console.warn(`[SW] ✗ 無法下載: ${asset.path}`, error.message);
+    console.error(`[SW] ✗ 無法下載: ${asset.path}`, {
+      error: error.message,
+      stack: error.stack
+    });
   }
 }
 
@@ -179,9 +188,13 @@ self.addEventListener('message', event => {
     }
   } else if (event.data && event.data.type === 'UPDATE_ASSETS') {
     // 資源更新請求
-    const { updateList, totalCount, maxParallel, hashVerify } = event.data;
+    const { updateList, totalCount, maxParallel, hashVerify, basePath } = event.data;
 
     console.log(`[SW] ✅ 收到資源更新請求: ${updateList.length} 個資源`);
+    if (basePath) {
+      console.log(`[SW] 基礎路徑: ${basePath}`);
+    }
+    console.log(`[SW] 第一個資源路徑: ${updateList[0]?.path}`);
 
     // 後台下載（不阻塞客戶端）
     downloadAssets(updateList, maxParallel || 3, hashVerify !== false)

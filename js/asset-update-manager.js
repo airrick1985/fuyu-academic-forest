@@ -226,6 +226,30 @@ class AssetUpdateManager {
   }
 
   /**
+   * 計算基礎路徑（用於 GitHub Pages 子路徑）
+   */
+  getBasePath() {
+    let basePath = window.location.pathname;
+
+    // 移除尾部斜槓
+    if (basePath.endsWith('/')) {
+      basePath = basePath.slice(0, -1);
+    }
+
+    // 移除 HTML 文件名（如果有）
+    if (basePath.includes('.html')) {
+      basePath = basePath.substring(0, basePath.lastIndexOf('/'));
+    }
+
+    // 對於根路徑，使用空字符串；對於子路徑保留
+    if (basePath === '' || basePath === '/fuyu-academic-forest') {
+      return basePath || '/fuyu-academic-forest';
+    }
+
+    return basePath;
+  }
+
+  /**
    * 通知 Service Worker 進行更新
    */
   async notifyServiceWorkerUpdate(differences, remoteManifest) {
@@ -264,16 +288,25 @@ class AssetUpdateManager {
         ...differences.added
       ];
 
+      // 計算基礎路徑並加到資源路徑中
+      const basePath = this.getBasePath();
+      const updateListWithBasePath = updateList.map(asset => ({
+        ...asset,
+        path: basePath + '/' + asset.path // 組合基礎路徑
+      }));
+
       console.log(`[AssetUpdateManager] 通知 Service Worker 下載 ${updateList.length} 個資源`);
+      console.log(`[AssetUpdateManager] 基礎路徑: ${basePath}`);
 
       // 發送消息給 Service Worker
       console.log('[AssetUpdateManager] 發送 UPDATE_ASSETS 消息給 Service Worker...');
       controller.postMessage({
         type: 'UPDATE_ASSETS',
-        updateList: updateList,
+        updateList: updateListWithBasePath,
         totalCount: updateList.length,
         maxParallel: this.maxParallelDownloads,
-        hashVerify: this.hashVerify
+        hashVerify: this.hashVerify,
+        basePath: basePath
       });
 
       // 等待更新完成（帶超時）
