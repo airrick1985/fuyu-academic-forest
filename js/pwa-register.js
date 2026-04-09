@@ -29,23 +29,15 @@ if ('serviceWorker' in navigator) {
   // 檢查遠端版本（帶離線降級）
   const checkRemoteVersion = async () => {
     try {
-      // 獲取 base 標籤設定的基礎路徑（由 index.html 動態注入）
-      const baseHref = document.querySelector('base')?.getAttribute('href') || '/fuyu-academic-forest/';
-
-      // 構造 version.json 的完整 URL
-      const versionUrl = window.location.origin + baseHref + 'version.json?t=' + Date.now();
-      console.log('[PWA] 檢查版本 URL:', versionUrl);
-
-      const response = await fetch(versionUrl, {
+      // Use relative path to be compatible with both localhost and GitHub Pages deployment
+      const versionUrl = new URL('version.json', window.location.href).href;
+      const response = await fetch(versionUrl + '?t=' + Date.now(), {
         cache: 'no-store',
         credentials: 'same-origin'
       });
       if (response.ok) {
         const data = await response.json();
-        console.log('[PWA] 遠端版本:', data.version);
         return data.version;
-      } else {
-        console.warn('[PWA] 版本檢查返回狀態:', response.status);
       }
     } catch (error) {
       console.log('[PWA] 無法檢查遠端版本（可能離線）:', error.message);
@@ -191,14 +183,10 @@ if ('serviceWorker' in navigator) {
   const performInitialUpdateCheck = async () => {
     try {
       const currentVersion = getAppVersion();
-      console.log('[PWA] 當前版本:', currentVersion);
-
       const remoteVersion = await checkRemoteVersion();
-      console.log('[PWA] 版本比較:', { currentVersion, remoteVersion });
 
-      // 只有在確實有新版本時才更新
       if (remoteVersion && remoteVersion !== currentVersion) {
-        console.log(`[PWA] ✨ 檢測到版本更新：${currentVersion} → ${remoteVersion}`);
+        console.log(`[PWA] 檢測到版本更新：${currentVersion} → ${remoteVersion}`);
         showLoadingOverlay('正在下載新版本...');
 
         // 等待一段時間以確保 Service Worker 已註冊
@@ -208,7 +196,6 @@ if ('serviceWorker' in navigator) {
         const meta = document.querySelector('meta[name="app-version"]');
         if (meta) {
           meta.setAttribute('content', remoteVersion);
-          console.log('[PWA] 已更新 meta 版本號:', remoteVersion);
         }
 
         // 通知 Service Worker 更新
@@ -217,18 +204,13 @@ if ('serviceWorker' in navigator) {
             type: 'CHECK_VERSION',
             version: remoteVersion
           });
-          console.log('[PWA] 已通知 SW 更新');
         }
 
         // 等待 Service Worker 更新完成
         await new Promise(resolve => {
-          const timeout = setTimeout(() => {
-            console.log('[PWA] SW 更新超時，繼續進行');
-            resolve();
-          }, 2000);
+          const timeout = setTimeout(resolve, 2000);
           navigator.serviceWorker?.addEventListener('message', (event) => {
             if (event.data?.type === 'UPDATE_COMPLETE') {
-              console.log('[PWA] SW 更新完成');
               clearTimeout(timeout);
               resolve();
             }
@@ -237,17 +219,14 @@ if ('serviceWorker' in navigator) {
 
         // 完成後隱藏加載界面並重新加載
         hideLoadingOverlay();
-        console.log('[PWA] 版本已更新，1秒後重新加載頁面');
-        setTimeout(() => {
-          console.log('[PWA] 執行 location.reload()');
-          location.reload();
-        }, 1000);
+        console.log('[PWA] 版本已更新，重新加載頁面');
+        setTimeout(() => location.reload(), 100);
       } else {
         hideLoadingOverlay();
         if (remoteVersion) {
-          console.log('[PWA] ✅ 已是最新版本:', currentVersion);
+          console.log('[PWA] 已是最新版本:', currentVersion);
         } else {
-          console.log('[PWA] 🔌 離線狀態，使用快取版本:', currentVersion);
+          console.log('[PWA] 離線狀態，使用快取版本:', currentVersion);
         }
       }
     } catch (error) {
@@ -263,37 +242,26 @@ if ('serviceWorker' in navigator) {
   // Update version in session
   sessionStorage.setItem('app-version', currentVersion);
 
-  // 只在 Service Worker 準備好後才執行初始檢查
-  // 這避免了競態條件導致的無限循環
-  let initialCheckDone = false;
+  // 在頁面加載時執行初始檢查
+  if (document.readyState === 'loading') {
+    // 文件仍在加載中
+    document.addEventListener('DOMContentLoaded', () => {
+      performInitialUpdateCheck();
+    });
+  } else {
+    // 文件已加載完成
+    performInitialUpdateCheck();
+  }
 
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('./sw.js')
       .then(registration => {
-        console.log('[PWA] Service Worker registered');
-
-        // 等待 SW 完全激活後才執行初始檢查
-        if (registration.active) {
-          console.log('[PWA] SW 已激活，執行版本檢查');
-          if (!initialCheckDone) {
-            initialCheckDone = true;
-            performInitialUpdateCheck();
-          }
-        } else if (registration.installing) {
-          console.log('[PWA] 等待 SW 激活...');
-          registration.installing.addEventListener('statechange', (event) => {
-            if (event.target.state === 'activated' && !initialCheckDone) {
-              console.log('[PWA] SW 已激活，執行版本檢查');
-              initialCheckDone = true;
-              performInitialUpdateCheck();
-            }
-          });
-        }
+        console.log('[PWA] Service Worker registered successfully');
 
         // 立即檢查 Service Worker 更新
         registration.update().catch(err => {
-          console.error('[PWA] Update check failed:', err);
+          console.error('[PWA] Initial update check failed:', err);
         });
 
         // 檢查更新間隔改為 1 小時
@@ -334,11 +302,6 @@ if ('serviceWorker' in navigator) {
       })
       .catch(error => {
         console.error('[PWA] Service Worker registration failed:', error);
-        // 若 SW 註冊失敗，仍執行版本檢查（使用緩存）
-        if (!initialCheckDone) {
-          initialCheckDone = true;
-          performInitialUpdateCheck();
-        }
       });
   });
 
