@@ -33,15 +33,14 @@ jobs:
           name: github-pages
           path: |
             *.html
-            version.json
-            manifest.json
-            favicon.ico
+            *.json
+            *.ico
+            *.webp
             assets/
             css/
             js/
             fonts/
           retention-days: 1
-          if-no-files-found: warn
 
       - name: Deploy to GitHub Pages
         id: deployment
