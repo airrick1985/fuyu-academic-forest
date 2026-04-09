@@ -11,7 +11,7 @@
 class AssetUpdateManager {
   constructor(options = {}) {
     this.manifestUrl = options.manifestUrl || '/assets-manifest.json';
-    this.checkInterval = options.checkInterval || 30 * 60 * 1000; // 30分鐘
+    this.checkInterval = options.checkInterval || 15 * 60 * 1000; // 15分鐘（首次進入後的檢查間隔）
     this.fetchTimeout = options.fetchTimeout || 5000; // 5秒
     this.retryCount = options.retryCount || 3;
     this.maxParallelDownloads = options.maxParallelDownloads || 3;
@@ -22,6 +22,7 @@ class AssetUpdateManager {
     this.remoteManifest = null;
     this.isUpdating = false;
     this.updateCheckTimer = null;
+    this.isInitialized = false;
 
     // 初始化本地清單
     this.loadLocalManifest();
@@ -31,21 +32,33 @@ class AssetUpdateManager {
    * 初始化管理器
    */
   async init() {
+    if (this.isInitialized) {
+      console.log('[AssetUpdateManager] 已初始化過，跳過重複初始化');
+      return;
+    }
+
     console.log('[AssetUpdateManager] 初始化中...');
 
     try {
-      // 首次進入時立即檢查
-      await this.checkForAssetUpdates();
+      // 首次進入時立即檢查（關鍵：每次進入都要檢查）
+      console.log('[AssetUpdateManager] 執行進入時檢查...');
+      const hasUpdates = await this.checkForAssetUpdates();
 
-      // 設置定期檢查
+      if (hasUpdates) {
+        console.log('[AssetUpdateManager] 檢測到更新，將在資源下載完成後刷新');
+      }
+
+      // 設置定期檢查（之後每15分鐘檢查一次）
       this.setupPeriodicCheck();
 
-      // 監聽頁面可見性變化
+      // 監聽頁面可見性變化（返回焦點時檢查）
       this.setupVisibilityListener();
 
+      this.isInitialized = true;
       console.log('[AssetUpdateManager] 初始化完成');
     } catch (error) {
       console.error('[AssetUpdateManager] 初始化失敗:', error);
+      this.isInitialized = true; // 即使失敗也標記已初始化，防止重複嘗試
     }
   }
 
@@ -222,12 +235,28 @@ class AssetUpdateManager {
     }
 
     try {
-      const controller = navigator.serviceWorker.controller;
+      // 獲取 Service Worker controller，如果尚未準備好則重試
+      let controller = navigator.serviceWorker.controller;
+      let retryCount = 0;
+      const maxRetries = 20; // 最多重試 20 次
+      const retryDelay = 200; // 每次等待 200ms
+
+      while (!controller && retryCount < maxRetries) {
+        if (retryCount > 0) {
+          console.log(`[AssetUpdateManager] ⏳ 等待 Service Worker 準備就緒... (${retryCount}/${maxRetries})`);
+        }
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+        controller = navigator.serviceWorker.controller;
+        retryCount++;
+      }
 
       if (!controller) {
-        console.log('[AssetUpdateManager] Service Worker 尚未準備好');
+        console.error('[AssetUpdateManager] ❌ Service Worker 無法準備就緒（超過重試次數）');
+        console.warn('[AssetUpdateManager] 可能原因：Service Worker 激活延遲過長或未成功激活');
         return;
       }
+
+      console.log('[AssetUpdateManager] ✅ Service Worker 已準備好，發送更新消息');
 
       // 構建更新列表（只包含更新和新增）
       const updateList = [
@@ -238,6 +267,7 @@ class AssetUpdateManager {
       console.log(`[AssetUpdateManager] 通知 Service Worker 下載 ${updateList.length} 個資源`);
 
       // 發送消息給 Service Worker
+      console.log('[AssetUpdateManager] 發送 UPDATE_ASSETS 消息給 Service Worker...');
       controller.postMessage({
         type: 'UPDATE_ASSETS',
         updateList: updateList,
@@ -249,17 +279,19 @@ class AssetUpdateManager {
       // 等待更新完成（帶超時）
       await new Promise((resolve) => {
         const timeout = setTimeout(() => {
-          console.log('[AssetUpdateManager] 等待 Service Worker 回應超時');
+          console.warn('[AssetUpdateManager] ⚠️  等待 Service Worker 回應超時（60秒）');
           resolve();
         }, 60000); // 60秒超時
 
         const messageHandler = (event) => {
+          console.log('[AssetUpdateManager] 收到 Service Worker 消息:', event.data?.type);
+
           if (event.data?.type === 'UPDATE_ASSETS_COMPLETE') {
             clearTimeout(timeout);
             const { success, updated, failed } = event.data;
 
             console.log(
-              `[AssetUpdateManager] 更新完成 (成功: ${updated}, 失敗: ${failed})`
+              `[AssetUpdateManager] ✅ 更新完成 (成功: ${updated}, 失敗: ${failed})`
             );
 
             // 更新本地清單
@@ -273,6 +305,7 @@ class AssetUpdateManager {
           }
         };
 
+        console.log('[AssetUpdateManager] 監聽 Service Worker 消息...');
         navigator.serviceWorker.addEventListener('message', messageHandler);
       });
 
@@ -282,6 +315,20 @@ class AssetUpdateManager {
         setTimeout(() => {
           location.reload();
         }, 500);
+      } else {
+        // 靜默更新模式：發送更新完成事件（可選：顯示輕量級通知）
+        console.log('[AssetUpdateManager] 資源已在後台更新，下次進入時生效');
+
+        // 設置完成標誌（給 Topbar 檢查用）
+        window._assetUpdateCompleted = true;
+
+        // 觸發自定義事件，應用可以監聽並顯示輕量級提示
+        window.dispatchEvent(new CustomEvent('asset-update-available', {
+          detail: {
+            oldVersion: this.localManifest?.version,
+            newVersion: this.remoteManifest?.version
+          }
+        }));
       }
 
     } catch (error) {
@@ -293,7 +340,13 @@ class AssetUpdateManager {
    * 設置定期檢查
    */
   setupPeriodicCheck() {
+    // 清理舊的計時器
+    if (this.updateCheckTimer) {
+      clearInterval(this.updateCheckTimer);
+    }
+
     this.updateCheckTimer = setInterval(async () => {
+      console.log('[AssetUpdateManager] 執行定期檢查...');
       await this.checkForAssetUpdates();
     }, this.checkInterval);
 
@@ -308,10 +361,15 @@ class AssetUpdateManager {
   setupVisibilityListener() {
     document.addEventListener('visibilitychange', async () => {
       if (!document.hidden) {
-        console.log('[AssetUpdateManager] 頁面重新獲得焦點，檢查更新...');
-        await this.checkForAssetUpdates();
+        console.log('[AssetUpdateManager] 頁面重新獲得焦點，檢查資源更新...');
+        // 返回焦點時檢查更新
+        const hasUpdates = await this.checkForAssetUpdates();
+        if (hasUpdates) {
+          console.log('[AssetUpdateManager] 焦點檢查發現更新');
+        }
       }
     });
+    console.log('[AssetUpdateManager] 已監聽頁面可見性變化');
   }
 
   /**

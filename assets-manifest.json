@@ -1,7 +1,7 @@
 {
-  "version": "1.0.0",
-  "timestamp": 1775723213271,
-  "generatedAt": "2026-04-09T08:26:53.271Z",
+  "version": "1.0.8",
+  "timestamp": 1775730960267,
+  "generatedAt": "2026-04-09T10:36:00.267Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "e2be2b0eff05",
@@ -18,10 +18,125 @@
       "size": 1261374,
       "mtime": 1774585133456.1204
     },
+    "assets/images/architect-01.webp": {
+      "hash": "d80fea55c444",
+      "size": 140112,
+      "mtime": 1774585152741.568
+    },
+    "assets/images/architect-02.webp": {
+      "hash": "5e8217e7a1c1",
+      "size": 610464,
+      "mtime": 1774585175800.1982
+    },
     "assets/images/CCPark.webp": {
       "hash": "e3aee98db72e",
       "size": 415208,
       "mtime": 1774585197565.1072
+    },
+    "assets/images/coming-soon-bg.webp": {
+      "hash": "f71df34ff23d",
+      "size": 184444,
+      "mtime": 1774585427210.1545
+    },
+    "assets/images/construction method/ETAG 感應門禁.md": {
+      "hash": "365481c25102",
+      "size": 283,
+      "mtime": 1774699047836.527
+    },
+    "assets/images/construction method/ETAG 感應門禁.webp": {
+      "hash": "900a44de14a8",
+      "size": 261384,
+      "mtime": 1774699003761.771
+    },
+    "assets/images/construction method/中庭植栽防水.md": {
+      "hash": "af22bd80f02d",
+      "size": 151,
+      "mtime": 1774698797519.5298
+    },
+    "assets/images/construction method/中庭植栽防水.webp": {
+      "hash": "9b4c9c062712",
+      "size": 496030,
+      "mtime": 1774697089427.9133
+    },
+    "assets/images/construction method/匯流排EMS.md": {
+      "hash": "a6e146f800b7",
+      "size": 190,
+      "mtime": 1774950538248.9146
+    },
+    "assets/images/construction method/匯流排EMS.webp": {
+      "hash": "853e0e067a6e",
+      "size": 106080,
+      "mtime": 1774699308338.5276
+    },
+    "assets/images/construction method/樑柱綁筋.md": {
+      "hash": "de7487f8c09e",
+      "size": 394,
+      "mtime": 1774698774217.8218
+    },
+    "assets/images/construction method/樑柱綁筋.webp": {
+      "hash": "01cb0b05f59f",
+      "size": 489828,
+      "mtime": 1774697834132.11
+    },
+    "assets/images/construction method/樓層接縫防水.md": {
+      "hash": "e71795c85ca4",
+      "size": 97,
+      "mtime": 1774698610976.8953
+    },
+    "assets/images/construction method/樓層接縫防水.webp": {
+      "hash": "ab5462821754",
+      "size": 500126,
+      "mtime": 1774696173304.0103
+    },
+    "assets/images/construction method/窗框防水.md": {
+      "hash": "866d6dd00dc3",
+      "size": 147,
+      "mtime": 1774698816061.9248
+    },
+    "assets/images/construction method/窗框防水.webp": {
+      "hash": "29d91d407977",
+      "size": 613706,
+      "mtime": 1774695940416.6763
+    },
+    "assets/images/construction method/衛浴止水墩.md": {
+      "hash": "2f3751f194c9",
+      "size": 86,
+      "mtime": 1774698506647.504
+    },
+    "assets/images/construction method/衛浴止水墩.webp": {
+      "hash": "9bdd935d9192",
+      "size": 331102,
+      "mtime": 1774695315279.776
+    },
+    "assets/images/construction method/衛浴防水.md": {
+      "hash": "43f65c2d1e6a",
+      "size": 170,
+      "mtime": 1774698480954.4158
+    },
+    "assets/images/construction method/衛浴防水.webp": {
+      "hash": "c916227ccbef",
+      "size": 245996,
+      "mtime": 1774694155297.9158
+    },
+    "assets/images/construction method/陽台露臺防水.md": {
+      "hash": "06cfb92a293d",
+      "size": 124,
+      "mtime": 1774698941327.3123
+    },
+    "assets/images/construction method/陽台露臺防水.webp": {
+      "hash": "87bb47f5fa74",
+      "size": 348866,
+      "mtime": 1774696643448.757
+    },
+    "assets/images/construction method/頂樓防水.md": {
+      "hash": "a00287d689cd",
+      "size": 154,
+      "mtime": 1774749163500.0168
+    },
+    "assets/images/construction method/頂樓防水.webp": {
+      "hash": "279c4c3a8b35",
+      "size": 431798,
+      "mtime": 1774702031877.083
     },
     "assets/images/COSTCO.webp": {
       "hash": "1baade8a7c32",
@@ -33,110 +148,10 @@
       "size": 614536,
       "mtime": 1774585228041.6074
     },
-    "assets/images/GPES.webp": {
-      "hash": "533956ecda43",
-      "size": 307860,
-      "mtime": 1774585296811.4082
-    },
-    "assets/images/GWJH.webp": {
-      "hash": "470cf1afb5d0",
-      "size": 477886,
-      "mtime": 1774585311693.7412
-    },
-    "assets/images/HSP.webp": {
-      "hash": "3e5176799f43",
-      "size": 464522,
-      "mtime": 1774585326087.21
-    },
-    "assets/images/KHPark.webp": {
-      "hash": "b25dffd97ca7",
-      "size": 461934,
-      "mtime": 1774585340922.8955
-    },
-    "assets/images/NYIO.webp": {
-      "hash": "f3160fc9a337",
-      "size": 402846,
-      "mtime": 1774585354143.3706
-    },
-    "assets/images/Starbucks.webp": {
-      "hash": "801d950eadf8",
-      "size": 326052,
-      "mtime": 1774585366677.1792
-    },
-    "assets/images/Sun Yat-sen Freeway.webp": {
-      "hash": "492135d02c88",
-      "size": 275778,
-      "mtime": 1774585383550.6426
-    },
-    "assets/images/TSMC.webp": {
-      "hash": "4603118399fa",
-      "size": 463814,
-      "mtime": 1774585409411.2683
-    },
-    "assets/images/architect-01.webp": {
-      "hash": "d80fea55c444",
-      "size": 140112,
-      "mtime": 1774585152741.568
-    },
-    "assets/images/architect-02.webp": {
-      "hash": "5e8217e7a1c1",
-      "size": 610464,
-      "mtime": 1774585175800.1982
-    },
-    "assets/images/coming-soon-bg.webp": {
-      "hash": "f71df34ff23d",
-      "size": 184444,
-      "mtime": 1774585427210.1545
-    },
-    "assets/images/construction method/ETAG 感應門禁.webp": {
-      "hash": "900a44de14a8",
-      "size": 261384,
-      "mtime": 1774699003761.771
-    },
-    "assets/images/construction method/中庭植栽防水.webp": {
-      "hash": "9b4c9c062712",
-      "size": 496030,
-      "mtime": 1774697089427.9133
-    },
-    "assets/images/construction method/匯流排EMS.webp": {
-      "hash": "853e0e067a6e",
-      "size": 106080,
-      "mtime": 1774699308338.5276
-    },
-    "assets/images/construction method/樑柱綁筋.webp": {
-      "hash": "01cb0b05f59f",
-      "size": 489828,
-      "mtime": 1774697834132.11
-    },
-    "assets/images/construction method/樓層接縫防水.webp": {
-      "hash": "ab5462821754",
-      "size": 500126,
-      "mtime": 1774696173304.0103
-    },
-    "assets/images/construction method/窗框防水.webp": {
-      "hash": "29d91d407977",
-      "size": 613706,
-      "mtime": 1774695940416.6763
-    },
-    "assets/images/construction method/衛浴止水墩.webp": {
-      "hash": "9bdd935d9192",
-      "size": 331102,
-      "mtime": 1774695315279.776
-    },
-    "assets/images/construction method/衛浴防水.webp": {
-      "hash": "c916227ccbef",
-      "size": 245996,
-      "mtime": 1774694155297.9158
-    },
-    "assets/images/construction method/陽台露臺防水.webp": {
-      "hash": "87bb47f5fa74",
-      "size": 348866,
-      "mtime": 1774696643448.757
-    },
-    "assets/images/construction method/頂樓防水.webp": {
-      "hash": "279c4c3a8b35",
-      "size": 431798,
-      "mtime": 1774702031877.083
+    "assets/images/equipment/ES41890.md": {
+      "hash": "88b71586e5f0",
+      "size": 152,
+      "mtime": 1774749163508.095
     },
     "assets/images/equipment/ES41890.png": {
       "hash": "b44c614a265b",
@@ -148,15 +163,50 @@
       "size": 422430,
       "mtime": 1774607672422.7808
     },
+    "assets/images/equipment/Gemini_Generated_Image_3lfaxp3lfaxp3lfa.jpg": {
+      "hash": "fe4da5e09c0f",
+      "size": 1821271,
+      "mtime": 1774635009276.0056
+    },
+    "assets/images/equipment/GRASS.md": {
+      "hash": "1d91735640b7",
+      "size": 592,
+      "mtime": 1774749163500.0168
+    },
     "assets/images/equipment/GRASS.webp": {
       "hash": "4a0a5256104f",
       "size": 168782,
       "mtime": 1774676867211.8809
     },
-    "assets/images/equipment/Gemini_Generated_Image_3lfaxp3lfaxp3lfa.jpg": {
-      "hash": "fe4da5e09c0f",
-      "size": 1821271,
-      "mtime": 1774635009276.0056
+    "assets/images/equipment/kronotex-2.md": {
+      "hash": "1055a11d257f",
+      "size": 338,
+      "mtime": 1774749163512.8274
+    },
+    "assets/images/equipment/kronotex-2.webp": {
+      "hash": "7c2d694c0d15",
+      "size": 492092,
+      "mtime": 1774630956483.289
+    },
+    "assets/images/equipment/kronotex-3.webp": {
+      "hash": "7bfd43ae7e6a",
+      "size": 407228,
+      "mtime": 1774588031140.6777
+    },
+    "assets/images/equipment/kronotex.md": {
+      "hash": "e3b0c44298fc",
+      "size": 0,
+      "mtime": 1774588187045.9165
+    },
+    "assets/images/equipment/kronotex.webp": {
+      "hash": "5477bcc1b851",
+      "size": 162634,
+      "mtime": 1774604436563.246
+    },
+    "assets/images/equipment/LEICHT-2.md": {
+      "hash": "a19f339a5a5c",
+      "size": 900,
+      "mtime": 1774604933961.7083
     },
     "assets/images/equipment/LEICHT-2.webp": {
       "hash": "fe5aa96ef5d5",
@@ -173,15 +223,50 @@
       "size": 587482,
       "mtime": 1774607398999.9905
     },
+    "assets/images/equipment/LEICHT.md": {
+      "hash": "6e35171941f6",
+      "size": 402,
+      "mtime": 1774604833429.8914
+    },
     "assets/images/equipment/LEICHT.webp": {
       "hash": "d7a462074a2b",
       "size": 170048,
       "mtime": 1774603913214.0603
     },
+    "assets/images/equipment/LGHIMACS.md": {
+      "hash": "9dbbe509a224",
+      "size": 491,
+      "mtime": 1774605523119.9524
+    },
     "assets/images/equipment/LGHIMACS.webp": {
       "hash": "4b1006834272",
       "size": 614150,
       "mtime": 1774605618792.261
+    },
+    "assets/images/equipment/panasonic-door.md": {
+      "hash": "f92705dbc608",
+      "size": 3152,
+      "mtime": 1774749163500.0168
+    },
+    "assets/images/equipment/panasonic室內門-2.webp": {
+      "hash": "9077c0e5156a",
+      "size": 102450,
+      "mtime": 1774681442071.0618
+    },
+    "assets/images/equipment/panasonic室內門-3.webp": {
+      "hash": "311e2ddd0072",
+      "size": 144512,
+      "mtime": 1774682214383.9102
+    },
+    "assets/images/equipment/panasonic室內門-4.webp": {
+      "hash": "e7cb00c83e3b",
+      "size": 136276,
+      "mtime": 1774682435710.206
+    },
+    "assets/images/equipment/panasonic室內門.webp": {
+      "hash": "b86309a6e8da",
+      "size": 432030,
+      "mtime": 1774587923170.7102
     },
     "assets/images/equipment/TOTO-1.webp": {
       "hash": "08f154efc365",
@@ -197,6 +282,11 @@
       "hash": "d1875f7038e6",
       "size": 364850,
       "mtime": 1774686542427.6282
+    },
+    "assets/images/equipment/waferlock.webp": {
+      "hash": "a273cee81c94",
+      "size": 22800,
+      "mtime": 1774586816860.353
     },
     "assets/images/equipment/YKK-1.webp": {
       "hash": "2ba65ddd45ca",
@@ -222,46 +312,6 @@
       "hash": "40f654cb5062",
       "size": 307770,
       "mtime": 1774685566515.3352
-    },
-    "assets/images/equipment/kronotex-2.webp": {
-      "hash": "7c2d694c0d15",
-      "size": 492092,
-      "mtime": 1774630956483.289
-    },
-    "assets/images/equipment/kronotex-3.webp": {
-      "hash": "7bfd43ae7e6a",
-      "size": 407228,
-      "mtime": 1774588031140.6777
-    },
-    "assets/images/equipment/kronotex.webp": {
-      "hash": "5477bcc1b851",
-      "size": 162634,
-      "mtime": 1774604436563.246
-    },
-    "assets/images/equipment/panasonic室內門-2.webp": {
-      "hash": "9077c0e5156a",
-      "size": 102450,
-      "mtime": 1774681442071.0618
-    },
-    "assets/images/equipment/panasonic室內門-3.webp": {
-      "hash": "311e2ddd0072",
-      "size": 144512,
-      "mtime": 1774682214383.9102
-    },
-    "assets/images/equipment/panasonic室內門-4.webp": {
-      "hash": "e7cb00c83e3b",
-      "size": 136276,
-      "mtime": 1774682435710.206
-    },
-    "assets/images/equipment/panasonic室內門.webp": {
-      "hash": "b86309a6e8da",
-      "size": 432030,
-      "mtime": 1774587923170.7102
-    },
-    "assets/images/equipment/waferlock.webp": {
-      "hash": "a273cee81c94",
-      "size": 22800,
-      "mtime": 1774586816860.353
     },
     "assets/images/equipment/主浴面盆.webp": {
       "hash": "c9e9009f1440",
@@ -333,6 +383,11 @@
       "size": 46056,
       "mtime": 1774632739144.6062
     },
+    "assets/images/equipment/玄關門.md": {
+      "hash": "4d0088b9157e",
+      "size": 580,
+      "mtime": 1774587217345.7483
+    },
     "assets/images/equipment/玄關門.webp": {
       "hash": "2cb4578abdde",
       "size": 344672,
@@ -342,6 +397,11 @@
       "hash": "d8e48f10c480",
       "size": 132312,
       "mtime": 1774633071981.919
+    },
+    "assets/images/equipment/維夫拉克電子鎖.md": {
+      "hash": "b91bd87b6119",
+      "size": 745,
+      "mtime": 1774749163508.095
     },
     "assets/images/equipment/維夫拉克電子鎖.webp": {
       "hash": "9390e1a07572",
@@ -383,10 +443,30 @@
       "size": 67024,
       "mtime": 1774585443831.5818
     },
+    "assets/images/GPES.webp": {
+      "hash": "533956ecda43",
+      "size": 307860,
+      "mtime": 1774585296811.4082
+    },
+    "assets/images/GWJH.webp": {
+      "hash": "470cf1afb5d0",
+      "size": 477886,
+      "mtime": 1774585311693.7412
+    },
     "assets/images/hero-forest.webp": {
       "hash": "4fe5bb0ba7fd",
       "size": 2208592,
       "mtime": 1774543339148.1106
+    },
+    "assets/images/HSP.webp": {
+      "hash": "3e5176799f43",
+      "size": 464522,
+      "mtime": 1774585326087.21
+    },
+    "assets/images/KHPark.webp": {
+      "hash": "b25dffd97ca7",
+      "size": 461934,
+      "mtime": 1774585340922.8955
     },
     "assets/images/layout/1F.webp": {
       "hash": "5e93a422cbdb",
@@ -409,39 +489,39 @@
       "mtime": 1774850636951.0967
     },
     "assets/images/layout/A1.webp": {
-      "hash": "7b281953edf9",
-      "size": 486466,
-      "mtime": 1775723068579.6506
+      "hash": "46f77a322811",
+      "size": 453098,
+      "mtime": 1775730931857.808
     },
     "assets/images/layout/A2.webp": {
-      "hash": "8c96cee92ab1",
-      "size": 480540,
-      "mtime": 1775723068581.9531
+      "hash": "a5a167a5adf3",
+      "size": 451380,
+      "mtime": 1775723381522.165
     },
     "assets/images/layout/A3.webp": {
-      "hash": "b02f34a0b156",
-      "size": 409842,
-      "mtime": 1775723068585.802
+      "hash": "b315174186d6",
+      "size": 386294,
+      "mtime": 1775723381525.703
     },
     "assets/images/layout/A5.webp": {
-      "hash": "fd7df68c05f0",
-      "size": 451382,
-      "mtime": 1775723068590.961
+      "hash": "95925c80b16f",
+      "size": 423500,
+      "mtime": 1775723381530.3745
     },
     "assets/images/layout/A6.webp": {
-      "hash": "4b0908c53645",
-      "size": 396310,
-      "mtime": 1775723068594.624
+      "hash": "e258ed0ffd42",
+      "size": 373740,
+      "mtime": 1775723381533.6821
     },
     "assets/images/layout/A7.webp": {
-      "hash": "7acfcd643364",
-      "size": 491178,
-      "mtime": 1775723068599.2166
+      "hash": "c8621ddf2a78",
+      "size": 460154,
+      "mtime": 1775723381538.1826
     },
     "assets/images/layout/A8.webp": {
-      "hash": "1b88691e949b",
-      "size": 556400,
-      "mtime": 1775723068604.29
+      "hash": "a33b987fd5a5",
+      "size": 521104,
+      "mtime": 1775723381543.6902
     },
     "assets/images/layout/B1.webp": {
       "hash": "dac33f8db4d3",
@@ -483,10 +563,30 @@
       "size": 3012750,
       "mtime": 1774519278386.4092
     },
+    "assets/images/NYIO.webp": {
+      "hash": "f3160fc9a337",
+      "size": 402846,
+      "mtime": 1774585354143.3706
+    },
+    "assets/images/Starbucks.webp": {
+      "hash": "801d950eadf8",
+      "size": 326052,
+      "mtime": 1774585366677.1792
+    },
+    "assets/images/Sun Yat-sen Freeway.webp": {
+      "hash": "492135d02c88",
+      "size": 275778,
+      "mtime": 1774585383550.6426
+    },
     "assets/images/train-station.webp": {
       "hash": "8a7d036c3c90",
       "size": 402604,
       "mtime": 1774585394650.641
+    },
+    "assets/images/TSMC.webp": {
+      "hash": "4603118399fa",
+      "size": 463814,
+      "mtime": 1774585409411.2683
     },
     "assets/images/xuesen_logo.webp": {
       "hash": "fab186b97e0f",
@@ -507,6 +607,101 @@
       "hash": "c9e9e3376c99",
       "size": 3732702,
       "mtime": 1774532222924.2942
+    },
+    "css/brand.css": {
+      "hash": "a3b499829337",
+      "size": 3353,
+      "mtime": 1774543362703.9128
+    },
+    "css/coming-soon.css": {
+      "hash": "b72fa6839cf1",
+      "size": 2341,
+      "mtime": 1774585644211.4097
+    },
+    "css/construction.css": {
+      "hash": "9620212c9c7d",
+      "size": 21099,
+      "mtime": 1774701982371.9846
+    },
+    "css/exterior-3d.css": {
+      "hash": "9de9a718d9ba",
+      "size": 4554,
+      "mtime": 1774522261683.3542
+    },
+    "css/floor-plan.css": {
+      "hash": "91251d25745d",
+      "size": 24831,
+      "mtime": 1775200942822.876
+    },
+    "css/global.css": {
+      "hash": "2bb1919a6241",
+      "size": 1120,
+      "mtime": 1774154223668.6465
+    },
+    "css/hero.css": {
+      "hash": "c3625a4385b8",
+      "size": 6079,
+      "mtime": 1774536028592.9312
+    },
+    "css/location.css": {
+      "hash": "614496b32f75",
+      "size": 7059,
+      "mtime": 1774942208796.6353
+    },
+    "css/materials.css": {
+      "hash": "4df0616afe36",
+      "size": 25021,
+      "mtime": 1775191073745.0444
+    },
+    "css/panorama.css": {
+      "hash": "c3a27e744779",
+      "size": 6501,
+      "mtime": 1774942235948.653
+    },
+    "css/topbar.css": {
+      "hash": "489fcbb7a4c1",
+      "size": 6462,
+      "mtime": 1774533562047.0818
+    },
+    "css/variables.css": {
+      "hash": "0d8c0ce0351b",
+      "size": 865,
+      "mtime": 1774154142260.6814
+    },
+    "js/animations.js": {
+      "hash": "0255bb75d1c5",
+      "size": 620,
+      "mtime": 1774155053777.8003
+    },
+    "js/asset-update-manager.js": {
+      "hash": "02b603113f87",
+      "size": 12134,
+      "mtime": 1775730708630.5764
+    },
+    "js/birds.js": {
+      "hash": "5eea9680646d",
+      "size": 2957,
+      "mtime": 1774156285910.8396
+    },
+    "js/fireflies.js": {
+      "hash": "908cf6e0f791",
+      "size": 2718,
+      "mtime": 1774155032212.1345
+    },
+    "js/pwa-register.js": {
+      "hash": "78026be6dd05",
+      "size": 13237,
+      "mtime": 1775730493732.6614
+    },
+    "js/spa-router.js": {
+      "hash": "54a9f560e32c",
+      "size": 3591,
+      "mtime": 1775722128167.4448
+    },
+    "js/topbar.js": {
+      "hash": "5d7dec1b9ccb",
+      "size": 21089,
+      "mtime": 1775730665716.365
     }
   }
 }

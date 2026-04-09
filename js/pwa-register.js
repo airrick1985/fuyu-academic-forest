@@ -261,6 +261,39 @@ if ('serviceWorker' in navigator) {
       .then(registration => {
         console.log('[PWA] Service Worker registered successfully');
 
+        // 等待 Service Worker 完全激活後再初始化資源管理器
+        let waitForActivation = setInterval(() => {
+          if (navigator.serviceWorker.controller) {
+            clearInterval(waitForActivation);
+            console.log('[PWA] Service Worker 已激活，開始初始化資源管理器...');
+
+            // ============== 資源動態更新管理（已移至此處，確保 SW 準備好） ==============
+            if (typeof AssetUpdateManager !== 'undefined') {
+              console.log('[PWA] 初始化資源更新管理器...');
+
+              window.assetUpdateManager = new AssetUpdateManager({
+                manifestUrl: '/assets-manifest.json',
+                checkInterval: 15 * 60 * 1000, // 15分鐘定期檢查一次
+                fetchTimeout: 5000,
+                retryCount: 3,
+                maxParallelDownloads: 3,
+                hashVerify: true,
+                autoRefresh: false // ✅ 靜默更新
+              });
+
+              // 確保 Service Worker 已註冊後初始化資源檢查
+              console.log('[PWA] 頁面加載完成，開始資源更新檢查...');
+              window.assetUpdateManager.init().catch(err => {
+                console.error('[PWA] 資源管理器初始化失敗:', err);
+              });
+
+              console.log('[PWA] 資源更新管理系統已啟用');
+            } else {
+              console.warn('[PWA] AssetUpdateManager 未加載');
+            }
+          }
+        }, 50); // 每 50ms 檢查一次，直到 SW 激活
+
         // 立即檢查 Service Worker 更新
         registration.update().catch(err => {
           console.error('[PWA] Initial update check failed:', err);
@@ -330,24 +363,6 @@ if ('serviceWorker' in navigator) {
   // });
 
   // ============== 資源動態更新管理 ==============
-  // [禁用] 防止無限版本更新循環 - 直到根本問題解決
-  // if (typeof AssetUpdateManager !== 'undefined') {
-  //   window.assetUpdateManager = new AssetUpdateManager({
-  //     manifestUrl: '/assets-manifest.json',
-  //     checkInterval: 30 * 60 * 1000,
-  //     fetchTimeout: 5000,
-  //     retryCount: 3,
-  //     maxParallelDownloads: 3,
-  //     hashVerify: true,
-  //     autoRefresh: true
-  //   });
-  //
-  //   window.addEventListener('load', () => {
-  //     window.assetUpdateManager.init().catch(err => {
-  //       console.error('[PWA] 資源管理器初始化失敗:', err);
-  //     });
-  //   });
-  // }
-
-  console.log('[PWA] 自動版本檢查已禁用（防止無限循環）');
+  // [已移至 Service Worker load 事件中，確保 SW 激活後再初始化]
+  // 參見上面的 window.addEventListener('load', ...) 中的 AssetUpdateManager 初始化代碼
 }

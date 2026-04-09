@@ -155,6 +155,8 @@ async function downloadAndCacheAsset(asset, cache, hashVerify, results) {
 
 // Message event - handle version update and asset updates from client
 self.addEventListener('message', event => {
+  console.log('[SW] 📨 收到來自客戶端的消息:', event.data?.type);
+
   if (event.data && event.data.type === 'CHECK_VERSION') {
     const newVersion = event.data.version;
     if (newVersion !== CACHE_VERSION) {
@@ -179,16 +181,19 @@ self.addEventListener('message', event => {
     // 資源更新請求
     const { updateList, totalCount, maxParallel, hashVerify } = event.data;
 
-    console.log(`[SW] 收到資源更新請求: ${updateList.length} 個資源`);
+    console.log(`[SW] ✅ 收到資源更新請求: ${updateList.length} 個資源`);
 
     // 後台下載（不阻塞客戶端）
     downloadAssets(updateList, maxParallel || 3, hashVerify !== false)
       .then(results => {
-        console.log(`[SW] 資源更新完成:`, results);
+        console.log(`[SW] ✅ 資源下載完成:`, results);
 
         // 通知所有客戶端更新完成
+        console.log('[SW] 📢 發送 UPDATE_ASSETS_COMPLETE 消息給所有客戶端...');
         self.clients.matchAll().then(clients => {
+          console.log(`[SW] 找到 ${clients.length} 個客戶端`);
           clients.forEach(client => {
+            console.log('[SW] 發送消息給客戶端:', client.id);
             client.postMessage({
               type: 'UPDATE_ASSETS_COMPLETE',
               success: results.failed === 0,

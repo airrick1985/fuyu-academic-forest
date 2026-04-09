@@ -52,7 +52,7 @@
             <button class="fullscreen-btn" title="切換全螢幕">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
             </button>
-            <button class="refresh-btn" onclick="location.reload()" title="重新整理">
+            <button class="refresh-btn" title="檢查並更新資源">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="23 4 23 10 17 10"></polyline>
@@ -100,6 +100,129 @@
         }
       };
       document.addEventListener('fullscreenchange', window._fullscreenChangeHandler);
+    }
+  }
+
+  // ===== 刷新按鈕邏輯（檢查並更新資源）=====
+  const refreshBtn = topbar.querySelector('.refresh-btn');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // 防止重複點擊
+      if (refreshBtn.disabled || refreshBtn.classList.contains('checking')) {
+        return;
+      }
+
+      refreshBtn.classList.add('checking');
+      refreshBtn.disabled = true;
+      const originalTitle = refreshBtn.title;
+      refreshBtn.title = '檢查中...';
+
+      // 添加轉圈動畫效果
+      const svg = refreshBtn.querySelector('svg');
+      if (svg) {
+        svg.style.animation = 'spin 1s linear infinite';
+      }
+
+      try {
+        console.log('[Topbar] 用戶手動檢查資源更新...');
+
+        // 檢查是否初始化了資源管理器
+        if (window.assetUpdateManager) {
+          // 手動觸發檢查
+          const hasUpdates = await window.assetUpdateManager.forceCheck();
+
+          if (hasUpdates) {
+            refreshBtn.title = '發現更新，下載中...';
+            console.log('[Topbar] 發現資源更新，等待下載完成...');
+
+            // 監聽資源更新完成事件
+            const updateHandler = () => {
+              console.log('[Topbar] 🎉 資源更新完成，即將刷新頁面...');
+              window.removeEventListener('asset-update-available', updateHandler);
+
+              // 短暫延遲後刷新，讓用戶看到完成的提示
+              setTimeout(() => {
+                location.reload();
+              }, 300);
+            };
+
+            // 設置監聽器（立即）
+            console.log('[Topbar] 正在監聽 asset-update-available 事件...');
+            window.addEventListener('asset-update-available', updateHandler, { once: true });
+
+            // 設置超時機制（防止一直等待）
+            const timeoutHandle = setTimeout(() => {
+              window.removeEventListener('asset-update-available', updateHandler);
+              console.log('[Topbar] 更新超時，執行刷新');
+              location.reload();
+            }, 30000); // 30秒超時
+
+            // 同時設置一個快速檢查，看事件是否已經發送過了
+            // （防止事件在監聽器設置之前被發送）
+            const quickCheckTimer = setInterval(() => {
+              if (window._assetUpdateCompleted) {
+                clearInterval(quickCheckTimer);
+                clearTimeout(timeoutHandle);
+                console.log('[Topbar] 檢測到已完成的更新，執行刷新');
+                location.reload();
+              }
+            }, 100);
+          } else {
+            refreshBtn.title = '已是最新版本';
+            console.log('[Topbar] 資源已是最新版本');
+
+            // 2秒後恢復
+            setTimeout(() => {
+              refreshBtn.classList.remove('checking');
+              refreshBtn.disabled = false;
+              refreshBtn.title = originalTitle;
+              if (svg) {
+                svg.style.animation = '';
+              }
+            }, 2000);
+          }
+        } else {
+          // 未初始化，直接刷新
+          console.warn('[Topbar] 資源管理器未初始化，直接刷新');
+          location.reload();
+        }
+
+      } catch (error) {
+        console.error('[Topbar] 檢查更新失敗:', error);
+        refreshBtn.title = '更新檢查失敗';
+
+        // 出錯後恢復
+        setTimeout(() => {
+          refreshBtn.classList.remove('checking');
+          refreshBtn.disabled = false;
+          refreshBtn.title = originalTitle;
+          if (svg) {
+            svg.style.animation = '';
+          }
+        }, 2000);
+      }
+    });
+
+    // CSS 轉圈動畫（如果不存在）
+    if (!document.getElementById('topbar-spin-animation')) {
+      const style = document.createElement('style');
+      style.id = 'topbar-spin-animation';
+      style.textContent = `
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .refresh-btn.checking {
+          opacity: 0.7;
+        }
+        .refresh-btn:disabled {
+          cursor: not-allowed;
+        }
+      `;
+      document.head.appendChild(style);
     }
   }
 

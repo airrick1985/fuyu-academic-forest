@@ -5,7 +5,9 @@
   "main": "index.html",
   "scripts": {
     "dev": "npx serve .",
-    "deploy": "git add . && git commit -m \"更新網站內容\" && git push origin main"
+    "generate-manifest": "node scripts/generate-manifest.js",
+    "build": "npm run generate-manifest",
+    "deploy": "npm run build && git add . && git commit -m \"更新網站及資源清單\" && git push origin main"
   },
   "author": "",
   "license": "ISC"
