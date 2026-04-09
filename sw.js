@@ -4,6 +4,9 @@
 let CACHE_VERSION = '1.0.0';
 let CACHE_NAME = `fuyu-forest-${CACHE_VERSION}`;
 
+// Asset manifest cache name
+const MANIFEST_CACHE_NAME = 'fuyu-asset-manifest-v1';
+
 // Core assets to pre-cache on install
 const CORE_ASSETS = [
   '/',
@@ -14,6 +17,7 @@ const CORE_ASSETS = [
   '/js/topbar.js',
   '/js/spa-router.js',
   '/js/pwa-register.js',
+  '/js/asset-update-manager.js',
   '/assets/images/fuyu-logo.webp',
   '/assets/images/hero-forest.webp',
   '/assets/pannellum/pannellum.min.js',
@@ -41,8 +45,8 @@ self.addEventListener('activate', event => {
       console.log(`[SW] Activating with cache version: ${CACHE_VERSION}`);
       return Promise.all(
         cacheNames.map(cacheName => {
-          // Delete caches that don't match current version
-          if (!cacheName.includes(CACHE_VERSION)) {
+          // Delete caches that don't match current version, but preserve manifest cache
+          if (!cacheName.includes(CACHE_VERSION) && cacheName !== MANIFEST_CACHE_NAME) {
             console.log(`[SW] Deleting old cache: ${cacheName}`);
             return caches.delete(cacheName);
           }
@@ -53,7 +57,99 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Message event - handle version update from client
+// ================== 資源清單和雜湊驗證 ==================
+
+/**
+ * 計算 ArrayBuffer 的 SHA256 雜湊值
+ */
+async function calculateSHA256(buffer) {
+  try {
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex.substring(0, 12); // 返回前 12 位
+  } catch (error) {
+    console.warn('[SW] SHA256 計算失敗:', error);
+    return null;
+  }
+}
+
+/**
+ * 並行下載資源列表
+ */
+async function downloadAssets(updateList, maxParallel = 3, hashVerify = true) {
+  const results = {
+    updated: 0,
+    failed: 0,
+    errors: []
+  };
+
+  const cache = await caches.open(CACHE_NAME);
+
+  // 分批處理
+  for (let i = 0; i < updateList.length; i += maxParallel) {
+    const batch = updateList.slice(i, i + maxParallel);
+    const batchPromises = batch.map(asset =>
+      downloadAndCacheAsset(asset, cache, hashVerify, results)
+    );
+
+    await Promise.all(batchPromises);
+    console.log(`[SW] 進度: ${Math.min(i + maxParallel, updateList.length)}/${updateList.length}`);
+  }
+
+  return results;
+}
+
+/**
+ * 下載單個資源並驗證
+ */
+async function downloadAndCacheAsset(asset, cache, hashVerify, results) {
+  try {
+    const response = await fetch(asset.path + '?t=' + Date.now(), {
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    const buffer = await blob.arrayBuffer();
+
+    // 驗證雜湊值
+    if (hashVerify) {
+      const calculatedHash = await calculateSHA256(buffer);
+      if (calculatedHash !== asset.hash) {
+        throw new Error(
+          `Hash mismatch: expected ${asset.hash}, got ${calculatedHash}`
+        );
+      }
+    }
+
+    // 保存到快取
+    const cacheResponse = new Response(blob, {
+      headers: {
+        'Content-Type': blob.type,
+        'X-Asset-Hash': asset.hash,
+        'Cache-Control': 'max-age=31536000' // 1 year
+      }
+    });
+
+    await cache.put(asset.path, cacheResponse);
+    results.updated++;
+    console.log(`[SW] ✓ 已快取: ${asset.path}`);
+
+  } catch (error) {
+    results.failed++;
+    results.errors.push({
+      path: asset.path,
+      error: error.message
+    });
+    console.warn(`[SW] ✗ 無法下載: ${asset.path}`, error.message);
+  }
+}
+
+// Message event - handle version update and asset updates from client
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'CHECK_VERSION') {
     const newVersion = event.data.version;
@@ -63,6 +159,47 @@ self.addEventListener('message', event => {
       CACHE_NAME = `fuyu-forest-${CACHE_VERSION}`;
       // Trigger activation to clean up old caches
       self.skipWaiting();
+    }
+  } else if (event.data && event.data.type === 'UPDATE_ASSETS') {
+    // 資源更新請求
+    const { updateList, totalCount, maxParallel, hashVerify } = event.data;
+
+    console.log(`[SW] 收到資源更新請求: ${updateList.length} 個資源`);
+
+    // 後台下載（不阻塞客戶端）
+    downloadAssets(updateList, maxParallel || 3, hashVerify !== false)
+      .then(results => {
+        console.log(`[SW] 資源更新完成:`, results);
+
+        // 通知所有客戶端更新完成
+        self.clients.matchAll().then(clients => {
+          clients.forEach(client => {
+            client.postMessage({
+              type: 'UPDATE_ASSETS_COMPLETE',
+              success: results.failed === 0,
+              updated: results.updated,
+              failed: results.failed,
+              errors: results.errors
+            });
+          });
+        });
+      })
+      .catch(error => {
+        console.error('[SW] 資源更新失敗:', error);
+        self.clients.matchAll().then(clients => {
+          clients.forEach(client => {
+            client.postMessage({
+              type: 'UPDATE_ASSETS_COMPLETE',
+              success: false,
+              error: error.message
+            });
+          });
+        });
+      });
+
+    // 立即回應客戶端（後台繼續下載）
+    if (event.ports && event.ports[0]) {
+      event.ports[0].postMessage({ type: 'UPDATE_ASSETS_STARTED' });
     }
   }
 });
@@ -78,6 +215,36 @@ self.addEventListener('fetch', event => {
 
   // Skip cross-origin requests
   if (url.origin !== location.origin) {
+    return;
+  }
+
+  // Asset manifest - Network First with fallback
+  if (url.pathname.endsWith('assets-manifest.json')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const clone = response.clone();
+          if (response.status === 200) {
+            caches.open(MANIFEST_CACHE_NAME).then(cache => {
+              cache.put(event.request, clone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // 嘗試從快取獲取舊的清單
+          return caches.match(event.request, { cacheName: MANIFEST_CACHE_NAME }).then(cached => {
+            if (cached) {
+              console.log('[SW] 使用快取的資源清單');
+              return cached;
+            }
+            console.warn('[SW] 無法獲取資源清單，且無快取版本');
+            return new Response(JSON.stringify({ assets: {} }), {
+              headers: { 'Content-Type': 'application/json' }
+            });
+          });
+        })
+    );
     return;
   }
 

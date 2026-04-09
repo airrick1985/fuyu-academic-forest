@@ -207,4 +207,25 @@ if ('serviceWorker' in navigator) {
       });
     }
   });
+
+  // ============== 資源動態更新管理 ==============
+  // 在應用版本檢查後初始化資源管理器
+  if (typeof AssetUpdateManager !== 'undefined') {
+    window.assetUpdateManager = new AssetUpdateManager({
+      manifestUrl: '/assets-manifest.json',
+      checkInterval: 30 * 60 * 1000, // 30分鐘檢查一次
+      fetchTimeout: 5000,
+      retryCount: 3,
+      maxParallelDownloads: 3,
+      hashVerify: true,
+      autoRefresh: true
+    });
+
+    // 頁面完全加載後初始化資源管理器
+    window.addEventListener('load', () => {
+      window.assetUpdateManager.init().catch(err => {
+        console.error('[PWA] 資源管理器初始化失敗:', err);
+      });
+    });
+  }
 }

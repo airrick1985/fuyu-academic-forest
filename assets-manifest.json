@@ -1,0 +1,512 @@
+{
+  "version": "1.0.0",
+  "timestamp": 1775723213271,
+  "generatedAt": "2026-04-09T08:26:53.271Z",
+  "assets": {
+    "assets/images/360pano.webp": {
+      "hash": "e2be2b0eff05",
+      "size": 23588816,
+      "mtime": 1774516760651.5183
+    },
+    "assets/images/3D-01.webp": {
+      "hash": "97e6daac0b1f",
+      "size": 770890,
+      "mtime": 1774585118039.989
+    },
+    "assets/images/3D-02.webp": {
+      "hash": "0c8446ab3642",
+      "size": 1261374,
+      "mtime": 1774585133456.1204
+    },
+    "assets/images/CCPark.webp": {
+      "hash": "e3aee98db72e",
+      "size": 415208,
+      "mtime": 1774585197565.1072
+    },
+    "assets/images/COSTCO.webp": {
+      "hash": "1baade8a7c32",
+      "size": 408100,
+      "mtime": 1774585214859.1597
+    },
+    "assets/images/DECATHLON.webp": {
+      "hash": "c615f5b11015",
+      "size": 614536,
+      "mtime": 1774585228041.6074
+    },
+    "assets/images/GPES.webp": {
+      "hash": "533956ecda43",
+      "size": 307860,
+      "mtime": 1774585296811.4082
+    },
+    "assets/images/GWJH.webp": {
+      "hash": "470cf1afb5d0",
+      "size": 477886,
+      "mtime": 1774585311693.7412
+    },
+    "assets/images/HSP.webp": {
+      "hash": "3e5176799f43",
+      "size": 464522,
+      "mtime": 1774585326087.21
+    },
+    "assets/images/KHPark.webp": {
+      "hash": "b25dffd97ca7",
+      "size": 461934,
+      "mtime": 1774585340922.8955
+    },
+    "assets/images/NYIO.webp": {
+      "hash": "f3160fc9a337",
+      "size": 402846,
+      "mtime": 1774585354143.3706
+    },
+    "assets/images/Starbucks.webp": {
+      "hash": "801d950eadf8",
+      "size": 326052,
+      "mtime": 1774585366677.1792
+    },
+    "assets/images/Sun Yat-sen Freeway.webp": {
+      "hash": "492135d02c88",
+      "size": 275778,
+      "mtime": 1774585383550.6426
+    },
+    "assets/images/TSMC.webp": {
+      "hash": "4603118399fa",
+      "size": 463814,
+      "mtime": 1774585409411.2683
+    },
+    "assets/images/architect-01.webp": {
+      "hash": "d80fea55c444",
+      "size": 140112,
+      "mtime": 1774585152741.568
+    },
+    "assets/images/architect-02.webp": {
+      "hash": "5e8217e7a1c1",
+      "size": 610464,
+      "mtime": 1774585175800.1982
+    },
+    "assets/images/coming-soon-bg.webp": {
+      "hash": "f71df34ff23d",
+      "size": 184444,
+      "mtime": 1774585427210.1545
+    },
+    "assets/images/construction method/ETAG 感應門禁.webp": {
+      "hash": "900a44de14a8",
+      "size": 261384,
+      "mtime": 1774699003761.771
+    },
+    "assets/images/construction method/中庭植栽防水.webp": {
+      "hash": "9b4c9c062712",
+      "size": 496030,
+      "mtime": 1774697089427.9133
+    },
+    "assets/images/construction method/匯流排EMS.webp": {
+      "hash": "853e0e067a6e",
+      "size": 106080,
+      "mtime": 1774699308338.5276
+    },
+    "assets/images/construction method/樑柱綁筋.webp": {
+      "hash": "01cb0b05f59f",
+      "size": 489828,
+      "mtime": 1774697834132.11
+    },
+    "assets/images/construction method/樓層接縫防水.webp": {
+      "hash": "ab5462821754",
+      "size": 500126,
+      "mtime": 1774696173304.0103
+    },
+    "assets/images/construction method/窗框防水.webp": {
+      "hash": "29d91d407977",
+      "size": 613706,
+      "mtime": 1774695940416.6763
+    },
+    "assets/images/construction method/衛浴止水墩.webp": {
+      "hash": "9bdd935d9192",
+      "size": 331102,
+      "mtime": 1774695315279.776
+    },
+    "assets/images/construction method/衛浴防水.webp": {
+      "hash": "c916227ccbef",
+      "size": 245996,
+      "mtime": 1774694155297.9158
+    },
+    "assets/images/construction method/陽台露臺防水.webp": {
+      "hash": "87bb47f5fa74",
+      "size": 348866,
+      "mtime": 1774696643448.757
+    },
+    "assets/images/construction method/頂樓防水.webp": {
+      "hash": "279c4c3a8b35",
+      "size": 431798,
+      "mtime": 1774702031877.083
+    },
+    "assets/images/equipment/ES41890.png": {
+      "hash": "b44c614a265b",
+      "size": 428125,
+      "mtime": 1774607538189.954
+    },
+    "assets/images/equipment/ES41890_ID2.webp": {
+      "hash": "0537952e617f",
+      "size": 422430,
+      "mtime": 1774607672422.7808
+    },
+    "assets/images/equipment/GRASS.webp": {
+      "hash": "4a0a5256104f",
+      "size": 168782,
+      "mtime": 1774676867211.8809
+    },
+    "assets/images/equipment/Gemini_Generated_Image_3lfaxp3lfaxp3lfa.jpg": {
+      "hash": "fe4da5e09c0f",
+      "size": 1821271,
+      "mtime": 1774635009276.0056
+    },
+    "assets/images/equipment/LEICHT-2.webp": {
+      "hash": "fe5aa96ef5d5",
+      "size": 151808,
+      "mtime": 1774604791495.752
+    },
+    "assets/images/equipment/LEICHT-3.webp": {
+      "hash": "4f3f1586699c",
+      "size": 616646,
+      "mtime": 1774606374953.4504
+    },
+    "assets/images/equipment/LEICHT-4.webp": {
+      "hash": "180871cb53fd",
+      "size": 587482,
+      "mtime": 1774607398999.9905
+    },
+    "assets/images/equipment/LEICHT.webp": {
+      "hash": "d7a462074a2b",
+      "size": 170048,
+      "mtime": 1774603913214.0603
+    },
+    "assets/images/equipment/LGHIMACS.webp": {
+      "hash": "4b1006834272",
+      "size": 614150,
+      "mtime": 1774605618792.261
+    },
+    "assets/images/equipment/TOTO-1.webp": {
+      "hash": "08f154efc365",
+      "size": 199160,
+      "mtime": 1774686004999.5215
+    },
+    "assets/images/equipment/TOTO蓮蓬頭.webp": {
+      "hash": "a29168854a1d",
+      "size": 49492,
+      "mtime": 1774686957910.8193
+    },
+    "assets/images/equipment/TOTO馬桶.webp": {
+      "hash": "d1875f7038e6",
+      "size": 364850,
+      "mtime": 1774686542427.6282
+    },
+    "assets/images/equipment/YKK-1.webp": {
+      "hash": "2ba65ddd45ca",
+      "size": 140100,
+      "mtime": 1774682780114.9502
+    },
+    "assets/images/equipment/YKK-2.webp": {
+      "hash": "87833bbc5de1",
+      "size": 170334,
+      "mtime": 1774684312484.7124
+    },
+    "assets/images/equipment/YKK-3.webp": {
+      "hash": "0812945b4c78",
+      "size": 121234,
+      "mtime": 1774684527536.3518
+    },
+    "assets/images/equipment/YKK-4.webp": {
+      "hash": "6f461d9ac9c9",
+      "size": 654374,
+      "mtime": 1774685118532.338
+    },
+    "assets/images/equipment/YKK-5.webp": {
+      "hash": "40f654cb5062",
+      "size": 307770,
+      "mtime": 1774685566515.3352
+    },
+    "assets/images/equipment/kronotex-2.webp": {
+      "hash": "7c2d694c0d15",
+      "size": 492092,
+      "mtime": 1774630956483.289
+    },
+    "assets/images/equipment/kronotex-3.webp": {
+      "hash": "7bfd43ae7e6a",
+      "size": 407228,
+      "mtime": 1774588031140.6777
+    },
+    "assets/images/equipment/kronotex.webp": {
+      "hash": "5477bcc1b851",
+      "size": 162634,
+      "mtime": 1774604436563.246
+    },
+    "assets/images/equipment/panasonic室內門-2.webp": {
+      "hash": "9077c0e5156a",
+      "size": 102450,
+      "mtime": 1774681442071.0618
+    },
+    "assets/images/equipment/panasonic室內門-3.webp": {
+      "hash": "311e2ddd0072",
+      "size": 144512,
+      "mtime": 1774682214383.9102
+    },
+    "assets/images/equipment/panasonic室內門-4.webp": {
+      "hash": "e7cb00c83e3b",
+      "size": 136276,
+      "mtime": 1774682435710.206
+    },
+    "assets/images/equipment/panasonic室內門.webp": {
+      "hash": "b86309a6e8da",
+      "size": 432030,
+      "mtime": 1774587923170.7102
+    },
+    "assets/images/equipment/waferlock.webp": {
+      "hash": "a273cee81c94",
+      "size": 22800,
+      "mtime": 1774586816860.353
+    },
+    "assets/images/equipment/主浴面盆.webp": {
+      "hash": "c9e9009f1440",
+      "size": 5792,
+      "mtime": 1774687327236.3096
+    },
+    "assets/images/equipment/全熱交換機-1.webp": {
+      "hash": "518ca507e2f4",
+      "size": 223504,
+      "mtime": 1774678895726.1086
+    },
+    "assets/images/equipment/全熱交換機-2.webp": {
+      "hash": "24440a6a75e8",
+      "size": 381180,
+      "mtime": 1774679449335.806
+    },
+    "assets/images/equipment/全熱交換機-3.webp": {
+      "hash": "a25288162893",
+      "size": 248578,
+      "mtime": 1774680665188.3193
+    },
+    "assets/images/equipment/微波烤箱.webp": {
+      "hash": "71d14888d9f2",
+      "size": 54364,
+      "mtime": 1774631156042.9404
+    },
+    "assets/images/equipment/排油煙機.webp": {
+      "hash": "ef2a66db6c2e",
+      "size": 86378,
+      "mtime": 1774633051723.5212
+    },
+    "assets/images/equipment/次浴面盆.webp": {
+      "hash": "7079ffa16a02",
+      "size": 9122,
+      "mtime": 1774687511206.9663
+    },
+    "assets/images/equipment/水槽.webp": {
+      "hash": "f2a781920446",
+      "size": 205270,
+      "mtime": 1774635070544.652
+    },
+    "assets/images/equipment/水龍頭.webp": {
+      "hash": "8cd79a1acc94",
+      "size": 42820,
+      "mtime": 1774634252395.882
+    },
+    "assets/images/equipment/洗碗機.webp": {
+      "hash": "c203fde68cbb",
+      "size": 109886,
+      "mtime": 1774630442476.4585
+    },
+    "assets/images/equipment/浴室暖風機-2.webp": {
+      "hash": "f51f91ae7a61",
+      "size": 181018,
+      "mtime": 1774704448542.6624
+    },
+    "assets/images/equipment/浴室暖風機-3.webp": {
+      "hash": "374e5d9a3f5e",
+      "size": 224380,
+      "mtime": 1774704721250.8423
+    },
+    "assets/images/equipment/浴室暖風機.webp": {
+      "hash": "0d8eff1ae966",
+      "size": 198852,
+      "mtime": 1774703992065.3572
+    },
+    "assets/images/equipment/烘碗機.webp": {
+      "hash": "0122c0d8fb2c",
+      "size": 46056,
+      "mtime": 1774632739144.6062
+    },
+    "assets/images/equipment/玄關門.webp": {
+      "hash": "2cb4578abdde",
+      "size": 344672,
+      "mtime": 1774586758404.6326
+    },
+    "assets/images/equipment/瓦斯爐.webp": {
+      "hash": "d8e48f10c480",
+      "size": 132312,
+      "mtime": 1774633071981.919
+    },
+    "assets/images/equipment/維夫拉克電子鎖.webp": {
+      "hash": "9390e1a07572",
+      "size": 270738,
+      "mtime": 1774605442919.764
+    },
+    "assets/images/equipment/電動曬衣架.webp": {
+      "hash": "412c5d38339f",
+      "size": 174664,
+      "mtime": 1774678326274.7031
+    },
+    "assets/images/equipment/電器收納櫃.webp": {
+      "hash": "b0e3b37b73b6",
+      "size": 232648,
+      "mtime": 1774634499795.821
+    },
+    "assets/images/equipment/面盆龍頭.webp": {
+      "hash": "c41ae962c548",
+      "size": 22392,
+      "mtime": 1774687406347.6235
+    },
+    "assets/images/fuyu-01.webp": {
+      "hash": "61c6f603602b",
+      "size": 387490,
+      "mtime": 1774629247320.9092
+    },
+    "assets/images/fuyu-02.webp": {
+      "hash": "bbabdf8fd6f7",
+      "size": 398164,
+      "mtime": 1774585260314.9966
+    },
+    "assets/images/fuyu-03.webp": {
+      "hash": "084cef61edd9",
+      "size": 294482,
+      "mtime": 1774585284686.3125
+    },
+    "assets/images/fuyu-logo.webp": {
+      "hash": "3d9de96c6733",
+      "size": 67024,
+      "mtime": 1774585443831.5818
+    },
+    "assets/images/hero-forest.webp": {
+      "hash": "4fe5bb0ba7fd",
+      "size": 2208592,
+      "mtime": 1774543339148.1106
+    },
+    "assets/images/layout/1F.webp": {
+      "hash": "5e93a422cbdb",
+      "size": 2773442,
+      "mtime": 1775185484752.9167
+    },
+    "assets/images/layout/2F.webp": {
+      "hash": "915473b47bba",
+      "size": 320160,
+      "mtime": 1774526425373.7942
+    },
+    "assets/images/layout/3F.webp": {
+      "hash": "25fed9465011",
+      "size": 424856,
+      "mtime": 1774526415037.588
+    },
+    "assets/images/layout/4-14F.webp": {
+      "hash": "607eae26383b",
+      "size": 494450,
+      "mtime": 1774850636951.0967
+    },
+    "assets/images/layout/A1.webp": {
+      "hash": "7b281953edf9",
+      "size": 486466,
+      "mtime": 1775723068579.6506
+    },
+    "assets/images/layout/A2.webp": {
+      "hash": "8c96cee92ab1",
+      "size": 480540,
+      "mtime": 1775723068581.9531
+    },
+    "assets/images/layout/A3.webp": {
+      "hash": "b02f34a0b156",
+      "size": 409842,
+      "mtime": 1775723068585.802
+    },
+    "assets/images/layout/A5.webp": {
+      "hash": "fd7df68c05f0",
+      "size": 451382,
+      "mtime": 1775723068590.961
+    },
+    "assets/images/layout/A6.webp": {
+      "hash": "4b0908c53645",
+      "size": 396310,
+      "mtime": 1775723068594.624
+    },
+    "assets/images/layout/A7.webp": {
+      "hash": "7acfcd643364",
+      "size": 491178,
+      "mtime": 1775723068599.2166
+    },
+    "assets/images/layout/A8.webp": {
+      "hash": "1b88691e949b",
+      "size": 556400,
+      "mtime": 1775723068604.29
+    },
+    "assets/images/layout/B1.webp": {
+      "hash": "dac33f8db4d3",
+      "size": 430100,
+      "mtime": 1774526351409.1572
+    },
+    "assets/images/layout/B2.webp": {
+      "hash": "ec0b1082479a",
+      "size": 558572,
+      "mtime": 1774526372030.0217
+    },
+    "assets/images/layout/B3.webp": {
+      "hash": "de789ed89c59",
+      "size": 590890,
+      "mtime": 1774526388984.5342
+    },
+    "assets/images/layout/background.webp": {
+      "hash": "15a9db011b4e",
+      "size": 476652,
+      "mtime": 1774537569463.2417
+    },
+    "assets/images/layout/high.webp": {
+      "hash": "ea0c4a069377",
+      "size": 7424002,
+      "mtime": 1774948942922.119
+    },
+    "assets/images/layout/low.webp": {
+      "hash": "0b28bc313e10",
+      "size": 1181632,
+      "mtime": 1774542130975.0408
+    },
+    "assets/images/layout/midum.webp": {
+      "hash": "bd558896d548",
+      "size": 1141304,
+      "mtime": 1774542180142.7144
+    },
+    "assets/images/location.webp": {
+      "hash": "d58772ab3d78",
+      "size": 3012750,
+      "mtime": 1774519278386.4092
+    },
+    "assets/images/train-station.webp": {
+      "hash": "8a7d036c3c90",
+      "size": 402604,
+      "mtime": 1774585394650.641
+    },
+    "assets/images/xuesen_logo.webp": {
+      "hash": "fab186b97e0f",
+      "size": 112856,
+      "mtime": 1774585458700.3127
+    },
+    "assets/pannellum/pannellum.min.css": {
+      "hash": "273b96f3a2ec",
+      "size": 9954,
+      "mtime": 1775190612034.5828
+    },
+    "assets/pannellum/pannellum.min.js": {
+      "hash": "8e7497a79249",
+      "size": 56525,
+      "mtime": 1775190611728.9397
+    },
+    "assets/sound/BGM.mp3": {
+      "hash": "c9e9e3376c99",
+      "size": 3732702,
+      "mtime": 1774532222924.2942
+    }
+  }
+}
