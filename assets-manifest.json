@@ -1,7 +1,7 @@
 {
-  "version": "1.0.9",
-  "timestamp": 1775733202336,
-  "generatedAt": "2026-04-09T11:13:22.336Z",
+  "version": "1.0.10",
+  "timestamp": 1775733820289,
+  "generatedAt": "2026-04-09T11:23:40.289Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "e2be2b0eff05",
@@ -489,6 +489,11 @@
       "mtime": 1774850636951.0967
     },
     "assets/images/layout/A1.webp": {
+      "hash": "a5a167a5adf3",
+      "size": 451380,
+      "mtime": 1775723381522.165
+    },
+    "assets/images/layout/A1.webp.bak": {
       "hash": "c3e28b06e5f0",
       "size": 440466,
       "mtime": 1775732870236.4453
@@ -689,9 +694,9 @@
       "mtime": 1774155032212.1345
     },
     "js/pwa-register.js": {
-      "hash": "81b43075d2d1",
-      "size": 13550,
-      "mtime": 1775731772506.1667
+      "hash": "ef36dd7ae34c",
+      "size": 14280,
+      "mtime": 1775733362934.6536
     },
     "js/spa-router.js": {
       "hash": "54a9f560e32c",
