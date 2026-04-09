@@ -257,6 +257,11 @@ if ('serviceWorker' in navigator) {
       .then(registration => {
         console.log('[PWA] Service Worker registered successfully');
 
+        // 立即檢查 Service Worker 更新
+        registration.update().catch(err => {
+          console.error('[PWA] Initial update check failed:', err);
+        });
+
         // 檢查更新間隔改為 1 小時
         setInterval(() => {
           registration.update().catch(err => {

@@ -120,26 +120,54 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Static assets (CSS, JS, images, fonts) - Cache First strategy
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) {
-        return cached;
-      }
-      return fetch(event.request).then(response => {
-        // Clone and cache successful responses
-        const clone = response.clone();
-        if (response.status === 200) {
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, clone);
+  // Static assets (CSS, JS, images, fonts) - Network First for JS, Cache First for others
+  const isJavaScript = event.request.url.endsWith('.js');
+
+  if (isJavaScript) {
+    // JavaScript files - Network First to ensure latest code is always loaded
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const clone = response.clone();
+          if (response.status === 200) {
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, clone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request).then(cached => {
+            if (cached) {
+              return cached;
+            }
+            console.warn('Fetch failed for:', event.request.url);
+            return new Response('Network error', { status: 503 });
           });
+        })
+    );
+  } else {
+    // Other assets - Cache First strategy
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) {
+          return cached;
         }
-        return response;
-      }).catch(() => {
-        // Graceful fallback for failed requests
-        console.warn('Fetch failed for:', event.request.url);
-        return new Response('Network error', { status: 503 });
-      });
-    })
-  );
+        return fetch(event.request).then(response => {
+          // Clone and cache successful responses
+          const clone = response.clone();
+          if (response.status === 200) {
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, clone);
+            });
+          }
+          return response;
+        }).catch(() => {
+          // Graceful fallback for failed requests
+          console.warn('Fetch failed for:', event.request.url);
+          return new Response('Network error', { status: 503 });
+        });
+      })
+    );
+  }
 });

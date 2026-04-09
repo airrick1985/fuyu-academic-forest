@@ -99,38 +99,58 @@
 
 ## 開發者部署指南
 
-### 步驟 1：更新應用版本
+### 每次更新的 3 個步驟
 
-在 HTML 的 `<head>` 中更新版本號：
+#### 步驟 1：更新應用版本
+
+在 **所有 HTML 檔案** 的 `<head>` 中更新版本號：
 ```html
 <meta name="app-version" content="1.0.1">
 ```
 
-### 步驟 2：更新 version.json
+#### 步驟 2：增加資源版本參數 ⭐ 重要！
 
-```bash
-# 編輯 version.json
+在所有 HTML 檔案中，為 CSS 和 JS 添加版本參數（**確保舊用戶快取失效**）：
+```html
+<!-- CSS -->
+<link rel="stylesheet" href="css/global.css?v=1.0.1">
+<link rel="stylesheet" href="css/variables.css?v=1.0.1">
+
+<!-- JS -->
+<script src="js/topbar.js?v=1.0.1"></script>
+<script src="js/pwa-register.js?v=1.0.1" defer></script>
+```
+
+**為什麼重要？**
+- 版本參數強制瀏覽器視為新資源
+- 已安裝 PWA 的舊用戶無需按 Ctrl+R 就能更新
+- 否則舊用戶可能看不到新的 pwa-register.js 代碼
+
+#### 步驟 3：更新 version.json
+
+```json
 {
   "version": "1.0.1",
   "timestamp": 1712832000000
 }
 ```
 
-### 步驟 3：部署到伺服器
+#### 步驟 4：部署到伺服器
 
 確保以下文件都已上傳：
 - `version.json` - 版本文件
 - `js/pwa-register.js` - 更新邏輯
 - `sw.js` - Service Worker
-- 所有 HTML 文件
+- 所有 HTML 文件（帶新版本參數）
 - 更新的資源文件（CSS、JS、圖片等）
 
-### 步驟 4：驗證部署
+#### 步驟 5：驗證部署
 
 1. 打開應用，檢查瀏覽器控制台
 2. 應該看到日誌：
    ```
    [PWA] Service Worker registered successfully
+   [PWA] Initial update check failed: ...（或成功）
    [PWA] 檢測到版本更新：1.0.0 → 1.0.1
    ```
 3. 應用會自動顯示加載覆蓋層並重新加載
