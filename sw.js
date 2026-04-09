@@ -318,29 +318,50 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Static assets - Network First strategy for all (優先從網絡獲取最新版本，失敗才用緩存)
+  // Static assets - Network First with quick timeout
+  // 優先網絡，無網路時快速回退到緩存（不阻塞頁面）
+
+  const isCssOrJs = event.request.url.endsWith('.css') || event.request.url.endsWith('.js');
+  const networkTimeoutMs = isCssOrJs ? 2000 : 5000; // CSS/JS 2秒超時，其他 5秒
+
+  // Promise 競速：網絡 vs 緩存超時
   event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        const clone = response.clone();
+    Promise.race([
+      // 嘗試從網絡獲取
+      fetch(event.request).then(response => {
         if (response.status === 200) {
+          const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, clone);
           });
+          console.log(`[SW] 📡 網絡: ${url.pathname}`);
         }
-        console.log(`[SW] 📡 Network First - 從網絡獲取: ${url.pathname}`);
         return response;
+      }),
+      // 超時後回退緩存
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          caches.match(event.request).then(cached => {
+            if (cached) {
+              console.log(`[SW] ⏱️ 超時→緩存: ${url.pathname}`);
+              resolve(cached);
+            } else {
+              console.warn(`[SW] ❌ 無緩存，繼續等待網絡: ${url.pathname}`);
+              reject();
+            }
+          });
+        }, networkTimeoutMs);
       })
-      .catch(() => {
-        // 網絡失敗，嘗試從緩存獲取
-        return caches.match(event.request).then(cached => {
-          if (cached) {
-            console.log(`[SW] 📦 使用緩存: ${url.pathname}`);
-            return cached;
-          }
-          console.warn(`[SW] ❌ 無法獲取: ${event.request.url}`);
-          return new Response('Network error', { status: 503 });
-        });
-      })
+    ]).catch(() => {
+      // 兩個都失敗，返回緩存作為最後手段
+      return caches.match(event.request).then(cached => {
+        if (cached) {
+          console.log(`[SW] 📦 最終緩存: ${url.pathname}`);
+          return cached;
+        }
+        console.error(`[SW] ❌ 完全無法獲取: ${event.request.url}`);
+        return new Response('Network error', { status: 503 });
+      });
+    })
   );
 });
