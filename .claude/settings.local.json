@@ -11,7 +11,8 @@
       "Bash(PYTHONIOENCODING=utf-8 python3)",
       "Bash(git add:*)",
       "Bash(git commit -m ':*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git commit -m '升級 GitHub Actions 至最新版本以支持 Node.js 24:*)"
     ]
   }
 }
