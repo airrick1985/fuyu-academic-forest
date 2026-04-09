@@ -272,9 +272,28 @@ if ('serviceWorker' in navigator) {
               console.log('[PWA] 初始化資源更新管理器...');
 
               // 動態計算清單 URL（考慮 GitHub Pages 子路徑）
-              const basePath = window.location.pathname.replace(/\/$/, '').replace(/\/[^/]*\.html?$/, '') || '';
+              // 方法：使用 window.location 計算基礎路徑
+              let basePath = window.location.pathname;
+
+              // 移除尾部斜槓
+              if (basePath.endsWith('/')) {
+                basePath = basePath.slice(0, -1);
+              }
+
+              // 移除 HTML 文件名（如果有）
+              if (basePath.includes('.html')) {
+                basePath = basePath.substring(0, basePath.lastIndexOf('/'));
+              }
+
+              // 對於根路徑，使用空字符串
+              if (basePath === '' || basePath === '/fuyu-academic-forest') {
+                basePath = basePath || '/fuyu-academic-forest';
+              }
+
               const manifestUrl = basePath + '/assets-manifest.json';
+              console.log('[PWA] 計算基礎路徑:', basePath);
               console.log('[PWA] 清單 URL:', manifestUrl);
+              console.log('[PWA] 當前 pathname:', window.location.pathname);
 
               window.assetUpdateManager = new AssetUpdateManager({
                 manifestUrl: manifestUrl,
