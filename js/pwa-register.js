@@ -243,15 +243,14 @@ if ('serviceWorker' in navigator) {
   sessionStorage.setItem('app-version', currentVersion);
 
   // 在頁面加載時執行初始檢查
-  if (document.readyState === 'loading') {
-    // 文件仍在加載中
-    document.addEventListener('DOMContentLoaded', () => {
-      performInitialUpdateCheck();
-    });
-  } else {
-    // 文件已加載完成
-    performInitialUpdateCheck();
-  }
+  // [禁用] 防止無限版本更新循環 - 直到根本問題解決
+  // if (document.readyState === 'loading') {
+  //   document.addEventListener('DOMContentLoaded', () => {
+  //     performInitialUpdateCheck();
+  //   });
+  // } else {
+  //   performInitialUpdateCheck();
+  // }
 
   window.addEventListener('load', () => {
     navigator.serviceWorker
@@ -306,44 +305,46 @@ if ('serviceWorker' in navigator) {
   });
 
   // 頁面重新獲得焦點時檢查更新
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && navigator.serviceWorker.controller) {
-      const newVersion = getAppVersion();
-      const storedVersion = sessionStorage.getItem('app-version');
-
-      checkRemoteVersion().then(remoteVersion => {
-        if (remoteVersion && storedVersion && storedVersion !== remoteVersion) {
-          console.log(`[PWA] 後台版本更新檢測：${storedVersion} → ${remoteVersion}`);
-          showUpdateBanner(storedVersion, remoteVersion);
-          sessionStorage.setItem('app-version', remoteVersion);
-        }
-      });
-
-      navigator.serviceWorker.controller.postMessage({
-        type: 'CHECK_VERSION',
-        version: newVersion
-      });
-    }
-  });
+  // [禁用] 防止無限版本更新循環 - 直到根本問題解決
+  // document.addEventListener('visibilitychange', () => {
+  //   if (!document.hidden && navigator.serviceWorker.controller) {
+  //     const newVersion = getAppVersion();
+  //     const storedVersion = sessionStorage.getItem('app-version');
+  //
+  //     checkRemoteVersion().then(remoteVersion => {
+  //       if (remoteVersion && storedVersion && storedVersion !== remoteVersion) {
+  //         console.log(`[PWA] 後台版本更新檢測：${storedVersion} → ${remoteVersion}`);
+  //         showUpdateBanner(storedVersion, remoteVersion);
+  //         sessionStorage.setItem('app-version', remoteVersion);
+  //       }
+  //     });
+  //
+  //     navigator.serviceWorker.controller.postMessage({
+  //       type: 'CHECK_VERSION',
+  //       version: newVersion
+  //     });
+  //   }
+  // });
 
   // ============== 資源動態更新管理 ==============
-  // 在應用版本檢查後初始化資源管理器
-  if (typeof AssetUpdateManager !== 'undefined') {
-    window.assetUpdateManager = new AssetUpdateManager({
-      manifestUrl: '/assets-manifest.json',
-      checkInterval: 30 * 60 * 1000, // 30分鐘檢查一次
-      fetchTimeout: 5000,
-      retryCount: 3,
-      maxParallelDownloads: 3,
-      hashVerify: true,
-      autoRefresh: true
-    });
+  // [禁用] 防止無限版本更新循環 - 直到根本問題解決
+  // if (typeof AssetUpdateManager !== 'undefined') {
+  //   window.assetUpdateManager = new AssetUpdateManager({
+  //     manifestUrl: '/assets-manifest.json',
+  //     checkInterval: 30 * 60 * 1000,
+  //     fetchTimeout: 5000,
+  //     retryCount: 3,
+  //     maxParallelDownloads: 3,
+  //     hashVerify: true,
+  //     autoRefresh: true
+  //   });
+  //
+  //   window.addEventListener('load', () => {
+  //     window.assetUpdateManager.init().catch(err => {
+  //       console.error('[PWA] 資源管理器初始化失敗:', err);
+  //     });
+  //   });
+  // }
 
-    // 頁面完全加載後初始化資源管理器
-    window.addEventListener('load', () => {
-      window.assetUpdateManager.init().catch(err => {
-        console.error('[PWA] 資源管理器初始化失敗:', err);
-      });
-    });
-  }
+  console.log('[PWA] 自動版本檢查已禁用（防止無限循環）');
 }
