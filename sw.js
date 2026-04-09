@@ -170,10 +170,19 @@ self.addEventListener('message', event => {
     const newVersion = event.data.version;
     if (newVersion !== CACHE_VERSION) {
       console.log(`[SW] Version update detected: ${CACHE_VERSION} → ${newVersion}`);
+      const oldVersion = CACHE_VERSION;
       CACHE_VERSION = newVersion;
       CACHE_NAME = `fuyu-forest-${CACHE_VERSION}`;
-      // Trigger activation to clean up old caches
-      self.skipWaiting();
+
+      // 立即清除舊版本緩存
+      caches.keys().then(cacheNames => {
+        cacheNames.forEach(cacheName => {
+          if (cacheName.includes(`fuyu-forest-${oldVersion}`)) {
+            console.log(`[SW] 🗑️ 清除舊緩存: ${cacheName}`);
+            caches.delete(cacheName);
+          }
+        });
+      });
 
       // Notify client that update is complete
       if (event.ports && event.ports[0]) {
@@ -309,54 +318,29 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Static assets (CSS, JS, images, fonts) - Network First for JS, Cache First for others
-  const isJavaScript = event.request.url.endsWith('.js');
-
-  if (isJavaScript) {
-    // JavaScript files - Network First to ensure latest code is always loaded
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          const clone = response.clone();
-          if (response.status === 200) {
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, clone);
-            });
-          }
-          return response;
-        })
-        .catch(() => {
-          return caches.match(event.request).then(cached => {
-            if (cached) {
-              return cached;
-            }
-            console.warn('Fetch failed for:', event.request.url);
-            return new Response('Network error', { status: 503 });
+  // Static assets - Network First strategy for all (優先從網絡獲取最新版本，失敗才用緩存)
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        const clone = response.clone();
+        if (response.status === 200) {
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, clone);
           });
-        })
-    );
-  } else {
-    // Other assets - Cache First strategy
-    event.respondWith(
-      caches.match(event.request).then(cached => {
-        if (cached) {
-          return cached;
         }
-        return fetch(event.request).then(response => {
-          // Clone and cache successful responses
-          const clone = response.clone();
-          if (response.status === 200) {
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, clone);
-            });
+        console.log(`[SW] 📡 Network First - 從網絡獲取: ${url.pathname}`);
+        return response;
+      })
+      .catch(() => {
+        // 網絡失敗，嘗試從緩存獲取
+        return caches.match(event.request).then(cached => {
+          if (cached) {
+            console.log(`[SW] 📦 使用緩存: ${url.pathname}`);
+            return cached;
           }
-          return response;
-        }).catch(() => {
-          // Graceful fallback for failed requests
-          console.warn('Fetch failed for:', event.request.url);
+          console.warn(`[SW] ❌ 無法獲取: ${event.request.url}`);
           return new Response('Network error', { status: 503 });
         });
       })
-    );
-  }
+  );
 });

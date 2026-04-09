@@ -298,6 +298,13 @@ class AssetUpdateManager {
       console.log(`[AssetUpdateManager] 通知 Service Worker 下載 ${updateList.length} 個資源`);
       console.log(`[AssetUpdateManager] 基礎路徑: ${basePath}`);
 
+      // 先發送 CHECK_VERSION 消息，確保 Service Worker 知道新版本（這樣可以清除舊緩存）
+      console.log('[AssetUpdateManager] 首先發送 CHECK_VERSION 消息...');
+      controller.postMessage({
+        type: 'CHECK_VERSION',
+        version: remoteManifest.version
+      });
+
       // 發送消息給 Service Worker
       console.log('[AssetUpdateManager] 發送 UPDATE_ASSETS 消息給 Service Worker...');
       controller.postMessage({

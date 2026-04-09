@@ -1,7 +1,7 @@
 {
-  "version": "1.0.14",
-  "timestamp": 1775734530792,
-  "generatedAt": "2026-04-09T11:35:30.792Z",
+  "version": "1.0.15",
+  "timestamp": 1775734943991,
+  "generatedAt": "2026-04-09T11:42:23.991Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "e2be2b0eff05",
@@ -674,9 +674,9 @@
       "mtime": 1774155053777.8003
     },
     "js/asset-update-manager.js": {
-      "hash": "95386c2214fc",
-      "size": 13112,
-      "mtime": 1775734146575.7087
+      "hash": "ed9bb83961b0",
+      "size": 13418,
+      "mtime": 1775734936920.168
     },
     "js/birds.js": {
       "hash": "5eea9680646d",
