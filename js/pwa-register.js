@@ -271,8 +271,13 @@ if ('serviceWorker' in navigator) {
             if (typeof AssetUpdateManager !== 'undefined') {
               console.log('[PWA] 初始化資源更新管理器...');
 
+              // 動態計算清單 URL（考慮 GitHub Pages 子路徑）
+              const basePath = window.location.pathname.replace(/\/$/, '').replace(/\/[^/]*\.html?$/, '') || '';
+              const manifestUrl = basePath + '/assets-manifest.json';
+              console.log('[PWA] 清單 URL:', manifestUrl);
+
               window.assetUpdateManager = new AssetUpdateManager({
-                manifestUrl: '/assets-manifest.json',
+                manifestUrl: manifestUrl,
                 checkInterval: 15 * 60 * 1000, // 15分鐘定期檢查一次
                 fetchTimeout: 5000,
                 retryCount: 3,
