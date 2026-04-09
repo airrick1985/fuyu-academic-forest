@@ -35,12 +35,6 @@ if (!window._spaRouterInitialized) {
             document.body.className = doc.body.className;
             document.body.innerHTML = doc.body.innerHTML;
 
-            // 立即隱藏新頁面的加載覆蓋層（SPA 路由不需要顯示）
-            const overlay = document.getElementById('pwa-loading-overlay');
-            if (overlay) {
-              overlay.classList.add('hidden');
-            }
-
             // Re-evaluate scripts sequentially (external scripts must load before inline scripts run)
             const scripts = Array.from(document.body.querySelectorAll('script'));
             for (const oldScript of scripts) {
