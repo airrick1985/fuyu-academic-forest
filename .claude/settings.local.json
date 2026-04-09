@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(chmod +x update_html_files.sh)",
+      "Bash(./update_html_files.sh)",
+      "Bash(git checkout:*)",
+      "Bash(chmod +x add_pwa.sh)",
+      "Bash(./add_pwa.sh)",
+      "Bash(python3)",
+      "Bash(PYTHONIOENCODING=utf-8 python3)",
+      "Bash(git add:*)"
     ]
   }
 }

@@ -63,6 +63,17 @@ self.addEventListener('message', event => {
       CACHE_NAME = `fuyu-forest-${CACHE_VERSION}`;
       // Trigger activation to clean up old caches
       self.skipWaiting();
+
+      // Notify client that update is complete
+      if (event.ports && event.ports[0]) {
+        event.ports[0].postMessage({ type: 'UPDATE_COMPLETE' });
+      }
+      // Broadcast to all clients
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({ type: 'UPDATE_COMPLETE', version: newVersion });
+        });
+      });
     }
   }
 });
