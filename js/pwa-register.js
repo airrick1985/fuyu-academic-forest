@@ -16,6 +16,9 @@ if ('serviceWorker' in navigator) {
     }
   };
 
+  // 立即隱藏加載覆蓋層（修復卡住的問題）
+  hideLoadingOverlay();
+
   // 顯示加載覆蓋層
   const showLoadingOverlay = (text = '正在檢查更新...') => {
     const overlay = document.getElementById('pwa-loading-overlay');
