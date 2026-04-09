@@ -29,7 +29,9 @@ if ('serviceWorker' in navigator) {
   // 檢查遠端版本（帶離線降級）
   const checkRemoteVersion = async () => {
     try {
-      const response = await fetch('/fuyu-academic-forest/version.json?t=' + Date.now(), {
+      // Use relative path to be compatible with both localhost and GitHub Pages deployment
+      const versionUrl = new URL('version.json', window.location.href).href;
+      const response = await fetch(versionUrl + '?t=' + Date.now(), {
         cache: 'no-store',
         credentials: 'same-origin'
       });

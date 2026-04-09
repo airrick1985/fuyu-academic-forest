@@ -5,9 +5,9 @@ let CACHE_VERSION = '1.0.0';
 let CACHE_NAME = `fuyu-forest-${CACHE_VERSION}`;
 
 // Core assets to pre-cache on install
+// Note: HTML files are NOT pre-cached to ensure users always get the latest version
+// HTML will be cached on demand using Network First strategy
 const CORE_ASSETS = [
-  '/',
-  '/index.html',
   '/css/variables.css',
   '/css/global.css',
   '/css/topbar.css',
@@ -41,16 +41,21 @@ self.addEventListener('activate', event => {
       console.log(`[SW] Activating with cache version: ${CACHE_VERSION}`);
       return Promise.all(
         cacheNames.map(cacheName => {
-          // Delete caches that don't match current version
+          // Aggressively delete all caches that don't match current version
+          // This ensures old cached resources are immediately removed
           if (!cacheName.includes(CACHE_VERSION)) {
             console.log(`[SW] Deleting old cache: ${cacheName}`);
-            return caches.delete(cacheName);
+            return caches.delete(cacheName).then(() => {
+              console.log(`[SW] Successfully deleted: ${cacheName}`);
+            });
           }
         })
       );
+    }).then(() => {
+      // Ensure new SW takes control immediately
+      return self.clients.claim();
     })
   );
-  self.clients.claim();
 });
 
 // Message event - handle version update from client
