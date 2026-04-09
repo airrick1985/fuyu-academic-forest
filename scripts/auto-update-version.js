@@ -95,7 +95,7 @@ function updateVersionJson(newVersion) {
 }
 
 /**
- * 更新所有 HTML 檔案中的版本號
+ * 更新所有 HTML 檔案中的版本號（meta 標籤和查詢參數）
  */
 function updateHtmlVersions(oldVersion, newVersion) {
   const projectRoot = path.join(__dirname, '..');
@@ -113,21 +113,30 @@ function updateHtmlVersions(oldVersion, newVersion) {
       let content = fs.readFileSync(filePath, 'utf-8');
       const originalContent = content;
 
-      // 更新版本號
+      // 更新 meta 標籤中的版本號
       content = content.replace(
         `content="${oldVersion}"`,
         `content="${newVersion}"`
       );
 
+      // 更新查詢參數 ?v=X.X.X （重要！用於 CSS/JS 快取失效）
+      content = content.replace(
+        new RegExp(`\\?v=${oldVersion.replace(/\./g, '\\.')}`, 'g'),
+        `?v=${newVersion}`
+      );
+
       if (content !== originalContent) {
         fs.writeFileSync(filePath, content, 'utf-8');
         updated++;
+        console.log(`  ✓ ${file}: ${oldVersion} → ${newVersion}`);
       }
     }
   });
 
   if (updated > 0) {
     console.log(`✅ 已更新 ${updated} 個 HTML 檔案的版本號`);
+  } else {
+    console.log(`ℹ️  無需更新 HTML 檔案`);
   }
 }
 
