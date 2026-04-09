@@ -7,27 +7,41 @@ if ('serviceWorker' in navigator) {
     return meta ? meta.getAttribute('content') : '1.0.0';
   };
 
-  // 隱藏加載覆蓋層
+  // 加載覆蓋層狀態標誌
+  let loadingOverlayShown = false;
+
+  // 隱藏加載覆蓋層（帶 SPA 路由安全保護）
   const hideLoadingOverlay = () => {
+    if (!loadingOverlayShown) return;
+
     const overlay = document.getElementById('pwa-loading-overlay');
     if (overlay) {
       overlay.classList.add('hidden');
-      setTimeout(() => overlay.remove(), 500);
+      setTimeout(() => {
+        const elem = document.getElementById('pwa-loading-overlay');
+        if (elem) elem.remove();
+        loadingOverlayShown = false;
+      }, 500);
+    } else {
+      loadingOverlayShown = false;
     }
   };
 
-  // 顯示加載覆蓋層
+  // 顯示加載覆蓋層（帶 SPA 路由安全保護）
   const showLoadingOverlay = (text = '正在檢查更新...') => {
+    if (loadingOverlayShown) return; // 防止重複顯示
+
     const overlay = document.getElementById('pwa-loading-overlay');
     if (overlay) {
       const textEl = overlay.querySelector('.pwa-loading-text');
       if (textEl) textEl.textContent = text;
       overlay.classList.remove('hidden');
+      loadingOverlayShown = true;
     }
   };
 
-  // 檢查遠端版本（帶離線降級）
-  const checkRemoteVersion = async () => {
+  // 檢查遠端版本（帶離線降級和超時保護）
+  const checkRemoteVersion = async (timeoutMs = 3000) => {
     try {
       // 獲取 base 標籤設定的基礎路徑（由 index.html 動態注入）
       const baseHref = document.querySelector('base')?.getAttribute('href') || '/fuyu-academic-forest/';
@@ -36,10 +50,18 @@ if ('serviceWorker' in navigator) {
       const versionUrl = window.location.origin + baseHref + 'version.json?t=' + Date.now();
       console.log('[PWA] 檢查版本 URL:', versionUrl);
 
+      // 添加超時保護，防止長時間掛起
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
       const response = await fetch(versionUrl, {
         cache: 'no-store',
-        credentials: 'same-origin'
+        credentials: 'same-origin',
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
+
       if (response.ok) {
         const data = await response.json();
         console.log('[PWA] 遠端版本:', data.version);
@@ -48,7 +70,11 @@ if ('serviceWorker' in navigator) {
         console.warn('[PWA] 版本檢查返回狀態:', response.status);
       }
     } catch (error) {
-      console.log('[PWA] 無法檢查遠端版本（可能離線）:', error.message);
+      if (error.name === 'AbortError') {
+        console.log('[PWA] 版本檢查超時（3秒）');
+      } else {
+        console.log('[PWA] 無法檢查遠端版本（可能離線）:', error.message);
+      }
     }
     return null;
   };
