@@ -910,6 +910,10 @@ body.mat-debug-mode .mat-hotspot .hotspot-label::after {
     width: 100%;
 }
 
+.bath-tiles-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
 .equip-card {
     background: transparent;
     border-radius: 0;

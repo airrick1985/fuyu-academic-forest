@@ -163,6 +163,18 @@
         </div>
     </div>
 
+    <!-- 衛浴地壁磚 Grid 覆蓋層 (點擊「衛浴地壁磚」按鈕時使用) -->
+    <div class="equip-grid-overlay" id="bathTilesGridOverlay">
+        <button class="equip-grid-overlay-close" id="bathTilesGridClose">✕</button>
+        <div class="equip-grid-overlay-content">
+            <h2 class="equip-grid-overlay-title">衛浴地壁磚</h2>
+            <p class="equip-grid-overlay-subtitle">精選高品質磚材，打造耐用美觀的衛浴空間。</p>
+            <div class="equip-grid bath-tiles-grid" id="bathTilesGridContainer"></div>
+            <p class="equip-grid-disclaimer">※ A3、A6 兩間套房衛浴皆採用主浴建材</p>
+            <p class="equip-grid-disclaimer">※ 以上建材設備圖文介紹皆為示意，以實際交屋為準。賣方保留建材設備品牌規格變更之權利。</p>
+        </div>
+    </div>
+
     <!-- 設備燈箱 (點擊 Grid 設備卡片時使用) -->
     <div class="equip-lightbox-overlay" id="equipLightboxOverlay">
         <button class="equip-lightbox-close" id="equipLightboxClose">✕</button>
@@ -795,6 +807,34 @@
                 }
             ];
 
+            // ===== 衛浴地壁磚 =====
+            const bathTilesEquipments = [
+                {
+                    name: '主浴壁磚',
+                    src: 'assets/images/equipment/主浴壁磚.webp'
+                },
+                {
+                    name: '主浴淋浴區花磚',
+                    src: 'assets/images/equipment/主浴花磚.webp'
+                },
+                {
+                    name: '主浴地磚',
+                    src: 'assets/images/equipment/主浴地磚.webp'
+                },
+                {
+                    name: '次浴壁磚',
+                    src: 'assets/images/equipment/次浴壁磚.webp'
+                },
+                {
+                    name: '次浴淋浴區花磚',
+                    src: 'assets/images/equipment/次浴花磚.webp'
+                },
+                {
+                    name: '次浴地磚',
+                    src: 'assets/images/equipment/次浴地磚.webp'
+                }
+            ];
+
             // ===== 建材 Modal =====
             function openMaterialModal(hs) {
                 modalTitle.textContent = hs.label;
@@ -826,6 +866,9 @@
                     headerBtnSlot.innerHTML = `
                         <button class="equip-grid-btn equip-grid-btn-header" onclick="document.getElementById('bathGridOverlay').classList.add('active')">
                             ▶ 衛浴設備一覽
+                        </button>
+                        <button class="equip-grid-btn equip-grid-btn-header" onclick="document.getElementById('bathTilesGridOverlay').classList.add('active')">
+                            ▶ 衛浴地壁磚
                         </button>
                     `;
                 }
@@ -974,6 +1017,32 @@
                 if (e.target === bathGridOverlay) bathGridOverlay.classList.remove('active');
             });
 
+            // ===== 衛浴地壁磚 Grid 覆蓋層邏輯 =====
+            const bathTilesGridOverlay = document.getElementById('bathTilesGridOverlay');
+            const bathTilesGridClose = document.getElementById('bathTilesGridClose');
+            const bathTilesGridContainer = document.getElementById('bathTilesGridContainer');
+
+            // 初始化衛浴地壁磚 Grid
+            bathTilesEquipments.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'equip-card';
+                card.innerHTML = `
+                    <div class="equip-card-img-wrap">
+                        <img src="${item.src}" alt="${item.name}" draggable="false">
+                    </div>
+                    <p class="equip-card-name">${item.name}</p>
+                `;
+                card.addEventListener('click', () => openEquipLightbox(item));
+                bathTilesGridContainer.appendChild(card);
+            });
+
+            bathTilesGridClose.addEventListener('click', () => {
+                bathTilesGridOverlay.classList.remove('active');
+            });
+            bathTilesGridOverlay.addEventListener('click', (e) => {
+                if (e.target === bathTilesGridOverlay) bathTilesGridOverlay.classList.remove('active');
+            });
+
             // ===== 設備燈箱邏輯 =====
             const equipOverlay = document.getElementById('equipLightboxOverlay');
             const equipClose = document.getElementById('equipLightboxClose');
@@ -1005,6 +1074,8 @@
                 if (e.key === 'Escape') {
                     if (equipOverlay.classList.contains('active')) {
                         closeEquipLightbox();
+                    } else if (bathTilesGridOverlay.classList.contains('active')) {
+                        bathTilesGridOverlay.classList.remove('active');
                     } else if (bathGridOverlay.classList.contains('active')) {
                         bathGridOverlay.classList.remove('active');
                     } else if (equipGridOverlay.classList.contains('active')) {

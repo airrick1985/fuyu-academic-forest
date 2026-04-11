@@ -1,7 +1,7 @@
 {
-  "version": "1.0.42",
-  "timestamp": 1775884488638,
-  "generatedAt": "2026-04-11T05:14:48.638Z",
+  "version": "1.0.43",
+  "timestamp": 1775890336096,
+  "generatedAt": "2026-04-11T06:52:16.096Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "e2be2b0eff05",
@@ -313,6 +313,21 @@
       "size": 307770,
       "mtime": 1774685566515.3352
     },
+    "assets/images/equipment/主浴地磚.webp": {
+      "hash": "adbf6fecf6c9",
+      "size": 130166,
+      "mtime": 1775888416027.6023
+    },
+    "assets/images/equipment/主浴壁磚.webp": {
+      "hash": "fae852535917",
+      "size": 136044,
+      "mtime": 1775888544335.5742
+    },
+    "assets/images/equipment/主浴花磚.webp": {
+      "hash": "87e52bfefb61",
+      "size": 205284,
+      "mtime": 1775888198508.4517
+    },
     "assets/images/equipment/主浴面盆.webp": {
       "hash": "c9e9009f1440",
       "size": 5792,
@@ -342,6 +357,21 @@
       "hash": "ef2a66db6c2e",
       "size": 86378,
       "mtime": 1774633051723.5212
+    },
+    "assets/images/equipment/次浴地磚.webp": {
+      "hash": "69725ef31d80",
+      "size": 338072,
+      "mtime": 1775888429681.813
+    },
+    "assets/images/equipment/次浴壁磚.webp": {
+      "hash": "4b5ece2e0008",
+      "size": 34686,
+      "mtime": 1775888654526.2642
+    },
+    "assets/images/equipment/次浴花磚.webp": {
+      "hash": "cca2535c52d7",
+      "size": 158156,
+      "mtime": 1775888337299.6746
     },
     "assets/images/equipment/次浴面盆.webp": {
       "hash": "7079ffa16a02",
@@ -649,9 +679,9 @@
       "mtime": 1774942208796.6353
     },
     "css/materials.css": {
-      "hash": "4df0616afe36",
-      "size": 25021,
-      "mtime": 1775191073745.0444
+      "hash": "be2b65dfdf4d",
+      "size": 25086,
+      "mtime": 1775889939767.686
     },
     "css/panorama.css": {
       "hash": "c3a27e744779",
