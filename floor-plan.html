@@ -303,7 +303,7 @@
 
     <!-- 常駐免責聲明 -->
     <div class="fp-disclaimer">
-        此房屋銷售平面圖僅供參考，實際規劃依建造變更核准圖面為依據。不動產經紀業：一研九鼎廣告策劃有限公司
+        本房屋銷售平面圖僅供參考，實際規劃與建材設備依建造變更核准圖面及買賣合約書記載為準。設備位置（包含冷氣室外機 AC、家電設備、家具配置）之方向與角度僅供參考，實際依正式水電配置圖面為準。<br><br>不動產經紀業：一研九鼎廣告策劃有限公司
     </div>
 
     <!-- 回到頂部 -->
@@ -573,32 +573,38 @@
                     let infoHtml = '';
                     const match = imgAlt.match(/A[1-8]/);
                     if (imgAlt.includes('4-14F')) {
-                        infoHtml = '<h3 style="margin:0 0 15px 0;font-size:18px;color:#8b6914;border-bottom:2px solid #8b6914;padding-bottom:10px;letter-spacing:3px;">面積一覽</h3>';
-                        infoHtml += '<table style="width:100%;border-collapse:collapse;">';
+                        infoHtml = '<h3>面積一覽</h3>';
+                        infoHtml += '<table>';
                         areaData['全區'].forEach(row => {
                             infoHtml += `<tr>
-                                <td style="padding:8px 10px;font-weight:700;color:#8b6914;font-size:15px;border-bottom:1px dashed #ddd;">${row.unit}</td>
-                                <td style="padding:8px 10px;text-align:right;font-weight:600;color:#333;font-size:15px;border-bottom:1px dashed #ddd;">${row.area}</td>
-                                <td style="padding:8px 10px;color:#888;font-size:13px;border-bottom:1px dashed #ddd;">坪</td>
+                                <td>${row.unit}</td>
+                                <td>${row.area}</td>
+                                <td>坪</td>
                             </tr>`;
                         });
                         infoHtml += '</table>';
                     } else if (match && areaData[match[0]]) {
                         const d = areaData[match[0]];
-                        infoHtml = `<h3 style="margin:0 0 15px 0;font-size:18px;color:#8b6914;border-bottom:2px solid #8b6914;padding-bottom:10px;letter-spacing:3px;">${match[0]} 面積資訊</h3>`;
+                        infoHtml = `<h3>${match[0]} 面積資訊</h3>`;
+                        infoHtml += '<table>';
                         const rows = [
                             ['主建物', d.main],
                             ['附屬建物(陽台)', d.balc],
                             ['共有部分(公設)', d.pub],
                         ];
                         rows.forEach(([label, val]) => {
-                            infoHtml += `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;color:#555;border-bottom:1px dashed #eee;">
-                                <span>${label}</span><span style="font-weight:600;color:#222;">${val} 坪</span>
-                            </div>`;
+                            infoHtml += `<tr>
+                                <td>${label}</td>
+                                <td>${val}</td>
+                                <td>坪</td>
+                            </tr>`;
                         });
-                        infoHtml += `<div style="margin-top:12px;padding-top:12px;border-top:2px solid #8b6914;display:flex;justify-content:space-between;font-size:18px;font-weight:700;color:#8b6914;">
-                            <span>權狀坪數</span><span>${d.total} 坪</span>
-                        </div>`;
+                        infoHtml += `<tr style="border-top:2px solid #8b6914;font-weight:700;color:#8b6914;">
+                            <td>權狀坪數</td>
+                            <td>${d.total}</td>
+                            <td>坪</td>
+                        </tr>`;
+                        infoHtml += '</table>';
                     }
 
                     // 如果有面積資訊，詢問用戶是否要包含
@@ -652,7 +658,7 @@
                     function doPrint(includeArea) {
                         // 建構面積信息欄的 HTML（根據用戶選擇）
                         const infoCellHtml = (infoHtml && includeArea)
-                            ? `<div style="padding:15px;">${infoHtml}</div>`
+                            ? infoHtml
                             : '';
 
                         // 開新視窗寫入完整的列印 HTML
@@ -665,7 +671,7 @@
                                 <style>
                                     @page {
                                         size: A3 landscape;
-                                        margin: 10mm;
+                                        margin: 3mm;
                                         page-break-after: avoid;
                                     }
                                     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -675,40 +681,50 @@
                                         background: #fff;
                                     }
                                     .print-container {
-                                        display: flex;
+                                        position: relative;
                                         width: 100%;
+                                        min-height: 100vh;
                                         page-break-inside: avoid;
                                     }
                                     .print-image-area {
-                                        width: ${(infoHtml && includeArea) ? '85%' : '100%'};
+                                        width: 100%;
+                                        height: 100%;
                                         display: flex;
                                         align-items: center;
                                         justify-content: center;
-                                        padding: 15mm;
+                                        padding: 5mm;
                                         page-break-inside: avoid;
                                     }
                                     .print-image-area img {
                                         max-width: 100%;
-                                        max-height: 800px;
+                                        max-height: 100%;
                                         object-fit: contain;
                                         page-break-inside: avoid;
                                     }
                                     .print-info-area {
-                                        ${(infoHtml && includeArea) ? 'width: 15%; display: block;' : 'display: none;'}
-                                        border-left: 2px solid #ddd;
+                                        position: absolute;
+                                        bottom: 30mm;
+                                        left: 10mm;
+                                        width: 260px;
+                                        ${(infoHtml && includeArea) ? 'display: block;' : 'display: none;'}
+                                        background: rgba(255, 255, 255, 0.95);
+                                        border: 2px solid #8b6914;
+                                        border-radius: 4px;
+                                        padding: 12px;
                                         font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
-                                        font-size: 14px;
+                                        font-size: 16px;
                                         page-break-inside: avoid;
-                                        overflow: visible;
+                                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                                     }
                                     .print-info-area h3 {
-                                        margin: 0 0 12px 0;
-                                        font-size: 15px;
+                                        margin: 0 0 8px 0;
+                                        font-size: 16px;
                                         color: #8b6914;
                                         border-bottom: 2px solid #8b6914;
-                                        padding-bottom: 8px;
-                                        letter-spacing: 2px;
+                                        padding-bottom: 6px;
+                                        letter-spacing: 1px;
                                         text-align: center;
+                                        font-weight: 700;
                                     }
                                     .print-info-area table {
                                         width: 100%;
@@ -718,25 +734,42 @@
                                         page-break-inside: avoid;
                                     }
                                     .print-info-area td {
-                                        padding: 5px 8px;
-                                        border-bottom: 1px dashed #ccc;
-                                        font-size: 12px;
+                                        padding: 6px 4px;
+                                        border-bottom: 1px dashed #ddd;
+                                        font-size: 15px;
+                                        line-height: 1.4;
                                     }
                                     .print-info-area td:first-child {
                                         font-weight: 700;
                                         color: #8b6914;
-                                        width: 40%;
+                                        width: 50%;
                                     }
                                     .print-info-area td:nth-child(2) {
                                         text-align: right;
                                         font-weight: 600;
                                         color: #333;
-                                        width: 40%;
+                                        width: 35%;
                                     }
                                     .print-info-area td:nth-child(3) {
                                         text-align: center;
                                         color: #888;
-                                        width: 20%;
+                                        width: 15%;
+                                    }
+                                    .print-disclaimer {
+                                        position: absolute;
+                                        bottom: 5mm;
+                                        left: 0;
+                                        right: 0;
+                                        width: 100%;
+                                        border-top: 1px solid #ddd;
+                                        padding: 5px 10mm;
+                                        font-size: 8.5px;
+                                        color: rgba(100, 90, 70, 0.65);
+                                        line-height: 1.5;
+                                        text-align: center;
+                                        word-wrap: break-word;
+                                        overflow-wrap: break-word;
+                                        page-break-inside: avoid;
                                     }
                                 </style>
                                 <!-- PWA Update Loading Screen -->
@@ -790,6 +823,10 @@
                                     </div>
                                     <div class="print-info-area">
                                         ${infoCellHtml}
+                                    </div>
+                                    <div class="print-disclaimer">
+                                        <div style="margin-bottom: 4px;">本房屋銷售平面圖僅供參考，實際規劃與建材設備依建造變更核准圖面及買賣合約書記載為準。設備位置（包含冷氣室外機 AC、家電設備、家具配置）之方向與角度僅供參考，實際依正式水電配置圖面為準。</div>
+                                        <div style="margin-top: 4px; font-weight: 600;">不動產經紀業：一研九鼎廣告策劃有限公司</div>
                                     </div>
                                 </div>
                                 <script>

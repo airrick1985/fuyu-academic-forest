@@ -849,11 +849,13 @@ body.lightbox-active .fp-nav-items {
     bottom: 15px;
     left: 20px;
     z-index: 90;
-    font-size: 12px;
-    color: rgba(100, 90, 70, 0.5);
-    line-height: 1.6;
+    font-size: 11px;
+    color: rgba(100, 90, 70, 0.55);
+    line-height: 1.5;
     text-align: left;
-    white-space: nowrap;
+    max-width: calc(100% - 40px);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
     pointer-events: none;
 }
 

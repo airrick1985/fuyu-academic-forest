@@ -7,8 +7,68 @@
     "dev": "npx serve .",
     "generate-manifest": "node scripts/generate-manifest.js",
     "build": "npm run generate-manifest",
-    "deploy": "npm run build && git add . && git commit -m \"更新網站及資源清單\" && git push origin main"
+    "deploy": "npm run build && git add . && git commit -m \"更新資源及清單\" && git push origin main",
+    "electron": "electron electron/main.js",
+    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && npm run electron\"",
+    "electron-build": "electron-builder --dir",
+    "electron-build-win": "npm run build && electron-builder --win nsis portable --publish never",
+    "electron-pack": "npm run build && electron-builder --win portable --publish never"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^41.2.0",
+    "electron-builder": "^26.8.1"
+  },
+  "build": {
+    "appId": "com.fuyuacademicforest.app",
+    "productName": "富宇學森",
+    "asar": false,
+    "extraMetadata": {
+      "main": "electron/main.js"
+    },
+    "directories": {
+      "buildResources": "."
+    },
+    "files": [
+      "electron/main.js",
+      "electron/preload.js",
+      "index.html",
+      "brand-*.html",
+      "coming-soon.html",
+      "css/**/*",
+      "js/**/*",
+      "assets/**/*",
+      "favicon.ico",
+      "manifest.json",
+      "sw.js",
+      "assets-manifest.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "富宇學森"
+    },
+    "portable": {
+      "artifactName": "富宇學森-${version}-portable.exe"
+    }
+  }
 }
