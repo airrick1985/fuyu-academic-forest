@@ -130,10 +130,23 @@ if (!window._spaRouterInitialized) {
 
             // 重新初始化 Google Maps（如果頁面是 google-map.html）
             if (window.initializeGoogleMap && url.includes('google-map')) {
-                // 等待 DOM 完全更新後再初始化
-                setTimeout(() => {
-                    window.initializeGoogleMap();
+                // 等待 Google Maps API 非同步加載完成（loading="async"）
+                // 需要更長的延遲以確保 google.maps 對象可用
+                const waitForGoogleMaps = setInterval(() => {
+                    if (window.google && window.google.maps) {
+                        clearInterval(waitForGoogleMaps);
+                        window.initializeGoogleMap();
+                        console.log('[SPA Router] Google Maps 已加載，初始化地圖');
+                    }
                 }, 100);
+
+                // 10 秒超時機制，防止無限等待
+                setTimeout(() => {
+                    clearInterval(waitForGoogleMaps);
+                    if (!window.google?.maps) {
+                        console.warn('[SPA Router] Google Maps 加載超時');
+                    }
+                }, 10000);
             }
 
             // 重新獲取加載覆蓋層（因為 innerHTML 替換後元素已更新）
