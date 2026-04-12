@@ -75,8 +75,14 @@ if (!window._spaRouterInitialized) {
                 if (!existingLinks.includes(href) || isPageSpecific) {
                     // 移除舊的同名 CSS（如果存在）
                     if (isPageSpecific) {
-                        const oldLink = document.querySelector(`link[href="${href}"]`);
-                        if (oldLink) oldLink.remove();
+                        // 使用更安全的方法查找舊的 CSS（避免 href 中的特殊字符問題）
+                        const allLinks = document.querySelectorAll('link[rel="stylesheet"]');
+                        allLinks.forEach(oldLink => {
+                            if (oldLink.getAttribute('href') === href) {
+                                oldLink.remove();
+                                console.log(`[SPA Router] 移除舊的 CSS: ${href}`);
+                            }
+                        });
                     }
 
                     const newLink = document.createElement('link');
@@ -114,11 +120,12 @@ if (!window._spaRouterInitialized) {
             }
 
             // 重新初始化動畫（如果頁面使用了 fade-in 動畫）
-            // 延遲執行以確保 CSS 樣式表已加載完成
+            // 延遲執行以確保 CSS 樣式表已加載完成（跟覆蓋層隱藏時間同步）
             if (window.initFadeInAnimations) {
                 setTimeout(() => {
                     window.initFadeInAnimations();
-                }, 50);
+                    console.log('[SPA Router] 已初始化 fade-in 動畫');
+                }, 480);
             }
 
             // 重新初始化 Google Maps（如果頁面是 google-map.html）
@@ -189,14 +196,14 @@ if (!window._spaRouterInitialized) {
             window.scrollTo(0, 0);
 
             // 延遲隱藏加載覆蓋層，確保 CSS 樣式表已完全加載
-            // 特別是強制刷新（Ctrl+Shift+R）後 CSS 加載可能較慢
+            // 增加延遲以確保頁面特定 CSS（如 brand.css）有足夠的時間加載
             setTimeout(() => {
                 const overlayToHide = document.getElementById('pwa-loading-overlay');
                 if (overlayToHide) {
                     overlayToHide.classList.add('hidden');
                     console.log('[SPA Router] 隱藏加載覆蓋層');
                 }
-            }, 300);
+            }, 500);
         } catch (err) {
             console.error('SPA Navigation failed:', err);
 
