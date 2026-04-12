@@ -157,7 +157,7 @@ if (!window._spaRouterInitialized) {
             const loadedScripts = Array.from(document.querySelectorAll('script[src]')).map(s => s.src);
 
             // 需要每次都重新加載的關鍵腳本（特定頁面的初始化庫或全局工具）
-            const alwaysReloadScripts = ['topbar.js', 'pannellum.min.js'];
+            const alwaysReloadScripts = ['topbar.js', 'pannellum.min.js', 'maps.googleapis.com'];
 
             const scripts = Array.from(document.body.querySelectorAll('script'));
             for (const oldScript of scripts) {
