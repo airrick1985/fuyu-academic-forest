@@ -311,19 +311,22 @@
         })();
         };
 
-        // SPA 導航時 pannellum 可能延遲加載，所以使用延遲執行
+        // SPA 導航時 pannellum 可能延遲加載
         if (window.pannellum) {
+            console.log('[Location] pannellum 已加載，初始化...');
             initLocationScript();
         } else {
-            console.warn('[Location] 等待 pannellum 加載...');
+            console.warn('[Location] pannellum 尚未加載，等待中...');
             let retries = 0;
+            const maxRetries = 100; // 10 秒超時
             const waitPannellum = setInterval(() => {
                 if (window.pannellum) {
                     clearInterval(waitPannellum);
+                    console.log('[Location] pannellum 加載完成，初始化...');
                     initLocationScript();
-                } else if (retries++ > 50) {
+                } else if (++retries > maxRetries) {
                     clearInterval(waitPannellum);
-                    console.error('[Location] pannellum 加載超時');
+                    console.error('[Location] pannellum 加載超時（10秒）');
                 }
             }, 100);
         }

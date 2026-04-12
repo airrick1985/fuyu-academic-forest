@@ -124,27 +124,44 @@ if (!window._spaRouterInitialized) {
             // 追蹤已加載的外部腳本，避免重複加載
             const loadedScripts = Array.from(document.querySelectorAll('script[src]')).map(s => s.src);
 
+            // 需要每次都重新加載的關鍵腳本（特定頁面的初始化庫）
+            const alwaysReloadScripts = ['pannellum.min.js'];
+
             const scripts = Array.from(document.body.querySelectorAll('script'));
             for (const oldScript of scripts) {
                 const newScript = document.createElement('script');
                 Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
 
                 if (oldScript.src) {
-                    // 跳過已加載的外部腳本（如 Google Maps API, topbar.js）
-                    const scriptSrc = oldScript.src.split('?')[0]; // 移除查詢字串
-                    const isAlreadyLoaded = loadedScripts.some(src => src.split('?')[0] === scriptSrc);
+                    // 檢查是否需要每次都重新加載
+                    const shouldAlwaysReload = alwaysReloadScripts.some(name => oldScript.src.includes(name));
 
-                    if (isAlreadyLoaded) {
-                        console.log(`[SPA Router] 跳過已加載的腳本: ${oldScript.src}`);
-                        oldScript.parentNode.removeChild(oldScript);
+                    if (!shouldAlwaysReload) {
+                        // 跳過已加載的外部腳本（如 Google Maps API, topbar.js）
+                        const scriptSrc = oldScript.src.split('?')[0]; // 移除查詢字串
+                        const isAlreadyLoaded = loadedScripts.some(src => src.split('?')[0] === scriptSrc);
+
+                        if (isAlreadyLoaded) {
+                            console.log(`[SPA Router] 跳過已加載的腳本: ${oldScript.src}`);
+                            oldScript.parentNode.removeChild(oldScript);
+                            continue;
+                        }
                     } else {
-                        // 外部腳本：等待載入完成後再繼續下一個
-                        await new Promise((resolve, reject) => {
-                            newScript.onload = resolve;
-                            newScript.onerror = reject;
-                            oldScript.parentNode.replaceChild(newScript, oldScript);
-                        });
+                        console.log(`[SPA Router] 重新加載關鍵腳本: ${oldScript.src}`);
                     }
+
+                    // 外部腳本：等待載入完成後再繼續下一個
+                    await new Promise((resolve, reject) => {
+                        newScript.onload = () => {
+                            console.log(`[SPA Router] 腳本加載成功: ${oldScript.src}`);
+                            resolve();
+                        };
+                        newScript.onerror = () => {
+                            console.error(`[SPA Router] 腳本加載失敗: ${oldScript.src}`);
+                            reject(new Error(`Failed to load script: ${oldScript.src}`));
+                        };
+                        oldScript.parentNode.replaceChild(newScript, oldScript);
+                    });
                 } else {
                     // 內聯腳本：直接替換執行
                     if (oldScript.innerHTML) {
