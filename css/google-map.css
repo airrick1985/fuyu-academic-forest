@@ -186,9 +186,7 @@ body.google-map-page {
 }
 
 .gmap-transport-detail {
-    font-size: 11px;
-    color: rgba(255, 215, 0, 0.8);
-    letter-spacing: 0.3px;
+    display: none;
 }
 
 /* ===== 周邊設施樣式 ===== */
@@ -234,9 +232,7 @@ body.google-map-page {
 }
 
 .gmap-facility-detail {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.7);
-    letter-spacing: 0.3px;
+    display: none;
 }
 
 /* 路線活躍狀態 - 設施卡片 */
@@ -605,31 +601,40 @@ body.google-map-page .topbar {
     }
 }
 
-/* ===== 自定義目的地輸入 ===== */
-.gmap-custom-dest-section {
-    border-top: 1px solid rgba(255, 215, 0, 0.2);
-    padding-top: 16px;
-    margin-top: 4px;
+/* ===== 浮動自定義目的地輸入 ===== */
+.gmap-floating-search {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 50;
+    max-width: 340px;
+    width: calc(100% - 40px);
 }
 
-.gmap-custom-dest-input-wrap {
+.gmap-floating-search-content {
     display: flex;
-    gap: 6px;
-    margin-top: 8px;
+    gap: 8px;
+    background: rgba(20, 30, 20, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .gmap-custom-dest-input {
     flex: 1;
-    background: rgba(45, 80, 22, 0.4);
-    border: 1px solid rgba(143, 191, 95, 0.3);
+    background: rgba(45, 80, 22, 0.5);
+    border: 1px solid rgba(143, 191, 95, 0.4);
     border-radius: 6px;
-    padding: 8px 10px;
+    padding: 9px 12px;
     color: #E8F5E9;
-    font-size: 12px;
+    font-size: 13px;
     outline: none;
     transition: border-color 0.3s ease, background 0.3s ease;
     width: 100%;
-    min-width: 0;
+    min-width: 120px;
 }
 
 .gmap-custom-dest-input:focus {

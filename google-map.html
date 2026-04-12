@@ -193,22 +193,6 @@
                     </div>
                 </div>
 
-                <!-- 自定義目的地輸入 -->
-                <div class="gmap-info-section gmap-custom-dest-section">
-                    <h3 class="gmap-section-title">🔍 自定義目的地</h3>
-                    <div class="gmap-custom-dest-input-wrap">
-                        <input
-                            id="gmap-custom-dest-input"
-                            type="text"
-                            class="gmap-custom-dest-input"
-                            placeholder="輸入地點或地址..."
-                            autocomplete="off"
-                        />
-                        <button id="gmap-custom-dest-btn" class="gmap-custom-dest-btn">導航</button>
-                    </div>
-                    <p class="gmap-custom-dest-hint">支援地址、地標搜尋</p>
-                </div>
-
                 <div class="gmap-info-section">
                     <h3 class="gmap-section-title">🏢 核心競爭力</h3>
                     <p class="gmap-info-text">坐擁新竹科學園區邊界，優越的地理位置確保未來增值潛力。</p>
@@ -221,6 +205,19 @@
             <div id="gmap-map-container" class="gmap-map-container"></div>
             <!-- CHIP 覆蓋層 -->
             <div id="gmap-chip-overlay" class="gmap-chip-overlay"></div>
+            <!-- 浮動自定義目的地輸入框 -->
+            <div class="gmap-floating-search">
+                <div class="gmap-floating-search-content">
+                    <input
+                        id="gmap-custom-dest-input"
+                        type="text"
+                        class="gmap-custom-dest-input"
+                        placeholder="輸入地點或地址..."
+                        autocomplete="off"
+                    />
+                    <button id="gmap-custom-dest-btn" class="gmap-custom-dest-btn">導航</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -414,6 +411,7 @@
                         const lng = selectedPlace.geometry.location.lng();
                         const name = selectedPlace.name || selectedPlace.formatted_address || destInput.value;
                         console.log(`[Google Map] 計算自定義目的地路線: ${name} (${lat}, ${lng})`);
+                        window.customDestMode = true; // 設置為開車模式
                         calculateRoute(name, lat, lng);
                     } else if (destInput.value.trim()) {
                         // 若未用 Autocomplete 選取，使用 Geocoder 解析輸入文字
@@ -425,6 +423,7 @@
                                     const loc = results[0].geometry.location;
                                     const name = results[0].formatted_address;
                                     console.log(`[Google Map] Geocoder 解析成功: ${name} (${loc.lat()}, ${loc.lng()})`);
+                                    window.customDestMode = true; // 設置為開車模式
                                     calculateRoute(name, loc.lat(), loc.lng());
                                 } else {
                                     console.warn(`[Google Map] Geocoder 失敗: ${status}`);
@@ -471,6 +470,7 @@
                     // 停止之前的動畫
                     window.flowAnimating = false;
                     window.destPulsing = false;
+                    window.customDestMode = false; // 重設開車模式標記
 
                     // 清除終點圓球
                     if (window.destPulseAnimationId && typeof window.destPulseAnimationId === 'number') {
@@ -485,7 +485,9 @@
                     }
 
                     // 使用 OSRM (Open Source Routing Machine) 獲取真實道路路線
-                    const osmUrl = `https://router.project-osrm.org/route/v1/walking/${locationData.lng},${locationData.lat};${destLng},${destLat}?overview=full&geometries=geojson`;
+                    // 注：自定義目的地使用 driving，周邊設施使用 walking（由調用方決定）
+                    const routeMode = window.customDestMode ? 'driving' : 'walking';
+                    const osmUrl = `https://router.project-osrm.org/route/v1/${routeMode}/${locationData.lng},${locationData.lat};${destLng},${destLat}?overview=full&geometries=geojson`;
 
                     console.log(`[Google Map] 從 OSRM 獲取路線: ${locationName}`);
                     console.log(`[Google Map] OSRM URL: ${osmUrl}`);
@@ -885,10 +887,6 @@
                     banner.innerHTML = `
                         <div style="background: rgba(255, 215, 0, 0.95); color: #0A1F0A; padding: 14px 20px; border-radius: 8px; font-weight: 600; text-align: center; display: flex; align-items: center; justify-content: center; gap: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
                             <span>📍 ${locationName}</span>
-                            <span style="color: #666; font-weight: 500;">|</span>
-                            <span>🚶 ${distance}km</span>
-                            <span style="color: #666; font-weight: 500;">|</span>
-                            <span>⏱️ 約 ${duration} 分鐘</span>
                             <button style="background: none; border: none; cursor: pointer; font-size: 18px; color: #0A1F0A; margin-left: auto; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'" onclick="
                                 if (window.currentPolyline) {
                                     window.currentPolyline.setMap(null);
@@ -900,8 +898,12 @@
                                 }
                                 window.flowAnimating = false;
                                 window.destPulsing = false;
+                                window.customDestMode = false;
                                 if (window.destPulseAnimationId && window.destPulseAnimationId.stop) {
                                     window.destPulseAnimationId.stop();
+                                }
+                                if (window.destPulseCircles) {
+                                    window.destPulseCircles.forEach(circle => circle.setMap(null));
                                 }
                                 if (window.destinationMarker) {
                                     window.destinationMarker.setMap(null);
