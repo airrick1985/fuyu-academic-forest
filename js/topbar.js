@@ -21,6 +21,7 @@
                 <div class="submenu">
                     <div class="submenu-item"><a href="panorama.html">全景</a></div>
                     <div class="submenu-item"><a href="location.html">360°環景</a></div>
+                    <div class="submenu-item"><a href="google-map.html">Google地圖</a></div>
                 </div>
             </div>
             <div class="nav-item">

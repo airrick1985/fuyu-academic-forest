@@ -1,7 +1,7 @@
 {
-  "version": "1.0.44",
-  "timestamp": 1775908554982,
-  "generatedAt": "2026-04-11T11:55:54.982Z",
+  "version": "1.0.45",
+  "timestamp": 1775981158713,
+  "generatedAt": "2026-04-12T08:05:58.713Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "e2be2b0eff05",
@@ -659,14 +659,19 @@
       "mtime": 1774522261683.3542
     },
     "css/floor-plan.css": {
-      "hash": "852d7e0a8cd0",
-      "size": 24899,
-      "mtime": 1775883778029.9917
+      "hash": "8d9ad824d976",
+      "size": 23411,
+      "mtime": 1775978533194.555
     },
     "css/global.css": {
-      "hash": "2bb1919a6241",
-      "size": 1120,
-      "mtime": 1774154223668.6465
+      "hash": "3ae12bd09be5",
+      "size": 1152,
+      "mtime": 1775980836526.0518
+    },
+    "css/google-map.css": {
+      "hash": "a366126e0b8b",
+      "size": 14913,
+      "mtime": 1775974057445.6748
     },
     "css/hero.css": {
       "hash": "c3625a4385b8",
@@ -679,9 +684,9 @@
       "mtime": 1774942208796.6353
     },
     "css/materials.css": {
-      "hash": "be2b65dfdf4d",
-      "size": 25086,
-      "mtime": 1775889939767.686
+      "hash": "26c3a4426108",
+      "size": 23511,
+      "mtime": 1775975267274.4373
     },
     "css/panorama.css": {
       "hash": "c3a27e744779",
@@ -689,9 +694,9 @@
       "mtime": 1774942235948.653
     },
     "css/topbar.css": {
-      "hash": "489fcbb7a4c1",
-      "size": 6462,
-      "mtime": 1774533562047.0818
+      "hash": "faea98d79576",
+      "size": 6661,
+      "mtime": 1775965908431.0886
     },
     "css/variables.css": {
       "hash": "0d8c0ce0351b",
@@ -699,14 +704,14 @@
       "mtime": 1774154142260.6814
     },
     "js/animations.js": {
-      "hash": "0255bb75d1c5",
-      "size": 620,
-      "mtime": 1774155053777.8003
+      "hash": "3b61b715eddc",
+      "size": 1105,
+      "mtime": 1775980782281.468
     },
     "js/asset-update-manager.js": {
-      "hash": "ed9bb83961b0",
-      "size": 13418,
-      "mtime": 1775734936920.168
+      "hash": "9c0e992f5c0e",
+      "size": 13624,
+      "mtime": 1775974286920.864
     },
     "js/birds.js": {
       "hash": "5eea9680646d",
@@ -724,14 +729,14 @@
       "mtime": 1775733362934.6536
     },
     "js/spa-router.js": {
-      "hash": "54a9f560e32c",
-      "size": 3591,
-      "mtime": 1775722128167.4448
+      "hash": "1aaef2f8bf69",
+      "size": 12192,
+      "mtime": 1775980947731.6433
     },
     "js/topbar.js": {
-      "hash": "5d7dec1b9ccb",
-      "size": 21089,
-      "mtime": 1775730665716.365
+      "hash": "82b9c7cba06c",
+      "size": 21184,
+      "mtime": 1775965546121.381
     }
   }
 }

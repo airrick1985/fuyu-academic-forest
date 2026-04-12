@@ -224,8 +224,8 @@
     <!-- JS -->
     <script src="js/topbar.js"></script>
 
-    <!-- Google Maps API - 包含 Directions 服務 -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIHP_KTHH71AYYygCpNqEI6L5DfTaT9Hs&libraries=places"></script>
+    <!-- Google Maps API - 包含 Places 庫（使用 loading=async 以獲得最佳性能）-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIHP_KTHH71AYYygCpNqEI6L5DfTaT9Hs&libraries=places" loading="async"></script>
 
     <!-- Google Maps 初始化與自定義標籤 -->
     <script>
@@ -237,10 +237,26 @@
                 address: '新竹市東區長春街'
             };
 
-            // 等待 Google Maps API 加載
+            // 定義初始化函數（暴露到 window，便於 SPA 導航重新初始化）
+            window.initializeGoogleMap = function() {
+                initializeMap();
+            };
+
+            // 等待 Google Maps API 加載（首次加載時）
             window.addEventListener('load', () => {
                 initializeMap();
             });
+
+            // 如果頁面已加載完成再執行一次，確保地圖初始化
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                setTimeout(() => {
+                    // 檢查是否已初始化過，避免重複
+                    const mapContainer = document.getElementById('gmap-map-container');
+                    if (mapContainer && !mapContainer.querySelector('[data-initialized="true"]')) {
+                        initializeMap();
+                    }
+                }, 100);
+            }
 
             function initializeMap() {
                 // 檢查 google.maps 是否已載入
@@ -383,56 +399,342 @@
                 // 初始化設施卡片點擊事件
                 setupFacilityClickListeners();
 
-                // ===== 自定義目的地功能 =====
-                const destInput = document.getElementById('gmap-custom-dest-input');
-                const destBtn = document.getElementById('gmap-custom-dest-btn');
+                // ===== 自定義信息面板 (使用 Google OverlayView) =====
+                // 創建自定義 OverlayView 類
+                class CustomInfoPanel extends google.maps.OverlayView {
+                    constructor(position, content, map) {
+                        super();
+                        this.position = position;
+                        this.content = content;
+                        this.div = null;
+                        this.setMap(map);
+                    }
 
-                // 初始化 Places Autocomplete（限制在台灣地區）
-                const autocomplete = new google.maps.places.Autocomplete(destInput, {
-                    componentRestrictions: { country: 'tw' },
-                    fields: ['geometry', 'name', 'formatted_address']
+                    onAdd() {
+                        this.div = document.createElement('div');
+                        this.div.style.cssText = `
+                            position: absolute;
+                            background: rgba(20, 30, 20, 0.97);
+                            border: 1px solid rgba(255, 215, 0, 0.3);
+                            border-radius: 12px;
+                            padding: 14px;
+                            min-width: 260px;
+                            color: #E8F5E9;
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+                            backdrop-filter: blur(10px);
+                            -webkit-backdrop-filter: blur(10px);
+                            z-index: 50;
+                            animation: slideUp 0.3s ease-out;
+                        `;
+                        this.div.innerHTML = this.content;
+                        this.getPanes().floatPane.appendChild(this.div);
+                    }
+
+                    draw() {
+                        const overlayProjection = this.getProjection();
+                        const position = overlayProjection.fromLatLngToDivPixel(this.position);
+
+                        if (position) {
+                            // 面板顯示在點擊位置的上方
+                            this.div.style.left = (position.x - this.div.offsetWidth / 2) + 'px';
+                            this.div.style.top = (position.y - this.div.offsetHeight - 10) + 'px';
+                        }
+                    }
+
+                    onRemove() {
+                        if (this.div) {
+                            this.div.parentNode.removeChild(this.div);
+                            this.div = null;
+                        }
+                    }
+
+                    close() {
+                        this.setMap(null);
+                    }
+                }
+
+                // 添加動畫樣式
+                const customStyle = document.createElement('style');
+                customStyle.textContent = `
+                    @keyframes slideUp {
+                        from { transform: translateY(10px); opacity: 0; }
+                        to { transform: translateY(0); opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(customStyle);
+
+                // 地圖點擊導航功能
+                let currentPanel = null;
+                const geocoder = new google.maps.Geocoder();
+
+                // ===== 面板隱藏控制函數 =====
+                function closeCurrentPanel() {
+                    if (currentPanel) {
+                        currentPanel.close();
+                        currentPanel = null;
+                        console.log('[Google Map] 面板已關閉');
+                    }
+                }
+
+                // ESC 鍵隱藏面板
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape' && currentPanel) {
+                        closeCurrentPanel();
+                    }
                 });
 
-                let selectedPlace = null;
+                // 點擊地圖其他位置隱藏面板
+                map.addListener('click', (event) => {
+                    // 關閉已有的面板（新點擊會打開新面板）
+                    if (currentPanel) {
+                        currentPanel.close();
+                    }
 
-                // 用戶從下拉選單選擇地點
-                autocomplete.addListener('place_changed', () => {
-                    const place = autocomplete.getPlace();
-                    if (place.geometry && place.geometry.location) {
-                        selectedPlace = place;
-                        console.log(`[Google Map] 用戶選擇: ${place.name || place.formatted_address}`);
+                    const lat = event.latLng.lat();
+                    const lng = event.latLng.lng();
+
+                    // 使用 Geocoder 反向查詢地名
+                    geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+                        let locationName = `自定義位置`;
+                        if (status === 'OK' && results[0]) {
+                            locationName = results[0].formatted_address;
+                        }
+
+                        // 創建面板內容
+                        const panelContent = `
+                            <div style="margin-bottom: 12px;">
+                                <div style="color: #FFD700; font-weight: 600; font-size: 13px; margin-bottom: 8px;">📍 ${locationName}</div>
+                                <div style="color: rgba(255, 255, 255, 0.6); font-size: 11px;">
+                                    <div>緯度: ${lat.toFixed(6)}</div>
+                                    <div>經度: ${lng.toFixed(6)}</div>
+                                </div>
+                            </div>
+                            <button class="custom-panel-navigate" style="
+                                width: 100%;
+                                padding: 9px;
+                                background: linear-gradient(135deg, rgba(255, 215, 0, 0.9), rgba(255, 200, 0, 0.8));
+                                border: none;
+                                border-radius: 6px;
+                                color: #0A1F0A;
+                                font-weight: 600;
+                                font-size: 12px;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                                margin-bottom: 6px;
+                            ">🚗 導航至此處</button>
+                            <button class="custom-panel-close" style="
+                                width: 100%;
+                                padding: 7px;
+                                background: transparent;
+                                border: 1px solid rgba(255, 215, 0, 0.3);
+                                border-radius: 6px;
+                                color: rgba(255, 255, 255, 0.7);
+                                font-size: 11px;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                            ">✕ 關閉</button>
+                        `;
+
+                        // 創建自定義面板
+                        currentPanel = new CustomInfoPanel(event.latLng, panelContent, map);
+
+                        // 添加按鈕事件
+                        setTimeout(() => {
+                            const navBtn = currentPanel.div?.querySelector('.custom-panel-navigate');
+                            const closeBtn = currentPanel.div?.querySelector('.custom-panel-close');
+
+                            if (navBtn) {
+                                navBtn.addEventListener('click', (e) => {
+                                    e.stopPropagation();
+                                    console.log(`[Google Map] 點擊地圖位置導航: ${locationName} (${lat}, ${lng})`);
+                                    window.customDestMode = true;
+                                    calculateRoute(locationName, lat, lng);
+                                    // 導航後自動關閉面板
+                                    setTimeout(() => {
+                                        closeCurrentPanel();
+                                    }, 300);
+                                });
+
+                                navBtn.addEventListener('mouseover', () => {
+                                    navBtn.style.background = 'linear-gradient(135deg, rgba(255, 215, 0, 1), rgba(255, 200, 0, 1))';
+                                    navBtn.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.5)';
+                                });
+                                navBtn.addEventListener('mouseout', () => {
+                                    navBtn.style.background = 'linear-gradient(135deg, rgba(255, 215, 0, 0.9), rgba(255, 200, 0, 0.8))';
+                                    navBtn.style.boxShadow = 'none';
+                                });
+                            }
+
+                            if (closeBtn) {
+                                closeBtn.addEventListener('click', (e) => {
+                                    e.stopPropagation();
+                                    if (currentPanel) {
+                                        currentPanel.close();
+                                        currentPanel = null;
+                                    }
+                                });
+
+                                closeBtn.addEventListener('mouseover', () => {
+                                    closeBtn.style.borderColor = 'rgba(255, 215, 0, 0.6)';
+                                    closeBtn.style.color = 'rgba(255, 255, 255, 0.9)';
+                                });
+                                closeBtn.addEventListener('mouseout', () => {
+                                    closeBtn.style.borderColor = 'rgba(255, 215, 0, 0.3)';
+                                    closeBtn.style.color = 'rgba(255, 255, 255, 0.7)';
+                                });
+                            }
+                        }, 50);
+                    });
+                });
+
+                // ===== 自定義目的地功能（使用 Places Autocomplete Service）=====
+                const destInput = document.getElementById('gmap-custom-dest-input');
+                const destBtn = document.getElementById('gmap-custom-dest-btn');
+                // geocoder 已在地圖點擊功能中聲明，直接使用
+
+                // 創建搜尋建議列表容器
+                const suggestionsList = document.createElement('ul');
+                suggestionsList.id = 'gmap-suggestions-list';
+                suggestionsList.style.cssText = `
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background: rgba(20, 30, 20, 0.97);
+                    border: 1px solid rgba(255, 215, 0, 0.3);
+                    border-top: none;
+                    border-radius: 0 0 8px 8px;
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                    max-height: 300px;
+                    overflow-y: auto;
+                    z-index: 100;
+                    display: none;
+                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+                `;
+                destInput.parentElement.style.position = 'relative';
+                destInput.parentElement.appendChild(suggestionsList);
+
+                // 初始化 Places Autocomplete Service（Google 推薦方式）
+                const autocompleteService = new google.maps.places.AutocompleteService();
+                const placesService = new google.maps.places.PlacesService(map);
+                let lastSearchTimeout;
+                let selectedSuggestion = null;
+
+                // 即時搜尋建議
+                destInput.addEventListener('input', (e) => {
+                    clearTimeout(lastSearchTimeout);
+                    const query = e.target.value.trim();
+
+                    if (query.length < 2) {
+                        suggestionsList.style.display = 'none';
+                        suggestionsList.innerHTML = '';
+                        return;
+                    }
+
+                    console.log(`[Google Map] 搜尋建議: ${query}`);
+
+                    // 使用 Autocomplete Service 獲取預測結果
+                    lastSearchTimeout = setTimeout(() => {
+                        autocompleteService.getPlacePredictions(
+                            {
+                                input: query,
+                                componentRestrictions: { country: 'tw' },
+                                types: ['geocode', 'establishment']
+                            },
+                            (predictions, status) => {
+                                if (status === 'OK' && predictions) {
+                                    suggestionsList.innerHTML = '';
+                                    const limitedPredictions = predictions.slice(0, 5); // 限制顯示 5 項
+
+                                    limitedPredictions.forEach((prediction, index) => {
+                                        const li = document.createElement('li');
+                                        li.style.cssText = `
+                                            padding: 10px 12px;
+                                            color: #E8F5E9;
+                                            font-size: 13px;
+                                            cursor: pointer;
+                                            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+                                            transition: background 0.2s ease;
+                                        `;
+                                        li.textContent = prediction.description;
+
+                                        li.addEventListener('mouseover', () => {
+                                            li.style.background = 'rgba(255, 215, 0, 0.1)';
+                                        });
+                                        li.addEventListener('mouseout', () => {
+                                            li.style.background = 'transparent';
+                                        });
+
+                                        li.addEventListener('click', () => {
+                                            destInput.value = prediction.description;
+                                            selectedSuggestion = prediction;
+                                            suggestionsList.style.display = 'none';
+                                            console.log(`[Google Map] 選擇建議: ${prediction.description}`);
+                                        });
+
+                                        suggestionsList.appendChild(li);
+                                    });
+
+                                    suggestionsList.style.display = 'block';
+                                } else {
+                                    suggestionsList.style.display = 'none';
+                                    console.log(`[Google Map] 無搜尋結果: ${status}`);
+                                }
+                            }
+                        );
+                    }, 300);
+                });
+
+                // 點擊其他地方關閉建議列表
+                document.addEventListener('click', (e) => {
+                    if (e.target !== destInput && e.target !== suggestionsList) {
+                        suggestionsList.style.display = 'none';
                     }
                 });
 
                 // 點擊導航按鈕
                 destBtn.addEventListener('click', () => {
-                    if (selectedPlace && selectedPlace.geometry) {
-                        const lat = selectedPlace.geometry.location.lat();
-                        const lng = selectedPlace.geometry.location.lng();
-                        const name = selectedPlace.name || selectedPlace.formatted_address || destInput.value;
-                        console.log(`[Google Map] 計算自定義目的地路線: ${name} (${lat}, ${lng})`);
-                        window.customDestMode = true; // 設置為開車模式
-                        calculateRoute(name, lat, lng);
-                    } else if (destInput.value.trim()) {
-                        // 若未用 Autocomplete 選取，使用 Geocoder 解析輸入文字
-                        const geocoder = new google.maps.Geocoder();
-                        geocoder.geocode(
-                            { address: destInput.value, componentRestrictions: { country: 'tw' } },
-                            (results, status) => {
-                                if (status === 'OK' && results[0]) {
-                                    const loc = results[0].geometry.location;
-                                    const name = results[0].formatted_address;
-                                    console.log(`[Google Map] Geocoder 解析成功: ${name} (${loc.lat()}, ${loc.lng()})`);
-                                    window.customDestMode = true; // 設置為開車模式
-                                    calculateRoute(name, loc.lat(), loc.lng());
-                                } else {
-                                    console.warn(`[Google Map] Geocoder 失敗: ${status}`);
-                                    alert('找不到該地點，請嘗試更具體的地址或地標名稱');
-                                }
-                            }
-                        );
-                    } else {
+                    const inputValue = destInput.value.trim();
+
+                    if (!inputValue) {
                         alert('請輸入地點或地址');
+                        return;
+                    }
+
+                    console.log(`[Google Map] 開始解析地址: ${inputValue}`);
+
+                    // 使用 Geocoder 解析輸入的地址（最新推薦方式）
+                    geocoder.geocode(
+                        { address: inputValue, componentRestrictions: { country: 'tw' } },
+                        (results, status) => {
+                            if (status === 'OK' && results[0]) {
+                                const result = results[0];
+                                const lat = result.geometry.location.lat();
+                                const lng = result.geometry.location.lng();
+                                const name = result.formatted_address;
+
+                                console.log(`[Google Map] Geocoder 解析成功: ${name} (${lat}, ${lng})`);
+                                window.customDestMode = true; // 設置為開車模式
+                                calculateRoute(name, lat, lng);
+
+                                // 清空輸入框
+                                destInput.value = '';
+                            } else {
+                                console.warn(`[Google Map] Geocoder 失敗: ${status}`);
+                                alert(`找不到該地點 (${status})。請嘗試更具體的地址或地標名稱。`);
+                            }
+                        }
+                    );
+                });
+
+                // 支持 Enter 鍵快速搜尋
+                destInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        destBtn.click();
                     }
                 });
 
@@ -554,7 +856,7 @@
                                 function animateFlow() {
                                     if (!flowAnimating) return;
 
-                                    flowOffset = (flowOffset + 0.03) % 40;
+                                    flowOffset = (flowOffset + 0.02) % 40;
                                     flowingPolyline.setOptions({
                                         icons: [
                                             {
@@ -743,7 +1045,7 @@
 
                         function animateFlow() {
                             if (!flowAnimating) return;
-                            flowOffset = (flowOffset + 0.03) % 40;
+                            flowOffset = (flowOffset + 0.02) % 40;
                             flowingPolyline.setOptions({
                                 icons: [
                                     {
@@ -887,6 +1189,10 @@
                     banner.innerHTML = `
                         <div style="background: rgba(255, 215, 0, 0.95); color: #0A1F0A; padding: 14px 20px; border-radius: 8px; font-weight: 600; text-align: center; display: flex; align-items: center; justify-content: center; gap: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
                             <span>📍 ${locationName}</span>
+                            <span style="color: #666; font-weight: 500;">|</span>
+                            <span>${distance}km</span>
+                            <span style="color: #666; font-weight: 500;">|</span>
+                            <span>⏱️ 約 ${duration} 分鐘</span>
                             <button style="background: none; border: none; cursor: pointer; font-size: 18px; color: #0A1F0A; margin-left: auto; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'" onclick="
                                 if (window.currentPolyline) {
                                     window.currentPolyline.setMap(null);
