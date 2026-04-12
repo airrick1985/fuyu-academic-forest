@@ -397,6 +397,18 @@
                     window.flowAnimating = false;
                     window.destPulsing = false;
 
+                    // 清除終點圓球
+                    if (window.destPulseAnimationId && typeof window.destPulseAnimationId === 'number') {
+                        clearInterval(window.destPulseAnimationId);
+                        window.destPulseAnimationId = null;
+                    }
+                    if (window.destPulseCircles && Array.isArray(window.destPulseCircles)) {
+                        window.destPulseCircles.forEach(circle => {
+                            circle.setMap(null);
+                        });
+                        window.destPulseCircles = [];
+                    }
+
                     // 使用 OSRM (Open Source Routing Machine) 獲取真實道路路線
                     const osmUrl = `https://router.project-osrm.org/route/v1/walking/${locationData.lng},${locationData.lat};${destLng},${destLat}?overview=full&geometries=geojson`;
 
@@ -487,6 +499,86 @@
 
                                 // 保存狀態以便清除
                                 window.flowAnimating = true;
+
+                                // ===== 添加終點紅色圓球（脈動效果） =====
+                                const destPulseCircles = [];
+
+                                // 終點外層圓圈
+                                const destOuterCircle = new google.maps.Circle({
+                                    center: {
+                                        lat: destLat,
+                                        lng: destLng
+                                    },
+                                    radius: 50,
+                                    map: map,
+                                    fillColor: '#FF4444',
+                                    fillOpacity: 0.1,
+                                    strokeColor: '#FF4444',
+                                    strokeWeight: 2,
+                                    strokeOpacity: 0.3
+                                });
+                                destPulseCircles.push(destOuterCircle);
+
+                                // 終點中層圓圈
+                                const destMiddleCircle = new google.maps.Circle({
+                                    center: {
+                                        lat: destLat,
+                                        lng: destLng
+                                    },
+                                    radius: 30,
+                                    map: map,
+                                    fillColor: '#FF4444',
+                                    fillOpacity: 0.2,
+                                    strokeColor: '#FF4444',
+                                    strokeWeight: 2,
+                                    strokeOpacity: 0.5
+                                });
+                                destPulseCircles.push(destMiddleCircle);
+
+                                // 終點核心圓圈
+                                const destCoreCircle = new google.maps.Circle({
+                                    center: {
+                                        lat: destLat,
+                                        lng: destLng
+                                    },
+                                    radius: 12,
+                                    map: map,
+                                    fillColor: '#FF4444',
+                                    fillOpacity: 0.8,
+                                    strokeColor: '#FFFFFF',
+                                    strokeWeight: 2,
+                                    strokeOpacity: 1
+                                });
+                                destPulseCircles.push(destCoreCircle);
+
+                                // 終點脈動動畫
+                                let destPulsePhase = 0;
+                                let destPulseAnimationId = setInterval(() => {
+                                    destPulsePhase = (destPulsePhase + 0.05) % (2 * Math.PI);
+                                    const destPulseValue = Math.sin(destPulsePhase) * 0.3 + 0.5;
+
+                                    // 更新終點外層圓圈
+                                    destOuterCircle.setOptions({
+                                        radius: 50 + Math.sin(destPulsePhase) * 15,
+                                        fillOpacity: 0.05 * (1 - destPulseValue),
+                                        strokeOpacity: 0.2 * (1 - destPulseValue)
+                                    });
+
+                                    // 更新終點中層圓圈
+                                    destMiddleCircle.setOptions({
+                                        fillOpacity: 0.2 + Math.sin(destPulsePhase) * 0.1,
+                                        strokeOpacity: 0.4 + Math.sin(destPulsePhase) * 0.2
+                                    });
+
+                                    // 更新終點核心圓圈
+                                    destCoreCircle.setOptions({
+                                        fillOpacity: 0.7 + Math.sin(destPulsePhase) * 0.2
+                                    });
+                                }, 50);
+
+                                // 保存動畫 ID 以便清除
+                                window.destPulseAnimationId = destPulseAnimationId;
+                                window.destPulseCircles = destPulseCircles;
 
                                 // ===== 添加終點 CHIP =====
                                 const destChip = document.createElement('div');
@@ -635,6 +727,86 @@
 
                         animateFlow();
                         window.flowAnimating = true;
+
+                        // ===== 添加終點紅色圓球（脈動效果） =====
+                        const destPulseCircles = [];
+
+                        // 終點外層圓圈
+                        const destOuterCircle = new google.maps.Circle({
+                            center: {
+                                lat: destLat,
+                                lng: destLng
+                            },
+                            radius: 50,
+                            map: map,
+                            fillColor: '#FF4444',
+                            fillOpacity: 0.1,
+                            strokeColor: '#FF4444',
+                            strokeWeight: 2,
+                            strokeOpacity: 0.3
+                        });
+                        destPulseCircles.push(destOuterCircle);
+
+                        // 終點中層圓圈
+                        const destMiddleCircle = new google.maps.Circle({
+                            center: {
+                                lat: destLat,
+                                lng: destLng
+                            },
+                            radius: 30,
+                            map: map,
+                            fillColor: '#FF4444',
+                            fillOpacity: 0.2,
+                            strokeColor: '#FF4444',
+                            strokeWeight: 2,
+                            strokeOpacity: 0.5
+                        });
+                        destPulseCircles.push(destMiddleCircle);
+
+                        // 終點核心圓圈
+                        const destCoreCircle = new google.maps.Circle({
+                            center: {
+                                lat: destLat,
+                                lng: destLng
+                            },
+                            radius: 12,
+                            map: map,
+                            fillColor: '#FF4444',
+                            fillOpacity: 0.8,
+                            strokeColor: '#FFFFFF',
+                            strokeWeight: 2,
+                            strokeOpacity: 1
+                        });
+                        destPulseCircles.push(destCoreCircle);
+
+                        // 終點脈動動畫
+                        let destPulsePhase = 0;
+                        let destPulseAnimationId = setInterval(() => {
+                            destPulsePhase = (destPulsePhase + 0.05) % (2 * Math.PI);
+                            const destPulseValue = Math.sin(destPulsePhase) * 0.3 + 0.5;
+
+                            // 更新終點外層圓圈
+                            destOuterCircle.setOptions({
+                                radius: 50 + Math.sin(destPulsePhase) * 15,
+                                fillOpacity: 0.05 * (1 - destPulseValue),
+                                strokeOpacity: 0.2 * (1 - destPulseValue)
+                            });
+
+                            // 更新終點中層圓圈
+                            destMiddleCircle.setOptions({
+                                fillOpacity: 0.2 + Math.sin(destPulsePhase) * 0.1,
+                                strokeOpacity: 0.4 + Math.sin(destPulsePhase) * 0.2
+                            });
+
+                            // 更新終點核心圓圈
+                            destCoreCircle.setOptions({
+                                fillOpacity: 0.7 + Math.sin(destPulsePhase) * 0.2
+                            });
+                        }, 50);
+
+                        // 保存動畫 ID 以便清除
+                        window.destPulseAnimationId = destPulseAnimationId;
+                        window.destPulseCircles = destPulseCircles;
 
                         // ===== 添加終點 CHIP =====
                         const destChip = document.createElement('div');
