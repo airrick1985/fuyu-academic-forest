@@ -159,11 +159,15 @@ if (!window._spaRouterInitialized) {
             document.body.style.overflow = '';
             window.scrollTo(0, 0);
 
-            // 隱藏加載覆蓋層（使用更新後的引用）
-            if (newLoadingOverlay) {
-                newLoadingOverlay.classList.add('hidden');
-                console.log('[SPA Router] 隱藏加載覆蓋層');
-            }
+            // 延遲隱藏加載覆蓋層，確保 CSS 樣式表已完全加載
+            // 特別是強制刷新（Ctrl+Shift+R）後 CSS 加載可能較慢
+            setTimeout(() => {
+                const overlayToHide = document.getElementById('pwa-loading-overlay');
+                if (overlayToHide) {
+                    overlayToHide.classList.add('hidden');
+                    console.log('[SPA Router] 隱藏加載覆蓋層');
+                }
+            }, 200);
         } catch (err) {
             console.error('SPA Navigation failed:', err);
 

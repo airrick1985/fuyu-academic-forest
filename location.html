@@ -119,6 +119,8 @@
 
     <script src="assets/pannellum/pannellum.min.js"></script>
     <script>
+        // 延遲執行以確保 pannellum 已加載（SPA 導航時的備用方案）
+        const initLocationScript = () => {
         (() => {
             /* ===== 熱點資料定義 =====
              * 如何取得座標？將下方 hotSpotDebug 設為 true，
@@ -307,6 +309,24 @@
                 if (e.key === 'Escape') closePoiModal();
             });
         })();
+        };
+
+        // SPA 導航時 pannellum 可能延遲加載，所以使用延遲執行
+        if (window.pannellum) {
+            initLocationScript();
+        } else {
+            console.warn('[Location] 等待 pannellum 加載...');
+            let retries = 0;
+            const waitPannellum = setInterval(() => {
+                if (window.pannellum) {
+                    clearInterval(waitPannellum);
+                    initLocationScript();
+                } else if (retries++ > 50) {
+                    clearInterval(waitPannellum);
+                    console.error('[Location] pannellum 加載超時');
+                }
+            }, 100);
+        }
     </script>
     <script src="js/spa-router.js?v=1.0.2"></script>
     <!-- Asset Update Manager -->
