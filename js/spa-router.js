@@ -120,12 +120,12 @@ if (!window._spaRouterInitialized) {
             }
 
             // 重新初始化動畫（如果頁面使用了 fade-in 動畫）
-            // 延遲執行以確保 CSS 樣式表已加載完成（跟覆蓋層隱藏時間同步）
+            // 延遲執行以確保 CSS 樣式表已加載完成
             if (window.initFadeInAnimations) {
                 setTimeout(() => {
                     window.initFadeInAnimations();
                     console.log('[SPA Router] 已初始化 fade-in 動畫');
-                }, 480);
+                }, 600);
             }
 
             // 重新初始化 Google Maps（如果頁面是 google-map.html）
@@ -157,7 +157,7 @@ if (!window._spaRouterInitialized) {
             const loadedScripts = Array.from(document.querySelectorAll('script[src]')).map(s => s.src);
 
             // 需要每次都重新加載的關鍵腳本（特定頁面的初始化庫或全局工具）
-            const alwaysReloadScripts = ['topbar.js', 'pannellum.min.js', 'maps.googleapis.com'];
+            const alwaysReloadScripts = ['topbar.js', 'pannellum.min.js', 'maps.googleapis.com', 'fireflies.js'];
 
             const scripts = Array.from(document.body.querySelectorAll('script'));
             for (const oldScript of scripts) {
@@ -209,14 +209,14 @@ if (!window._spaRouterInitialized) {
             window.scrollTo(0, 0);
 
             // 延遲隱藏加載覆蓋層，確保 CSS 樣式表已完全加載
-            // 增加延遲以確保頁面特定 CSS（如 brand.css）有足夠的時間加載
+            // 增加延遲以確保頁面特定 CSS（如 brand.css）和動畫初始化有足夠的時間完成
             setTimeout(() => {
                 const overlayToHide = document.getElementById('pwa-loading-overlay');
                 if (overlayToHide) {
                     overlayToHide.classList.add('hidden');
                     console.log('[SPA Router] 隱藏加載覆蓋層');
                 }
-            }, 500);
+            }, 700);
         } catch (err) {
             console.error('SPA Navigation failed:', err);
 
