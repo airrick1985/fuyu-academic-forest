@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="app-version" content="1.0.3">
+    <script>
+      if (!window.location.hostname.includes('localhost') && window.location.hostname !== '127.0.0.1') {
+        document.write('<base href="/fuyu-academic-forest/">');
+      }
+    </script>
+    <title>基地位置 - Google地圖 - 富宇學森 The Academic Forest</title>
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2D5016">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="富宇學森">
+    <link rel="apple-touch-icon" href="assets/images/fuyu-logo.webp">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css?v=1.0.2">
+    <link rel="stylesheet" href="css/global.css?v=1.0.2">
+    <link rel="stylesheet" href="css/topbar.css?v=1.0.2">
+    <link rel="stylesheet" href="css/google-map.css?v=1.0.2">
+    <!-- PWA Update Loading Screen -->
+    <style id="pwa-loading-style">
+      #pwa-loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #0A1F0A 0%, #1a3a1a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        opacity: 1;
+        transition: opacity 0.5s ease-out;
+      }
+      #pwa-loading-overlay.hidden {
+        pointer-events: none;
+        opacity: 0;
+      }
+      .pwa-loading-content {
+        text-align: center;
+        color: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      .pwa-loading-spinner {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 20px;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        border-top-color: #2D5016;
+        border-radius: 50%;
+        animation: pwa-spin 1s linear infinite;
+      }
+      @keyframes pwa-spin {
+        to { transform: rotate(360deg); }
+      }
+      .pwa-loading-text {
+        font-size: 16px;
+        font-weight: 500;
+        color: #ccc;
+      }
+    </style>
+</head>
+
+<body class="google-map-page">
+    <!-- PWA Loading Overlay -->
+    <div id="pwa-loading-overlay">
+      <div class="pwa-loading-content">
+        <div class="pwa-loading-spinner"></div>
+        <div class="pwa-loading-text">正在檢查更新...</div>
+      </div>
+    </div>
+    <!-- Top Bar (由 topbar.js 統一注入) -->
+    <div id="topbar-root"></div>
+
+    <!-- Main Container -->
+    <div class="gmap-container">
+        <!-- 左側信息面板 -->
+        <div class="gmap-info-panel">
+            <div class="gmap-info-header">
+                <h2>基地位置</h2>
+                <p class="gmap-subtitle">LOCATION</p>
+            </div>
+
+            <div class="gmap-info-content">
+                <div class="gmap-info-section">
+                    <h3 class="gmap-section-title">📍 建案地址</h3>
+                    <p class="gmap-info-text">新竹市東區長春街</p>
+                </div>
+
+                <div class="gmap-info-section">
+                    <h3 class="gmap-section-title">🚌 交通便利</h3>
+                    <div class="gmap-transport-list">
+                        <div class="gmap-transport-item" data-location="新莊車站" data-lat="24.788195949987482" data-lng="121.02183023761707">
+                            <div class="gmap-transport-icon">🚶</div>
+                            <div class="gmap-transport-info">
+                                <div class="gmap-transport-name">新莊車站</div>
+                                <div class="gmap-transport-detail">徒步11分鐘 | 約800m</div>
+                            </div>
+                        </div>
+                        <div class="gmap-transport-item" data-location="國道一號" data-lat="24.79022165356515" data-lng="121.00561976703688">
+                            <div class="gmap-transport-icon">🚗</div>
+                            <div class="gmap-transport-info">
+                                <div class="gmap-transport-name">國道一號</div>
+                                <div class="gmap-transport-detail">開車5分鐘 | 約1.5km</div>
+                            </div>
+                        </div>
+                        <div class="gmap-transport-item" data-location="竹科園區" data-lat="24.77354648796669" data-lng="121.01402925107101">
+                            <div class="gmap-transport-icon">🚗</div>
+                            <div class="gmap-transport-info">
+                                <div class="gmap-transport-name">竹科園區</div>
+                                <div class="gmap-transport-detail">開車7分鐘 | 約2km</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gmap-info-section">
+                    <h3 class="gmap-section-title">🌳 周邊設施</h3>
+                    <div class="gmap-facility-list">
+                        <div class="gmap-facility-item" data-location="長春公園" data-lat="24.787034596901606" data-lng="121.01463069948683">
+                            <div class="gmap-facility-icon">🌳</div>
+                            <div class="gmap-facility-info">
+                                <div class="gmap-facility-name">長春公園</div>
+                                <div class="gmap-facility-detail">徒步2分鐘 | 約120m</div>
+                            </div>
+                        </div>
+                        <div class="gmap-facility-item" data-location="關新公園" data-lat="24.786441810086217" data-lng="121.01922482935154">
+                            <div class="gmap-facility-icon">🌳</div>
+                            <div class="gmap-facility-info">
+                                <div class="gmap-facility-name">關新公園</div>
+                                <div class="gmap-facility-detail">徒步8分鐘 | 約550m</div>
+                            </div>
+                        </div>
+                        <div class="gmap-facility-item" data-location="靜心湖" data-lat="24.779558283885233" data-lng="121.01309232363158">
+                            <div class="gmap-facility-icon">💧</div>
+                            <div class="gmap-facility-info">
+                                <div class="gmap-facility-name">靜心湖</div>
+                                <div class="gmap-facility-detail">徒步10分鐘 | 約900m</div>
+                            </div>
+                        </div>
+                        <div class="gmap-facility-item" data-location="紐約國際幼兒園" data-lat="24.788271125928155" data-lng="121.01368104022522">
+                            <div class="gmap-facility-icon">🏫</div>
+                            <div class="gmap-facility-info">
+                                <div class="gmap-facility-name">紐約國際幼兒園</div>
+                                <div class="gmap-facility-detail">徒步4分鐘 | 約300m</div>
+                            </div>
+                        </div>
+                        <div class="gmap-facility-item" data-location="關埔國小" data-lat="24.788679836099256" data-lng="121.01340208024266">
+                            <div class="gmap-facility-icon">🏫</div>
+                            <div class="gmap-facility-info">
+                                <div class="gmap-facility-name">關埔國小</div>
+                                <div class="gmap-facility-detail">徒步5分鐘 | 約350m</div>
+                            </div>
+                        </div>
+                        <div class="gmap-facility-item" data-location="光武國中" data-lat="24.78682952127125" data-lng="121.01302339577504">
+                            <div class="gmap-facility-icon">🏫</div>
+                            <div class="gmap-facility-info">
+                                <div class="gmap-facility-name">光武國中</div>
+                                <div class="gmap-facility-detail">徒步6分鐘 | 約450m</div>
+                            </div>
+                        </div>
+                        <div class="gmap-facility-item" data-location="迪卡儂" data-lat="24.792120382167557" data-lng="121.01332025858709">
+                            <div class="gmap-facility-icon">🛒</div>
+                            <div class="gmap-facility-info">
+                                <div class="gmap-facility-name">迪卡儂</div>
+                                <div class="gmap-facility-detail">開車4分鐘 | 約1km</div>
+                            </div>
+                        </div>
+                        <div class="gmap-facility-item" data-location="星巴克" data-lat="24.790825467977086" data-lng="121.0134409756614">
+                            <div class="gmap-facility-icon">☕</div>
+                            <div class="gmap-facility-info">
+                                <div class="gmap-facility-name">星巴克</div>
+                                <div class="gmap-facility-detail">徒步8分鐘 | 約650m</div>
+                            </div>
+                        </div>
+                        <div class="gmap-facility-item" data-location="好市多" data-lat="24.793656806734425" data-lng="121.01303647725766">
+                            <div class="gmap-facility-icon">🛒</div>
+                            <div class="gmap-facility-info">
+                                <div class="gmap-facility-name">好市多</div>
+                                <div class="gmap-facility-detail">開車6分鐘 | 約1.3km</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gmap-info-section">
+                    <h3 class="gmap-section-title">🏢 核心競爭力</h3>
+                    <p class="gmap-info-text">坐擁新竹科學園區邊界，優越的地理位置確保未來增值潛力。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右側地圖 -->
+        <div class="gmap-map-wrapper">
+            <div id="gmap-map-container" class="gmap-map-container"></div>
+            <!-- CHIP 覆蓋層 -->
+            <div id="gmap-chip-overlay" class="gmap-chip-overlay"></div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="js/topbar.js"></script>
+
+    <!-- Google Maps API - 包含 Directions 服務 -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIHP_KTHH71AYYygCpNqEI6L5DfTaT9Hs&libraries=places"></script>
+
+    <!-- Google Maps 初始化與自定義標籤 -->
+    <script>
+        (() => {
+            const locationData = {
+                lat: 24.787786,
+                lng: 121.015289,
+                title: '富宇學森基地位置',
+                address: '新竹市東區長春街'
+            };
+
+            // 等待 Google Maps API 加載
+            window.addEventListener('load', () => {
+                initializeMap();
+            });
+
+            function initializeMap() {
+                // 檢查 google.maps 是否已載入
+                if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+                    console.warn('Google Maps API 未載入，使用備用嵌入式地圖');
+                    loadFallbackMap();
+                    return;
+                }
+
+                const mapContainer = document.getElementById('gmap-map-container');
+
+                const map = new google.maps.Map(mapContainer, {
+                    zoom: 16,
+                    center: {
+                        lat: locationData.lat,
+                        lng: locationData.lng
+                    },
+                    mapTypeId: 'hybrid',
+                    mapTypeControl: true,
+                    fullscreenControl: true,
+                    zoomControl: true,
+                    streetViewControl: false
+                });
+
+                // ===== 添加基地位置 CHIP 標籤（簡化版本） =====
+                const chipOverlay = document.getElementById('gmap-chip-overlay');
+                const baseLocationChip = document.createElement('div');
+                baseLocationChip.className = 'gmap-location-chip';
+                baseLocationChip.textContent = '🏢 ' + locationData.title;
+                baseLocationChip.id = 'base-location-chip';
+                baseLocationChip.style.position = 'absolute';
+                baseLocationChip.style.pointerEvents = 'none';
+                chipOverlay.appendChild(baseLocationChip);
+
+                // ===== 添加呼吸感的黃色光球 =====
+                // 創建多個圓圈實現光球效果
+                const pulseCircles = [];
+
+                // 外層脈動圓圈
+                const outerCircle = new google.maps.Circle({
+                    center: {
+                        lat: locationData.lat,
+                        lng: locationData.lng
+                    },
+                    radius: 50,
+                    map: map,
+                    fillColor: '#FFD700',
+                    fillOpacity: 0.1,
+                    strokeColor: '#FFD700',
+                    strokeWeight: 2,
+                    strokeOpacity: 0.3
+                });
+                pulseCircles.push(outerCircle);
+
+                // 中層圓圈
+                const middleCircle = new google.maps.Circle({
+                    center: {
+                        lat: locationData.lat,
+                        lng: locationData.lng
+                    },
+                    radius: 30,
+                    map: map,
+                    fillColor: '#FFD700',
+                    fillOpacity: 0.2,
+                    strokeColor: '#FFD700',
+                    strokeWeight: 2,
+                    strokeOpacity: 0.5
+                });
+                pulseCircles.push(middleCircle);
+
+                // 核心圓圈
+                const coreCircle = new google.maps.Circle({
+                    center: {
+                        lat: locationData.lat,
+                        lng: locationData.lng
+                    },
+                    radius: 12,
+                    map: map,
+                    fillColor: '#FFD700',
+                    fillOpacity: 0.8,
+                    strokeColor: '#FFFFFF',
+                    strokeWeight: 2,
+                    strokeOpacity: 1
+                });
+                pulseCircles.push(coreCircle);
+
+                // 脈動動畫
+                let pulsePhase = 0;
+                setInterval(() => {
+                    pulsePhase = (pulsePhase + 0.05) % (2 * Math.PI);
+                    const pulseValue = Math.sin(pulsePhase) * 0.3 + 0.5;
+
+                    // 更新外層圓圈
+                    outerCircle.setOptions({
+                        radius: 50 + Math.sin(pulsePhase) * 15,
+                        fillOpacity: 0.05 * (1 - pulseValue),
+                        strokeOpacity: 0.2 * (1 - pulseValue)
+                    });
+
+                    // 更新中層圓圈
+                    middleCircle.setOptions({
+                        fillOpacity: 0.2 + Math.sin(pulsePhase) * 0.1,
+                        strokeOpacity: 0.4 + Math.sin(pulsePhase) * 0.2
+                    });
+
+                    // 更新核心圓圈
+                    coreCircle.setOptions({
+                        fillOpacity: 0.7 + Math.sin(pulsePhase) * 0.2
+                    });
+                }, 50);
+
+                // ===== 導航功能 (地圖上繪製路線) =====
+                window.currentPolyline = null; // 保存當前路線線條（全局變數）
+
+                // 為左側所有卡片（交通 + 設施）添加點擊事件
+                function setupFacilityClickListeners() {
+                    const facilityItems = document.querySelectorAll('.gmap-facility-item, .gmap-transport-item');
+                    console.log(`[Google Map] 找到 ${facilityItems.length} 個導航卡片（${document.querySelectorAll('.gmap-transport-item').length} 個交通 + ${document.querySelectorAll('.gmap-facility-item').length} 個設施）`);
+
+                    facilityItems.forEach((item, index) => {
+                        item.style.cursor = 'pointer';
+
+                        item.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const locationName = this.getAttribute('data-location');
+                            const destLat = parseFloat(this.getAttribute('data-lat'));
+                            const destLng = parseFloat(this.getAttribute('data-lng'));
+
+                            console.log(`[Google Map] 點擊設施: ${locationName}, 座標: ${destLat}, ${destLng}`);
+
+                            if (!isNaN(destLat) && !isNaN(destLng)) {
+                                calculateRoute(locationName, destLat, destLng);
+                            } else {
+                                console.warn(`[Google Map] 無效的座標: ${destLat}, ${destLng}`);
+                            }
+                        });
+                    });
+                }
+
+                // 初始化設施卡片點擊事件
+                setupFacilityClickListeners();
+
+                // 儲存目的地 CHIP，便於清除
+                let destinationGlow = null;
+
+                function calculateRoute(locationName, destLat, destLng) {
+                    console.log(`[Google Map] 開始計算路線到 ${locationName}`);
+
+                    // 清除之前的路線和目的地標記
+                    if (window.currentPolyline) {
+                        window.currentPolyline.setMap(null);
+                        window.currentPolyline = null;
+                    }
+                    if (window.flowingPolyline) {
+                        window.flowingPolyline.setMap(null);
+                        window.flowingPolyline = null;
+                    }
+                    if (window.destPulseAnimationId && window.destPulseAnimationId.stop) {
+                        window.destPulseAnimationId.stop();
+                    }
+                    if (window.destinationGlow && window.destinationGlow.parentNode) {
+                        window.destinationGlow.parentNode.removeChild(window.destinationGlow);
+                        window.destinationGlow = null;
+                    }
+
+                    // 停止之前的動畫
+                    window.flowAnimating = false;
+                    window.destPulsing = false;
+
+                    // 使用 OSRM (Open Source Routing Machine) 獲取真實道路路線
+                    const osmUrl = `https://router.project-osrm.org/route/v1/walking/${locationData.lng},${locationData.lat};${destLng},${destLat}?overview=full&geometries=geojson`;
+
+                    console.log(`[Google Map] 從 OSRM 獲取路線: ${locationName}`);
+                    console.log(`[Google Map] OSRM URL: ${osmUrl}`);
+
+                    fetch(osmUrl, { timeout: 10000 })
+                        .then(response => {
+                            console.log(`[Google Map] OSRM 響應狀態: ${response.status}`);
+                            if (!response.ok) {
+                                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log(`[Google Map] OSRM 響應碼: ${data.code}`);
+                            if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                                const route = data.routes[0];
+                                const geometry = route.geometry;
+
+                                // 將 GeoJSON 坐標轉換為 Google Maps LatLng
+                                const routePath = geometry.coordinates.map(coord => ({
+                                    lat: coord[1],
+                                    lng: coord[0]
+                                }));
+
+                                console.log(`[Google Map] 路線包含 ${routePath.length} 個點`);
+
+                                // ===== 繪製動態流動的路線 =====
+                                // 主路線邊框（底層，深藍色）
+                                window.currentPolyline = new google.maps.Polyline({
+                                    path: routePath,
+                                    geodesic: false,
+                                    strokeColor: '#003D7A', // 深藍色邊框
+                                    strokeOpacity: 1,
+                                    strokeWeight: 8,
+                                    map: map
+                                });
+
+                                // 流動效果路線（頂層，淺藍色，使用箭頭動畫）
+                                window.flowingPolyline = new google.maps.Polyline({
+                                    path: routePath,
+                                    geodesic: false,
+                                    strokeColor: '#1E90FF', // 淺藍色
+                                    strokeOpacity: 1,
+                                    strokeWeight: 6,
+                                    map: map,
+                                    icons: [
+                                        {
+                                            icon: {
+                                                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                                                strokeColor: '#FFFFFF',
+                                                scale: 2.5
+                                            },
+                                            offset: '0%',
+                                            repeat: '40px'
+                                        }
+                                    ]
+                                });
+                                const flowingPolyline = window.flowingPolyline;
+
+                                // 添加流動動畫（使用 requestAnimationFrame 減少閃爍）
+                                let flowOffset = 0;
+                                let flowAnimating = true;
+
+                                function animateFlow() {
+                                    if (!flowAnimating) return;
+
+                                    flowOffset = (flowOffset + 0.03) % 40;
+                                    flowingPolyline.setOptions({
+                                        icons: [
+                                            {
+                                                icon: {
+                                                    path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                                                    strokeColor: '#FFFFFF',
+                                                    scale: 2.5
+                                                },
+                                                offset: flowOffset + '%',
+                                                repeat: '40px'
+                                            }
+                                        ]
+                                    });
+
+                                    requestAnimationFrame(animateFlow);
+                                }
+
+                                animateFlow();
+
+                                // 保存狀態以便清除
+                                window.flowAnimating = true;
+
+                                // ===== 添加終點 CHIP =====
+                                const destChip = document.createElement('div');
+                                destChip.className = 'gmap-location-chip destination';
+                                destChip.textContent = '📍 ' + locationName;
+                                destChip.id = 'dest-location-chip';
+                                destChip.style.position = 'absolute';
+                                destChip.style.pointerEvents = 'none';
+                                chipOverlay.appendChild(destChip);
+                                window.destinationGlow = destChip;
+
+                                // 位置終點 CHIP（在地圖空閒後計算）
+                                function positionDestinationChip() {
+                                    const destPoint = new google.maps.LatLng(destLat, destLng);
+                                    const projection = new google.maps.OverlayView();
+                                    projection.setMap(map);
+
+                                    try {
+                                        const point = projection.getProjection().fromLatLngToContainerPixel(destPoint);
+                                        if (point) {
+                                            destChip.style.left = point.x + 'px';
+                                            destChip.style.top = point.y + 'px';
+                                            console.log(`[Google Map] 終點 CHIP 位置: left=${point.x}px, top=${point.y}px`);
+                                        }
+                                    } catch (e) {
+                                        console.warn('[Google Map] 位置計算失敗:', e.message);
+                                    }
+                                }
+
+                                // 保存清除函數
+                                window.destPulsing = true;
+                                window.destPulseAnimationId = {
+                                    stop: () => {
+                                        destPulsing = true;
+                                        if (window.destinationGlow && window.destinationGlow.parentNode) {
+                                            window.destinationGlow.parentNode.removeChild(window.destinationGlow);
+                                            window.destinationGlow = null;
+                                        }
+                                    }
+                                };
+
+                                // 調整地圖視野以顯示完整路線
+                                const bounds = new google.maps.LatLngBounds();
+                                routePath.forEach(point => bounds.extend(point));
+                                map.fitBounds(bounds, 100); // 100px 的內邊距
+
+                                // 地圖空閒後位置 CHIP
+                                const idleListener = google.maps.event.addListenerOnce(map, 'idle', () => {
+                                    positionDestinationChip();
+                                });
+
+                                // 高亮顯示卡片
+                                document.querySelectorAll('.gmap-facility-item').forEach(item => {
+                                    item.classList.remove('route-active');
+                                });
+
+                                const activeItem = document.querySelector(`[data-location="${locationName}"]`);
+                                if (activeItem) {
+                                    activeItem.classList.add('route-active');
+                                }
+
+                                // 獲取距離和時間資訊
+                                const distance = (route.distance / 1000).toFixed(2); // 轉換為公里
+                                const duration = Math.round(route.duration / 60); // 轉換為分鐘
+
+                                // 顯示路線資訊
+                                showNavigationInfo(locationName, distance, duration);
+
+                                console.log(`[Google Map] 路線已繪製: ${locationName}, 距離: ${distance}km, 時間: ${duration}分鐘`);
+                            } else {
+                                console.error(`OSRM 路線查詢失敗: ${data.code}`, data.message);
+                                // 備用方案：使用直線連接
+                                drawFallbackRoute(locationName, destLat, destLng, distance, duration);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('[Google Map] OSRM 網絡錯誤:', error.message);
+                            // 備用方案：使用直線連接
+                            console.log('[Google Map] 使用備用路線（直線）');
+                            drawFallbackRoute(locationName, destLat, destLng);
+                        });
+
+                    // 備用方案：繪製直線路線
+                    function drawFallbackRoute(locationName, destLat, destLng, distance, duration) {
+                        console.log(`[Google Map] 使用備用路線到 ${locationName}`);
+
+                        const routePath = [
+                            { lat: locationData.lat, lng: locationData.lng },
+                            { lat: destLat, lng: destLng }
+                        ];
+
+                        // 繪製主路線邊框（深藍色）
+                        window.currentPolyline = new google.maps.Polyline({
+                            path: routePath,
+                            geodesic: true,
+                            strokeColor: '#003D7A', // 深藍色邊框
+                            strokeOpacity: 1,
+                            strokeWeight: 8,
+                            map: map
+                        });
+
+                        // 繪製動態效果路線（淺藍色）
+                        window.flowingPolyline = new google.maps.Polyline({
+                            path: routePath,
+                            geodesic: true,
+                            strokeColor: '#1E90FF', // 淺藍色
+                            strokeOpacity: 1,
+                            strokeWeight: 6,
+                            map: map,
+                            icons: [
+                                {
+                                    icon: {
+                                        path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                                        strokeColor: '#FFFFFF',
+                                        scale: 2.5
+                                    },
+                                    offset: '0%',
+                                    repeat: '40px'
+                                }
+                            ]
+                        });
+                        const flowingPolyline = window.flowingPolyline;
+
+                        // 流動動畫
+                        let flowOffset = 0;
+                        let flowAnimating = true;
+
+                        function animateFlow() {
+                            if (!flowAnimating) return;
+                            flowOffset = (flowOffset + 0.03) % 40;
+                            flowingPolyline.setOptions({
+                                icons: [
+                                    {
+                                        icon: {
+                                            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                                            strokeColor: '#FFFFFF',
+                                            scale: 2.5
+                                        },
+                                        offset: flowOffset + '%',
+                                        repeat: '40px'
+                                    }
+                                ]
+                            });
+                            requestAnimationFrame(animateFlow);
+                        }
+
+                        animateFlow();
+                        window.flowAnimating = true;
+
+                        // ===== 添加終點 CHIP =====
+                        const destChip = document.createElement('div');
+                        destChip.className = 'gmap-location-chip destination';
+                        destChip.textContent = '📍 ' + locationName;
+                        destChip.id = 'dest-location-chip';
+                        destChip.style.position = 'absolute';
+                        destChip.style.pointerEvents = 'none';
+                        chipOverlay.appendChild(destChip);
+                        destinationGlow = window.destinationGlow = destChip;
+
+                        // 保存清除函數
+                        window.destPulsing = true;
+                        window.destPulseAnimationId = {
+                            stop: () => {
+                                window.destPulsing = false;
+                                if (window.destinationGlow && window.destinationGlow.parentNode) {
+                                    window.destinationGlow.parentNode.removeChild(window.destinationGlow);
+                                    window.destinationGlow = null;
+                                }
+                            }
+                        };
+
+                        // 調整地圖視野
+                        const bounds = new google.maps.LatLngBounds();
+                        bounds.extend({ lat: locationData.lat, lng: locationData.lng });
+                        bounds.extend({ lat: destLat, lng: destLng });
+                        map.fitBounds(bounds, 100);
+
+                        // 位置終點 CHIP（在地圖空閒後計算）
+                        function positionDestinationChip() {
+                            const destPoint = new google.maps.LatLng(destLat, destLng);
+                            const projection = new google.maps.OverlayView();
+                            projection.setMap(map);
+
+                            try {
+                                const point = projection.getProjection().fromLatLngToContainerPixel(destPoint);
+                                if (point) {
+                                    destChip.style.left = point.x + 'px';
+                                    destChip.style.top = point.y + 'px';
+                                    console.log(`[Google Map] 終點 CHIP 位置: left=${point.x}px, top=${point.y}px`);
+                                }
+                            } catch (e) {
+                                console.warn('[Google Map] 位置計算失敗:', e.message);
+                            }
+                        }
+
+                        // 地圖空閒後位置 CHIP
+                        const idleListener = google.maps.event.addListenerOnce(map, 'idle', () => {
+                            positionDestinationChip();
+                        });
+
+                        // 高亮卡片
+                        document.querySelectorAll('.gmap-facility-item, .gmap-transport-item').forEach(item => {
+                            item.classList.remove('route-active');
+                        });
+
+                        const activeItem = document.querySelector(`[data-location="${locationName}"]`);
+                        if (activeItem) {
+                            activeItem.classList.add('route-active');
+                        }
+
+                        // 顯示導航資訊
+                        if (distance && duration) {
+                            showNavigationInfo(locationName, distance, duration);
+                        } else {
+                            showNavigationInfo(locationName, '計算中', '計算中');
+                        }
+
+                        console.log(`[Google Map] 備用路線已繪製: ${locationName}`);
+                    }
+                }
+
+                // 顯示導航資訊
+                function showNavigationInfo(locationName, distance, duration) {
+                    console.log(`[Google Map] 顯示導航資訊: ${locationName}, ${distance}km, ${duration}分鐘`);
+
+                    // 移除之前的提示
+                    if (window._navigationBanner) {
+                        window._navigationBanner.remove();
+                    }
+
+                    const banner = document.createElement('div');
+                    banner.id = 'navigation-info-banner';
+                    banner.innerHTML = `
+                        <div style="background: rgba(255, 215, 0, 0.95); color: #0A1F0A; padding: 14px 20px; border-radius: 8px; font-weight: 600; text-align: center; display: flex; align-items: center; justify-content: center; gap: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
+                            <span>📍 ${locationName}</span>
+                            <span style="color: #666; font-weight: 500;">|</span>
+                            <span>🚶 ${distance}km</span>
+                            <span style="color: #666; font-weight: 500;">|</span>
+                            <span>⏱️ 約 ${duration} 分鐘</span>
+                            <button style="background: none; border: none; cursor: pointer; font-size: 18px; color: #0A1F0A; margin-left: auto; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'" onclick="
+                                if (window.currentPolyline) {
+                                    window.currentPolyline.setMap(null);
+                                    window.currentPolyline = null;
+                                }
+                                if (window.flowingPolyline) {
+                                    window.flowingPolyline.setMap(null);
+                                    window.flowingPolyline = null;
+                                }
+                                window.flowAnimating = false;
+                                window.destPulsing = false;
+                                if (window.destPulseAnimationId && window.destPulseAnimationId.stop) {
+                                    window.destPulseAnimationId.stop();
+                                }
+                                if (window.destinationMarker) {
+                                    window.destinationMarker.setMap(null);
+                                    window.destinationMarker = null;
+                                }
+                                this.parentElement.parentElement.remove();
+                                document.querySelectorAll('.gmap-facility-item, .gmap-transport-item').forEach(item => item.classList.remove('route-active'));
+                            ">✕</button>
+                        </div>
+                    `;
+                    document.body.insertBefore(banner, document.body.firstChild);
+                    window._navigationBanner = banner;
+
+                    // 8 秒後自動關閉提示
+                    setTimeout(() => {
+                        if (window._navigationBanner) {
+                            window._navigationBanner.remove();
+                        }
+                    }, 8000);
+                }
+            }
+
+            function loadFallbackMap() {
+                // 備用方案：使用靜態地圖圖片
+                const mapContainer = document.getElementById('gmap-map-container');
+                mapContainer.innerHTML = `
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d4725.870228763408!2d121.015289!3d24.787786000000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjTCsDQ3JzE2LjAiTiAxMjHCsDAwJzU1LjAiRQ!5e1!3m2!1szh-TW!2stw!4v1775965474053!5m2!1szh-TW!2stw"
+                        width="100%"
+                        height="100%"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                `;
+            }
+        })();
+    </script>
+
+    <script src="js/spa-router.js?v=1.0.2"></script>
+    <!-- Asset Update Manager -->
+    <script src="js/asset-update-manager.js"></script>
+    <script src="js/pwa-register.js?v=1.0.2" defer></script>
+</body>
+
+</html>

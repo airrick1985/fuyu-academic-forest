@@ -1,0 +1,606 @@
+/* css/google-map.css - Google 地圖頁面專用樣式 */
+
+/* 頁面基礎樣式 */
+body.google-map-page {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, var(--color-bg-dark) 0%, #1a3a1a 100%);
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* 主容器 - 雙欄佈局 */
+.gmap-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    gap: 0;
+}
+
+/* ===== 左側信息面板 ===== */
+.gmap-info-panel {
+    width: 15%;
+    height: 100vh;
+    background: rgba(15, 35, 15, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(143, 191, 95, 0.2);
+    padding: 100px 20px 40px 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    animation: panel-slide-in 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes panel-slide-in {
+    0% {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 信息面板頭部 */
+.gmap-info-header {
+    text-align: left;
+    margin-bottom: 40px;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+    padding-bottom: 20px;
+}
+
+.gmap-info-header h2 {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    color: var(--color-text-primary);
+    margin: 0 0 8px 0;
+    letter-spacing: 3px;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.gmap-subtitle {
+    font-family: var(--font-english-serif);
+    font-size: 12px;
+    color: var(--color-accent);
+    letter-spacing: 2px;
+    margin: 0;
+    font-weight: 300;
+}
+
+/* 信息內容區域 */
+.gmap-info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* 信息區段 */
+.gmap-info-section {
+    animation: section-fade-in 0.8s ease-out forwards;
+}
+
+.gmap-info-section:nth-child(1) { animation-delay: 0.1s; }
+.gmap-info-section:nth-child(2) { animation-delay: 0.2s; }
+.gmap-info-section:nth-child(3) { animation-delay: 0.3s; }
+.gmap-info-section:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes section-fade-in {
+    0% {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 區段標題 */
+.gmap-section-title {
+    font-size: 14px;
+    color: var(--color-accent);
+    margin: 0 0 8px 0;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* 文本樣式 */
+.gmap-info-text {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+/* 列表樣式 */
+.gmap-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.gmap-list li {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.8;
+    padding-left: 0;
+    border-left: 2px solid var(--color-accent);
+    padding-left: 10px;
+    margin-bottom: 4px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.gmap-list li:hover {
+    color: var(--color-accent);
+    transform: translateX(4px);
+    border-left-color: var(--color-accent-soft);
+}
+
+/* ===== 交通便利樣式 ===== */
+.gmap-transport-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.gmap-transport-item {
+    background: rgba(255, 215, 0, 0.05);
+    border-left: 3px solid var(--color-accent);
+    padding: 10px 12px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.gmap-transport-item:hover {
+    background: rgba(255, 215, 0, 0.12);
+    transform: translateX(3px);
+}
+
+.gmap-transport-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.gmap-transport-icon {
+    font-size: 18px;
+    min-width: 24px;
+    text-align: center;
+    line-height: 1;
+}
+
+.gmap-transport-info {
+    flex: 1;
+}
+
+.gmap-transport-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #E8F5E9;
+    margin-bottom: 3px;
+}
+
+.gmap-transport-detail {
+    font-size: 11px;
+    color: rgba(255, 215, 0, 0.8);
+    letter-spacing: 0.3px;
+}
+
+/* ===== 周邊設施樣式 ===== */
+.gmap-facility-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.gmap-facility-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(45, 80, 22, 0.3);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(143, 191, 95, 0.15);
+}
+
+.gmap-facility-item:hover {
+    background: rgba(45, 80, 22, 0.5);
+    border-color: rgba(143, 191, 95, 0.3);
+    transform: translateX(2px);
+}
+
+.gmap-facility-icon {
+    font-size: 18px;
+    min-width: 24px;
+    text-align: center;
+    line-height: 1;
+}
+
+.gmap-facility-info {
+    flex: 1;
+}
+
+.gmap-facility-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #E8F5E9;
+    margin-bottom: 2px;
+}
+
+.gmap-facility-detail {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.3px;
+}
+
+/* 路線活躍狀態 - 設施卡片 */
+.gmap-facility-item.route-active {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 215, 0, 0.6);
+    border-left-color: var(--color-accent);
+    box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.15);
+}
+
+.gmap-facility-item.route-active .gmap-facility-name {
+    color: var(--color-accent);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.gmap-facility-item.route-active .gmap-facility-detail {
+    color: var(--color-accent-soft);
+}
+
+/* 路線活躍狀態 - 交通卡片 */
+.gmap-transport-item.route-active {
+    background: rgba(255, 215, 0, 0.15);
+    border-left-color: var(--color-accent);
+    box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.15);
+    transform: translateX(2px);
+}
+
+.gmap-transport-item.route-active .gmap-transport-name {
+    color: var(--color-accent);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.gmap-transport-item.route-active .gmap-transport-detail {
+    color: var(--color-accent-soft);
+}
+
+.gmap-transport-item.route-active .gmap-transport-icon {
+    font-size: 20px;
+    animation: icon-bounce 0.5s ease;
+}
+
+@keyframes icon-bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* ===== 右側地圖區域 ===== */
+.gmap-map-wrapper {
+    width: 85%;
+    height: 100vh;
+    position: relative;
+    animation: map-slide-in 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes map-slide-in {
+    0% {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 地圖容器 */
+.gmap-map-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a3a1a 0%, #0A1F0A 100%);
+}
+
+.gmap-map-container iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4);
+}
+
+/* 地圖卡片（提示框） */
+.gmap-card {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, rgba(45, 80, 22, 0.95), rgba(15, 35, 15, 0.95));
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 12px;
+    padding: 20px 28px;
+    max-width: 280px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(255, 215, 0, 0.1);
+    animation: card-bounce-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    opacity: 0;
+    animation-delay: 0.6s;
+}
+
+@keyframes card-bounce-in {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.gmap-card:hover {
+    border-color: rgba(255, 215, 0, 0.6);
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.6),
+                0 0 30px rgba(255, 215, 0, 0.2);
+}
+
+.gmap-card-title {
+    font-size: 16px;
+    color: var(--color-accent);
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    letter-spacing: 2px;
+}
+
+.gmap-card-text {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    line-height: 1.6;
+    letter-spacing: 0.5px;
+}
+
+/* ===== 響應式設計 ===== */
+
+/* 平板 (768px - 1024px) */
+@media (max-width: 1024px) {
+    .gmap-container {
+        flex-direction: column;
+    }
+
+    .gmap-info-panel {
+        width: 100%;
+        height: auto;
+        max-height: 40vh;
+        border-right: none;
+        border-bottom: 1px solid rgba(143, 191, 95, 0.2);
+        padding: 80px 30px 30px 30px;
+        overflow-y: auto;
+    }
+
+    .gmap-map-wrapper {
+        width: 100%;
+        height: 60vh;
+    }
+
+    .gmap-info-header h2 {
+        font-size: 40px;
+    }
+
+    .gmap-info-content {
+        gap: 24px;
+    }
+
+    .gmap-card {
+        bottom: 20px;
+        right: 20px;
+        max-width: 250px;
+        padding: 16px 20px;
+    }
+}
+
+/* 手機 (max-width: 768px) */
+@media (max-width: 768px) {
+    .gmap-container {
+        flex-direction: column;
+    }
+
+    .gmap-info-panel {
+        width: 100%;
+        height: auto;
+        max-height: 50vh;
+        border-right: none;
+        border-bottom: 1px solid rgba(143, 191, 95, 0.2);
+        padding: 90px 20px 20px 20px;
+    }
+
+    .gmap-map-wrapper {
+        width: 100%;
+        height: 50vh;
+    }
+
+    .gmap-info-header {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .gmap-info-header h2 {
+        font-size: 32px;
+        letter-spacing: 4px;
+    }
+
+    .gmap-subtitle {
+        font-size: 14px;
+        letter-spacing: 2px;
+    }
+
+    .gmap-info-content {
+        gap: 16px;
+    }
+
+    .gmap-section-title {
+        font-size: 16px;
+    }
+
+    .gmap-info-text,
+    .gmap-list li {
+        font-size: 14px;
+    }
+
+    .gmap-card {
+        bottom: 15px;
+        right: 15px;
+        max-width: 220px;
+        padding: 14px 16px;
+        font-size: 12px;
+    }
+
+    .gmap-card-title {
+        font-size: 14px;
+    }
+
+    .gmap-card-text {
+        font-size: 13px;
+    }
+}
+
+/* 超小螢幕 (max-width: 480px) */
+@media (max-width: 480px) {
+    .gmap-info-panel {
+        max-height: 45vh;
+        padding: 85px 16px 16px 16px;
+    }
+
+    .gmap-map-wrapper {
+        height: 55vh;
+    }
+
+    .gmap-info-header h2 {
+        font-size: 28px;
+    }
+
+    .gmap-info-section {
+        margin-bottom: 12px;
+    }
+
+    .gmap-card {
+        bottom: 10px;
+        right: 10px;
+        max-width: 90vw;
+        padding: 12px 14px;
+    }
+}
+
+/* 滾動條美化 */
+.gmap-info-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.gmap-info-panel::-webkit-scrollbar-track {
+    background: rgba(143, 191, 95, 0.05);
+}
+
+.gmap-info-panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 215, 0, 0.3);
+    border-radius: 3px;
+    transition: background 0.3s ease;
+}
+
+.gmap-info-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 215, 0, 0.6);
+}
+
+/* Topbar 調整 */
+body.google-map-page .topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    width: 100%;
+}
+
+/* 導航資訊橫幅 */
+#route-info-banner,
+#navigation-info-banner {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99;
+    animation: banner-slide-down 0.4s ease-out;
+    max-width: 90%;
+}
+
+@keyframes banner-slide-down {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ===== CHIP 覆蓋層容器 ===== */
+.gmap-chip-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* ===== 位置標籤 CHIP 樣式 ===== */
+.gmap-location-chip {
+    position: absolute;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.95), rgba(255, 230, 100, 0.9));
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0A1F0A;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3),
+                0 0 15px rgba(255, 215, 0, 0.3);
+    white-space: nowrap;
+    pointer-events: none;
+    animation: chip-bounce-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    z-index: 10;
+    width: fit-content;
+    height: fit-content;
+}
+
+.gmap-location-chip.destination {
+    background: linear-gradient(135deg, rgba(255, 68, 68, 0.95), rgba(255, 100, 100, 0.9));
+    color: #FFFFFF;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3),
+                0 0 15px rgba(255, 68, 68, 0.3);
+}
+
+@keyframes chip-bounce-in {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -60px) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -80px) scale(1);
+    }
+}
