@@ -8,7 +8,9 @@
  * 4. 管理本地快取清單
  */
 
-class AssetUpdateManager {
+// 防止在 SPA 導航時重複聲明
+if (typeof window.AssetUpdateManager === 'undefined') {
+  class AssetUpdateManager {
   constructor(options = {}) {
     this.manifestUrl = options.manifestUrl || '/assets-manifest.json';
     this.checkInterval = options.checkInterval || 15 * 60 * 1000; // 15分鐘（首次進入後的檢查間隔）
@@ -429,9 +431,12 @@ class AssetUpdateManager {
     }
     console.log('[AssetUpdateManager] 已清理');
   }
-}
+  }
 
-// 全局實例暴露到 window，便於調試
-if (typeof window !== 'undefined') {
-  window.AssetUpdateManager = AssetUpdateManager;
+  // 全局實例暴露到 window，便於調試
+  if (typeof window !== 'undefined') {
+    window.AssetUpdateManager = AssetUpdateManager;
+  }
+} else {
+  console.log('[AssetUpdateManager] 類已在此頁面上定義，跳過重複聲明');
 }

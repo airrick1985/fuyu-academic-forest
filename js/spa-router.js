@@ -36,18 +36,30 @@ if (!window._spaRouterInitialized) {
             document.body.innerHTML = doc.body.innerHTML;
 
             // Re-evaluate scripts sequentially (external scripts must load before inline scripts run)
+            // 追蹤已加載的外部腳本，避免重複加載
+            const loadedScripts = Array.from(document.querySelectorAll('script[src]')).map(s => s.src);
+
             const scripts = Array.from(document.body.querySelectorAll('script'));
             for (const oldScript of scripts) {
                 const newScript = document.createElement('script');
                 Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
 
                 if (oldScript.src) {
-                    // 外部腳本：等待載入完成後再繼續下一個
-                    await new Promise((resolve, reject) => {
-                        newScript.onload = resolve;
-                        newScript.onerror = reject;
-                        oldScript.parentNode.replaceChild(newScript, oldScript);
-                    });
+                    // 跳過已加載的外部腳本（如 Google Maps API, topbar.js）
+                    const scriptSrc = oldScript.src.split('?')[0]; // 移除查詢字串
+                    const isAlreadyLoaded = loadedScripts.some(src => src.split('?')[0] === scriptSrc);
+
+                    if (isAlreadyLoaded) {
+                        console.log(`[SPA Router] 跳過已加載的腳本: ${oldScript.src}`);
+                        oldScript.parentNode.removeChild(oldScript);
+                    } else {
+                        // 外部腳本：等待載入完成後再繼續下一個
+                        await new Promise((resolve, reject) => {
+                            newScript.onload = resolve;
+                            newScript.onerror = reject;
+                            oldScript.parentNode.replaceChild(newScript, oldScript);
+                        });
+                    }
                 } else {
                     // 內聯腳本：直接替換執行
                     if (oldScript.innerHTML) {
