@@ -193,6 +193,22 @@
                     </div>
                 </div>
 
+                <!-- 自定義目的地輸入 -->
+                <div class="gmap-info-section gmap-custom-dest-section">
+                    <h3 class="gmap-section-title">🔍 自定義目的地</h3>
+                    <div class="gmap-custom-dest-input-wrap">
+                        <input
+                            id="gmap-custom-dest-input"
+                            type="text"
+                            class="gmap-custom-dest-input"
+                            placeholder="輸入地點或地址..."
+                            autocomplete="off"
+                        />
+                        <button id="gmap-custom-dest-btn" class="gmap-custom-dest-btn">導航</button>
+                    </div>
+                    <p class="gmap-custom-dest-hint">支援地址、地標搜尋</p>
+                </div>
+
                 <div class="gmap-info-section">
                     <h3 class="gmap-section-title">🏢 核心競爭力</h3>
                     <p class="gmap-info-text">坐擁新竹科學園區邊界，優越的地理位置確保未來增值潛力。</p>
@@ -369,6 +385,65 @@
 
                 // 初始化設施卡片點擊事件
                 setupFacilityClickListeners();
+
+                // ===== 自定義目的地功能 =====
+                const destInput = document.getElementById('gmap-custom-dest-input');
+                const destBtn = document.getElementById('gmap-custom-dest-btn');
+
+                // 初始化 Places Autocomplete（限制在台灣地區）
+                const autocomplete = new google.maps.places.Autocomplete(destInput, {
+                    componentRestrictions: { country: 'tw' },
+                    fields: ['geometry', 'name', 'formatted_address']
+                });
+
+                let selectedPlace = null;
+
+                // 用戶從下拉選單選擇地點
+                autocomplete.addListener('place_changed', () => {
+                    const place = autocomplete.getPlace();
+                    if (place.geometry && place.geometry.location) {
+                        selectedPlace = place;
+                        console.log(`[Google Map] 用戶選擇: ${place.name || place.formatted_address}`);
+                    }
+                });
+
+                // 點擊導航按鈕
+                destBtn.addEventListener('click', () => {
+                    if (selectedPlace && selectedPlace.geometry) {
+                        const lat = selectedPlace.geometry.location.lat();
+                        const lng = selectedPlace.geometry.location.lng();
+                        const name = selectedPlace.name || selectedPlace.formatted_address || destInput.value;
+                        console.log(`[Google Map] 計算自定義目的地路線: ${name} (${lat}, ${lng})`);
+                        calculateRoute(name, lat, lng);
+                    } else if (destInput.value.trim()) {
+                        // 若未用 Autocomplete 選取，使用 Geocoder 解析輸入文字
+                        const geocoder = new google.maps.Geocoder();
+                        geocoder.geocode(
+                            { address: destInput.value, componentRestrictions: { country: 'tw' } },
+                            (results, status) => {
+                                if (status === 'OK' && results[0]) {
+                                    const loc = results[0].geometry.location;
+                                    const name = results[0].formatted_address;
+                                    console.log(`[Google Map] Geocoder 解析成功: ${name} (${loc.lat()}, ${loc.lng()})`);
+                                    calculateRoute(name, loc.lat(), loc.lng());
+                                } else {
+                                    console.warn(`[Google Map] Geocoder 失敗: ${status}`);
+                                    alert('找不到該地點，請嘗試更具體的地址或地標名稱');
+                                }
+                            }
+                        );
+                    } else {
+                        alert('請輸入地點或地址');
+                    }
+                });
+
+                // 按下 Enter 也可以觸發
+                destInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        destBtn.click();
+                    }
+                });
 
                 // 儲存目的地 CHIP，便於清除
                 let destinationGlow = null;
@@ -580,55 +655,13 @@
                                 window.destPulseAnimationId = destPulseAnimationId;
                                 window.destPulseCircles = destPulseCircles;
 
-                                // ===== 添加終點 CHIP =====
-                                const destChip = document.createElement('div');
-                                destChip.className = 'gmap-location-chip destination';
-                                destChip.textContent = '📍 ' + locationName;
-                                destChip.id = 'dest-location-chip';
-                                destChip.style.position = 'absolute';
-                                destChip.style.pointerEvents = 'none';
-                                chipOverlay.appendChild(destChip);
-                                window.destinationGlow = destChip;
-
-                                // 位置終點 CHIP（在地圖空閒後計算）
-                                function positionDestinationChip() {
-                                    const destPoint = new google.maps.LatLng(destLat, destLng);
-                                    const projection = new google.maps.OverlayView();
-                                    projection.setMap(map);
-
-                                    try {
-                                        const point = projection.getProjection().fromLatLngToContainerPixel(destPoint);
-                                        if (point) {
-                                            destChip.style.left = point.x + 'px';
-                                            destChip.style.top = point.y + 'px';
-                                            console.log(`[Google Map] 終點 CHIP 位置: left=${point.x}px, top=${point.y}px`);
-                                        }
-                                    } catch (e) {
-                                        console.warn('[Google Map] 位置計算失敗:', e.message);
-                                    }
-                                }
-
-                                // 保存清除函數
+                                // 保存狀態以便清除
                                 window.destPulsing = true;
-                                window.destPulseAnimationId = {
-                                    stop: () => {
-                                        destPulsing = true;
-                                        if (window.destinationGlow && window.destinationGlow.parentNode) {
-                                            window.destinationGlow.parentNode.removeChild(window.destinationGlow);
-                                            window.destinationGlow = null;
-                                        }
-                                    }
-                                };
 
                                 // 調整地圖視野以顯示完整路線
                                 const bounds = new google.maps.LatLngBounds();
                                 routePath.forEach(point => bounds.extend(point));
                                 map.fitBounds(bounds, 100); // 100px 的內邊距
-
-                                // 地圖空閒後位置 CHIP
-                                const idleListener = google.maps.event.addListenerOnce(map, 'idle', () => {
-                                    positionDestinationChip();
-                                });
 
                                 // 高亮顯示卡片
                                 document.querySelectorAll('.gmap-facility-item').forEach(item => {
@@ -808,56 +841,14 @@
                         window.destPulseAnimationId = destPulseAnimationId;
                         window.destPulseCircles = destPulseCircles;
 
-                        // ===== 添加終點 CHIP =====
-                        const destChip = document.createElement('div');
-                        destChip.className = 'gmap-location-chip destination';
-                        destChip.textContent = '📍 ' + locationName;
-                        destChip.id = 'dest-location-chip';
-                        destChip.style.position = 'absolute';
-                        destChip.style.pointerEvents = 'none';
-                        chipOverlay.appendChild(destChip);
-                        destinationGlow = window.destinationGlow = destChip;
-
-                        // 保存清除函數
+                        // 保存狀態以便清除
                         window.destPulsing = true;
-                        window.destPulseAnimationId = {
-                            stop: () => {
-                                window.destPulsing = false;
-                                if (window.destinationGlow && window.destinationGlow.parentNode) {
-                                    window.destinationGlow.parentNode.removeChild(window.destinationGlow);
-                                    window.destinationGlow = null;
-                                }
-                            }
-                        };
 
                         // 調整地圖視野
                         const bounds = new google.maps.LatLngBounds();
                         bounds.extend({ lat: locationData.lat, lng: locationData.lng });
                         bounds.extend({ lat: destLat, lng: destLng });
                         map.fitBounds(bounds, 100);
-
-                        // 位置終點 CHIP（在地圖空閒後計算）
-                        function positionDestinationChip() {
-                            const destPoint = new google.maps.LatLng(destLat, destLng);
-                            const projection = new google.maps.OverlayView();
-                            projection.setMap(map);
-
-                            try {
-                                const point = projection.getProjection().fromLatLngToContainerPixel(destPoint);
-                                if (point) {
-                                    destChip.style.left = point.x + 'px';
-                                    destChip.style.top = point.y + 'px';
-                                    console.log(`[Google Map] 終點 CHIP 位置: left=${point.x}px, top=${point.y}px`);
-                                }
-                            } catch (e) {
-                                console.warn('[Google Map] 位置計算失敗:', e.message);
-                            }
-                        }
-
-                        // 地圖空閒後位置 CHIP
-                        const idleListener = google.maps.event.addListenerOnce(map, 'idle', () => {
-                            positionDestinationChip();
-                        });
 
                         // 高亮卡片
                         document.querySelectorAll('.gmap-facility-item, .gmap-transport-item').forEach(item => {

@@ -604,3 +604,97 @@ body.google-map-page .topbar {
         transform: translate(-50%, -80px) scale(1);
     }
 }
+
+/* ===== 自定義目的地輸入 ===== */
+.gmap-custom-dest-section {
+    border-top: 1px solid rgba(255, 215, 0, 0.2);
+    padding-top: 16px;
+    margin-top: 4px;
+}
+
+.gmap-custom-dest-input-wrap {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.gmap-custom-dest-input {
+    flex: 1;
+    background: rgba(45, 80, 22, 0.4);
+    border: 1px solid rgba(143, 191, 95, 0.3);
+    border-radius: 6px;
+    padding: 8px 10px;
+    color: #E8F5E9;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.3s ease, background 0.3s ease;
+    width: 100%;
+    min-width: 0;
+}
+
+.gmap-custom-dest-input:focus {
+    border-color: rgba(255, 215, 0, 0.6);
+    background: rgba(45, 80, 22, 0.6);
+}
+
+.gmap-custom-dest-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 11px;
+}
+
+.gmap-custom-dest-btn {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.9), rgba(255, 200, 0, 0.8));
+    border: none;
+    border-radius: 6px;
+    padding: 8px 10px;
+    color: #0A1F0A;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.gmap-custom-dest-btn:hover {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 1), rgba(255, 200, 0, 1));
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+.gmap-custom-dest-btn:active {
+    transform: scale(0.98);
+}
+
+.gmap-custom-dest-hint {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 4px 0 0 0;
+}
+
+/* Google Autocomplete 下拉選單樣式覆蓋 */
+.pac-container {
+    background: rgba(20, 40, 20, 0.97) !important;
+    border: 1px solid rgba(255, 215, 0, 0.3) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+    font-family: var(--font-sans) !important;
+}
+
+.pac-item {
+    color: #E8F5E9 !important;
+    border-top: 1px solid rgba(143, 191, 95, 0.15) !important;
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+}
+
+.pac-item:hover {
+    background: rgba(255, 215, 0, 0.1) !important;
+}
+
+.pac-item-query {
+    color: var(--color-accent) !important;
+    font-size: 12px !important;
+}
+
+.pac-icon {
+    filter: invert(1) opacity(0.5) !important;
+}
