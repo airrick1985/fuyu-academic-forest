@@ -62,16 +62,28 @@ if (!window._spaRouterInitialized) {
             document.title = doc.title;
 
             // Merge Stylesheets
+            // 頁面特定的 CSS 文件總是需要重新加載（即使已存在）
+            const pageSpecificCSSPatterns = ['brand.css', 'location.css', 'google-map.css', 'floor-plan.css', 'exterior-3d.css', 'public-3d.css', 'panorama.css', 'coming-soon.css', 'materials.css', 'construction.css'];
+
             const existingLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l => l.getAttribute('href'));
             const newLinks = doc.querySelectorAll('link[rel="stylesheet"]');
 
             newLinks.forEach(link => {
                 const href = link.getAttribute('href');
-                if (!existingLinks.includes(href)) {
+                const isPageSpecific = pageSpecificCSSPatterns.some(pattern => href.includes(pattern));
+
+                if (!existingLinks.includes(href) || isPageSpecific) {
+                    // 移除舊的同名 CSS（如果存在）
+                    if (isPageSpecific) {
+                        const oldLink = document.querySelector(`link[href="${href}"]`);
+                        if (oldLink) oldLink.remove();
+                    }
+
                     const newLink = document.createElement('link');
                     newLink.rel = 'stylesheet';
                     newLink.href = href;
                     document.head.appendChild(newLink);
+                    console.log(`[SPA Router] 加載 CSS: ${href}`);
                 }
             });
 
@@ -184,7 +196,7 @@ if (!window._spaRouterInitialized) {
                     overlayToHide.classList.add('hidden');
                     console.log('[SPA Router] 隱藏加載覆蓋層');
                 }
-            }, 200);
+            }, 300);
         } catch (err) {
             console.error('SPA Navigation failed:', err);
 
