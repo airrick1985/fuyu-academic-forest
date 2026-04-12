@@ -895,61 +895,6 @@ body.lightbox-active .fp-nav-items {
     color: #8b6914;
 }
 
-/* ===== topbar 深色模式修正 (淺色頁面上 topbar 需要調整) ===== */
-
-body.floor-plan-page .topbar.scrolled {
-    background: rgba(233, 236, 240, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(180, 165, 130, 0.3);
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-}
-
-body.floor-plan-page .topbar .nav-link,
-body.floor-plan-page .topbar .topbar-logo a {
-    color: #3a3228;
-}
-
-body.floor-plan-page .topbar .nav-item:hover .nav-link,
-body.floor-plan-page .topbar .nav-item.active .nav-link {
-    color: #8b6914;
-    text-shadow: none;
-}
-
-body.floor-plan-page .topbar .nav-item:hover .nav-link::after,
-body.floor-plan-page .topbar .nav-item.active .nav-link::after {
-    background-color: #8b6914;
-    box-shadow: none;
-}
-
-body.floor-plan-page .topbar .submenu {
-    background: rgba(245, 240, 232, 0.95);
-    border-color: rgba(180, 165, 130, 0.3);
-}
-
-body.floor-plan-page .topbar .submenu-item a {
-    color: #3a3228;
-}
-
-body.floor-plan-page .topbar .submenu-item a:hover {
-    background: rgba(139, 105, 20, 0.1);
-    color: #8b6914;
-}
-
-body.floor-plan-page .topbar .fullscreen-btn,
-body.floor-plan-page .topbar .refresh-btn {
-    color: #6b5e4e;
-    border-color: rgba(180, 165, 130, 0.4);
-}
-
-body.floor-plan-page .topbar .fullscreen-btn:hover,
-body.floor-plan-page .topbar .refresh-btn:hover {
-    color: #8b6914;
-    border-color: #8b6914;
-    background: rgba(139, 105, 20, 0.1);
-    box-shadow: none;
-}
-
 /* ===== 列印 Modal 對話框 ===== */
 .fp-print-modal-overlay {
     position: fixed;
