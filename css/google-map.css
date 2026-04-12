@@ -116,6 +116,23 @@ body.google-map-page {
     letter-spacing: 0.5px;
 }
 
+/* 可點擊地址樣式 */
+.gmap-address-clickable {
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    background: rgba(255, 215, 0, 0.05);
+    border-left: 3px solid transparent;
+}
+
+.gmap-address-clickable:hover {
+    background: rgba(255, 215, 0, 0.15);
+    border-left-color: rgba(255, 215, 0, 0.6);
+    color: var(--color-accent);
+    transform: translateX(4px);
+}
+
 /* 列表樣式 */
 .gmap-list {
     list-style: none;
@@ -569,18 +586,18 @@ body.google-map-page .topbar {
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 24px;
-    padding: 8px 16px;
+    padding: 10px 16px;
     font-size: 14px;
     font-weight: 600;
     color: #0A1F0A;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3),
                 0 0 15px rgba(255, 215, 0, 0.3);
-    white-space: nowrap;
-    pointer-events: none;
+    white-space: normal;
     animation: chip-bounce-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     z-index: 10;
     width: fit-content;
     height: fit-content;
+    pointer-events: auto;
 }
 
 .gmap-location-chip.destination {

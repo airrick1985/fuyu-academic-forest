@@ -94,7 +94,7 @@
             <div class="gmap-info-content">
                 <div class="gmap-info-section">
                     <h3 class="gmap-section-title">📍 建案地址</h3>
-                    <p class="gmap-info-text">新竹市東區長春街</p>
+                    <p class="gmap-info-text gmap-address-clickable" id="base-location-address">新竹市東區長春街</p>
                 </div>
 
                 <div class="gmap-info-section">
@@ -281,15 +281,57 @@
                     streetViewControl: false
                 });
 
+                // ===== 左側面板地址點擊事件 - 聚焦到黃色光球位置 =====
+                const addressElement = document.getElementById('base-location-address');
+                if (addressElement) {
+                    addressElement.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        console.log('[Google Map] 點擊左側地址，聚焦到黃色光球位置');
+                        // 地圖聚焦到基地位置
+                        map.setCenter({
+                            lat: locationData.lat,
+                            lng: locationData.lng
+                        });
+                        map.setZoom(18); // 放大到合適的層級以查看黃色光球
+                    });
+                }
+
                 // ===== 添加基地位置 CHIP 標籤（簡化版本） =====
                 const chipOverlay = document.getElementById('gmap-chip-overlay');
                 const baseLocationChip = document.createElement('div');
                 baseLocationChip.className = 'gmap-location-chip';
-                baseLocationChip.textContent = '🏢 ' + locationData.title;
+                baseLocationChip.innerHTML = `<div style="line-height: 1.4;">
+                    <div style="font-size: 14px; font-weight: 600;">🏢 ${locationData.title}</div>
+                    <div style="font-size: 12px; opacity: 0.9; margin-top: 2px;">${locationData.address}</div>
+                </div>`;
                 baseLocationChip.id = 'base-location-chip';
                 baseLocationChip.style.position = 'absolute';
-                baseLocationChip.style.pointerEvents = 'none';
+                baseLocationChip.style.cursor = 'pointer';
+                baseLocationChip.style.transition = 'all 0.3s ease';
                 chipOverlay.appendChild(baseLocationChip);
+
+                // 為基地位置 CHIP 添加點擊事件 - 聚焦到黃色光球位置
+                baseLocationChip.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    console.log('[Google Map] 點擊基地位置 CHIP，聚焦到黃色光球位置');
+                    // 地圖聚焦到基地位置
+                    map.setCenter({
+                        lat: locationData.lat,
+                        lng: locationData.lng
+                    });
+                    map.setZoom(18); // 放大到合適的層級以查看黃色光球
+                });
+
+                // 為 CHIP 添加懸停效果
+                baseLocationChip.addEventListener('mouseover', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.boxShadow = '0 6px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.5)';
+                });
+
+                baseLocationChip.addEventListener('mouseout', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 215, 0, 0.3)';
+                });
 
                 // ===== 添加呼吸感的黃色光球 =====
                 // 創建多個圓圈實現光球效果

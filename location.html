@@ -120,8 +120,10 @@
     <script src="assets/pannellum/pannellum.min.js"></script>
     <script>
         // 延遲執行以確保 pannellum 已加載（SPA 導航時的備用方案）
-        const initLocationScript = () => {
-        (() => {
+        // 檢查是否已經定義，避免 SPA 導航時重複聲明
+        if (!window.initLocationScript) {
+            window.initLocationScript = () => {
+            (() => {
             /* ===== 熱點資料定義 =====
              * 如何取得座標？將下方 hotSpotDebug 設為 true，
              * 然後在 360 畫面上點擊任意位置，流覽器 Console 會印出該點的 yaw 與 pitch 值。
@@ -309,7 +311,8 @@
                 if (e.key === 'Escape') closePoiModal();
             });
         })();
-        };
+            };
+        }
 
         // SPA 導航時 pannellum 可能延遲加載
         if (window.pannellum) {

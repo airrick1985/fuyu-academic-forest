@@ -1,7 +1,7 @@
 {
-  "version": "1.0.46",
-  "timestamp": 1775982368365,
-  "generatedAt": "2026-04-12T08:26:08.365Z",
+  "version": "1.0.47",
+  "timestamp": 1776005631711,
+  "generatedAt": "2026-04-12T14:53:51.711Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "e2be2b0eff05",
@@ -669,9 +669,9 @@
       "mtime": 1775980836526.0518
     },
     "css/google-map.css": {
-      "hash": "a366126e0b8b",
-      "size": 14913,
-      "mtime": 1775974057445.6748
+      "hash": "8ba2e27607e0",
+      "size": 15338,
+      "mtime": 1776004466333.8564
     },
     "css/hero.css": {
       "hash": "c3625a4385b8",
