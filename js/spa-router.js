@@ -143,8 +143,8 @@ if (!window._spaRouterInitialized) {
             // 追蹤已加載的外部腳本，避免重複加載
             const loadedScripts = Array.from(document.querySelectorAll('script[src]')).map(s => s.src);
 
-            // 需要每次都重新加載的關鍵腳本（特定頁面的初始化庫）
-            const alwaysReloadScripts = ['pannellum.min.js'];
+            // 需要每次都重新加載的關鍵腳本（特定頁面的初始化庫或全局工具）
+            const alwaysReloadScripts = ['topbar.js', 'pannellum.min.js'];
 
             const scripts = Array.from(document.body.querySelectorAll('script'));
             for (const oldScript of scripts) {
