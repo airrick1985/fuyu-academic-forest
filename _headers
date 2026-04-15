@@ -1,0 +1,11 @@
+/*
+  Cache-Control: public, max-age=3600
+
+/sw.js
+  Cache-Control: public, max-age=0
+
+/manifest.json
+  Cache-Control: public, max-age=0
+
+/index.html
+  Cache-Control: public, max-age=0
