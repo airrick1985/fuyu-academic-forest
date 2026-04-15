@@ -243,9 +243,11 @@ if (typeof window.AssetUpdateManager === 'undefined') {
       basePath = basePath.substring(0, basePath.lastIndexOf('/'));
     }
 
-    // 對於根路徑，使用空字符串；對於子路徑保留
-    if (basePath === '' || basePath === '/fuyu-academic-forest') {
-      return basePath || '/fuyu-academic-forest';
+    // 對於根路徑，根據環境判斷
+    // Electron 環境（localhost）使用空路徑，Web 使用 /fuyu-academic-forest
+    if (basePath === '') {
+      const isElectron = window.isElectron === true || window.location.hostname === 'localhost';
+      return isElectron ? '' : '/fuyu-academic-forest';
     }
 
     return basePath;

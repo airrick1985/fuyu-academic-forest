@@ -225,7 +225,7 @@
     <script src="js/topbar.js"></script>
 
     <!-- Google Maps API - 包含 Places 庫（使用 loading=async 以獲得最佳性能）-->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIHP_KTHH71AYYygCpNqEI6L5DfTaT9Hs&libraries=places" loading="async"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIHP_KTHH71AYYygCpNqEI6L5DfTaT9Hs&libraries=places" loading="async" onerror="window._googleMapsError=true;"></script>
 
     <!-- Google Maps 初始化與自定義標籤 -->
     <script>
@@ -237,38 +237,75 @@
                 address: '新竹市東區長春街'
             };
 
+            let initTimeout;
+            let mapInitialized = false;
+
             // 定義初始化函數（暴露到 window，便於 SPA 導航重新初始化）
             window.initializeGoogleMap = function() {
-                initializeMap();
+                try {
+                    initializeMap();
+                } catch (error) {
+                    console.error('[Google Map] 初始化失敗:', error);
+                    loadFallbackMap();
+                }
             };
 
             // 等待 Google Maps API 加載（首次加載時）
             window.addEventListener('load', () => {
-                initializeMap();
+                try {
+                    initializeMap();
+                } catch (error) {
+                    console.error('[Google Map] 在 load 事件中初始化失敗:', error);
+                    loadFallbackMap();
+                }
             });
 
             // 如果頁面已加載完成再執行一次，確保地圖初始化
             if (document.readyState === 'complete' || document.readyState === 'interactive') {
                 setTimeout(() => {
-                    // 檢查是否已初始化過，避免重複
-                    const mapContainer = document.getElementById('gmap-map-container');
-                    if (mapContainer && !mapContainer.querySelector('[data-initialized="true"]')) {
-                        initializeMap();
+                    try {
+                        // 檢查是否已初始化過，避免重複
+                        const mapContainer = document.getElementById('gmap-map-container');
+                        if (mapContainer && !mapContainer.getAttribute('data-initialized')) {
+                            initializeMap();
+                        }
+                    } catch (error) {
+                        console.error('[Google Map] 在 setTimeout 中初始化失敗:', error);
+                        loadFallbackMap();
                     }
                 }, 100);
             }
 
+            // 設置超時機制：如果 5 秒內 Google Maps API 還沒加載，使用備用方案
+            initTimeout = setTimeout(() => {
+                if (!mapInitialized && !window._googleMapsError) {
+                    console.warn('[Google Map] Google Maps API 加載超時（5秒），使用備用嵌入式地圖');
+                    loadFallbackMap();
+                }
+            }, 5000);
+
             function initializeMap() {
+                // 防止重複初始化
+                if (mapInitialized) {
+                    console.log('[Google Map] 地圖已初始化，跳過重複初始化');
+                    return;
+                }
+
                 // 檢查 google.maps 是否已載入
                 if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-                    console.warn('Google Maps API 未載入，使用備用嵌入式地圖');
+                    console.warn('[Google Map] Google Maps API 未載入，使用備用嵌入式地圖');
+                    if (initTimeout) clearTimeout(initTimeout);
                     loadFallbackMap();
                     return;
                 }
 
-                const mapContainer = document.getElementById('gmap-map-container');
+                try {
+                    mapInitialized = true;
+                    if (initTimeout) clearTimeout(initTimeout);
 
-                const map = new google.maps.Map(mapContainer, {
+                    const mapContainer = document.getElementById('gmap-map-container');
+
+                    const map = new google.maps.Map(mapContainer, {
                     zoom: 16,
                     center: {
                         lat: locationData.lat,
@@ -1271,6 +1308,11 @@
                             window._navigationBanner.remove();
                         }
                     }, 8000);
+                }
+                } catch (error) {
+                    console.error('[Google Map] 地圖初始化錯誤:', error);
+                    mapInitialized = false;
+                    loadFallbackMap();
                 }
             }
 

@@ -60,6 +60,9 @@
                     <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
                 </svg>
             </button>
+            <button class="close-btn" title="關閉應用 (Ctrl+Q)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 8 20 12 16 16"></polyline><line x1="9" y1="12" x2="20" y2="12"></line></svg>
+            </button>
         </div>
     </header>
     `;
@@ -81,18 +84,23 @@
   const fullscreenBtn = topbar.querySelector('.fullscreen-btn');
   if (fullscreenBtn) {
     fullscreenBtn.addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => {
-          console.warn(`Error attempting to enable fullscreen: ${err.message}`);
-        });
+      // 在 Electron 環境中使用 IPC，否則使用瀏覽器 API
+      if (window.electron && window.electron.toggleFullscreen) {
+        window.electron.toggleFullscreen();
       } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => {
+            console.warn(`Error attempting to enable fullscreen: ${err.message}`);
+          });
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
         }
       }
     });
 
-    // 監聽全螢幕狀態改變（例如按 Esc 鍵退出）
+    // 監聽全螢幕狀態改變
     if (!window._fullscreenChangeHandler) {
       window._fullscreenChangeHandler = () => {
         const btn = document.querySelector('.fullscreen-btn');
@@ -101,6 +109,16 @@
         }
       };
       document.addEventListener('fullscreenchange', window._fullscreenChangeHandler);
+    }
+
+    // 在 Electron 環境中監聽 IPC 全屏狀態改變
+    if (window.electron && window.electron.onFullscreenChange) {
+      window.electron.onFullscreenChange((isFullscreen) => {
+        const btn = document.querySelector('.fullscreen-btn');
+        if (btn) {
+          btn.innerHTML = isFullscreen ? exitIcon : enterIcon;
+        }
+      });
     }
   }
 
@@ -225,6 +243,47 @@
       `;
       document.head.appendChild(style);
     }
+  }
+
+  // ===== 關閉按鈕邏輯 =====
+  const closeBtn = topbar.querySelector('.close-btn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      // 檢查是否在 Electron 環境中
+      if (window.electron && window.electron.closeApp) {
+        window.electron.closeApp();
+      } else if (typeof window !== 'undefined' && window.close) {
+        // 網頁環境中的備用方案
+        window.close();
+      }
+    });
+  }
+
+  // ===== 全域快捷鍵（ESC 退出全螢幕，Ctrl+Q 關閉應用）=====
+  if (!window._globalKeyboardHandler) {
+    window._globalKeyboardHandler = (e) => {
+      // ESC 鍵：退出全螢幕
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        // 在 Electron 環境中使用 IPC，否則使用瀏覽器 API
+        if (window.electron && window.electron.exitFullscreen) {
+          window.electron.exitFullscreen();
+        } else if (document.fullscreenElement && document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+
+      // Ctrl+Q 或 Cmd+Q：關閉應用
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'q' || e.key === 'Q')) {
+        e.preventDefault();
+        if (window.electron && window.electron.closeApp) {
+          window.electron.closeApp();
+        } else if (typeof window !== 'undefined' && window.close) {
+          window.close();
+        }
+      }
+    };
+    document.addEventListener('keydown', window._globalKeyboardHandler);
   }
 
   // ===== 滾動偵測：背景樣式 =====
@@ -499,5 +558,38 @@
         mark.querySelector('span:first-child').style.display = 'inline';
       }, 500);
     });
+  }
+})();
+
+// ===== 全域導航事件委派 (SPA 路由) =====
+// 攔截所有 topbar 導航鏈接的點擊事件，使用 SPA 導航而不是頁面刷新
+(() => {
+  if (!window._spaNavigationSetup) {
+    window._spaNavigationSetup = true;
+
+    document.addEventListener('click', (e) => {
+      // 檢查是否點擊了導航鏈接（在 topbar 中的 nav-item 或 submenu-item）
+      const navLink = e.target.closest('.topbar a[href]');
+
+      if (navLink && !navLink.href.includes('http')) {
+        // 防止默認頁面加載
+        e.preventDefault();
+        e.stopPropagation();
+
+        const href = navLink.getAttribute('href');
+        console.log('[Navigation] 點擊導航鏈接:', href);
+
+        // 使用 SPA 導航（如果可用）
+        if (typeof window.spaNavigate === 'function') {
+          // 更新 URL（不刷新頁面）
+          history.pushState(null, '', href);
+          // 執行 SPA 導航
+          window.spaNavigate(href);
+        } else {
+          // 備用方案：直接導航
+          window.location.href = href;
+        }
+      }
+    }, { passive: false });
   }
 })();

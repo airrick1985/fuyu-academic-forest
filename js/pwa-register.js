@@ -285,9 +285,12 @@ if ('serviceWorker' in navigator) {
                 basePath = basePath.substring(0, basePath.lastIndexOf('/'));
               }
 
-              // 對於根路徑，使用空字符串
-              if (basePath === '' || basePath === '/fuyu-academic-forest') {
-                basePath = basePath || '/fuyu-academic-forest';
+              // 對於根路徑，根據環境判斷
+              // Electron 環境（localhost）使用空路徑，Web 使用 /fuyu-academic-forest
+              if (basePath === '') {
+                // 檢測是否在 Electron 環境中
+                const isElectron = window.isElectron === true || window.location.hostname === 'localhost';
+                basePath = isElectron ? '' : '/fuyu-academic-forest';
               }
 
               const manifestUrl = basePath + '/assets-manifest.json';

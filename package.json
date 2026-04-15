@@ -12,13 +12,14 @@
     "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && npm run electron\"",
     "electron-build": "electron-builder --dir",
     "electron-build-win": "npm run build && electron-builder --win nsis portable --publish never",
-    "electron-pack": "npm run build && electron-builder --win portable --publish never"
+    "electron-pack": "npm run build && electron-builder --win portable --publish never && node scripts/rename-exe.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "electron": "^41.2.0",
-    "electron-builder": "^26.8.1"
+    "electron-builder": "^26.8.1",
+    "sharp": "^0.34.5"
   },
   "build": {
     "appId": "com.fuyuacademicforest.app",
@@ -33,13 +34,12 @@
     "files": [
       "electron/main.js",
       "electron/preload.js",
-      "index.html",
-      "brand-*.html",
-      "coming-soon.html",
+      "*.html",
       "css/**/*",
       "js/**/*",
       "assets/**/*",
       "favicon.ico",
+      "app-icon-256.png",
       "manifest.json",
       "sw.js",
       "assets-manifest.json"
@@ -58,14 +58,17 @@
             "x64"
           ]
         }
-      ]
+      ],
+      "icon": "app-icon-256.png"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "富宇學森"
+      "shortcutName": "富宇學森",
+      "installerIcon": "app-icon-256.png",
+      "uninstallerIcon": "app-icon-256.png"
     },
     "portable": {
       "artifactName": "富宇學森-${version}-portable.exe"

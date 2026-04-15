@@ -101,6 +101,60 @@ if (!window._spaRouterInitialized) {
             document.body.className = doc.body.className;
             document.body.innerHTML = doc.body.innerHTML;
 
+            // 修復圖片相對路徑 — 確保在 SPA 環境中能正確加載
+            const images = document.querySelectorAll('img[src]');
+            images.forEach(img => {
+              let src = img.getAttribute('src');
+              // 如果是相對路徑，補上完整的 URL（跳過 data URI 和絕對 URL）
+              if (src && !src.startsWith('http') && !src.startsWith('/') && !src.startsWith('data:')) {
+                // 使用 location.origin 確保在 Electron 中也能正確加載
+                const fullUrl = new URL(src, window.location.origin).href;
+                img.setAttribute('src', fullUrl);
+              }
+            });
+            console.log(`[SPA Router] 修復了 ${images.length} 個圖片路徑`);
+
+            // 設置觀察器，監視新添加的 img 標籤並自動修復路徑
+            if (!window._imgObserverSetup) {
+              window._imgObserverSetup = true;
+              const observer = new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                  mutation.addedNodes.forEach(node => {
+                    // 檢查新添加的 img 標籤
+                    if (node.tagName === 'IMG') {
+                      fixImagePath(node);
+                    }
+                    // 檢查新添加的節點中是否包含 img 標籤
+                    if (node.querySelectorAll) {
+                      node.querySelectorAll('img[src]').forEach(img => {
+                        fixImagePath(img);
+                      });
+                    }
+                  });
+                  // 監視 src 屬性的改變
+                  if (mutation.type === 'attributes' && mutation.target.tagName === 'IMG' && mutation.attributeName === 'src') {
+                    fixImagePath(mutation.target);
+                  }
+                });
+              });
+              observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['src']
+              });
+            }
+
+            function fixImagePath(img) {
+              let src = img.getAttribute('src');
+              // 跳過 data URI 和絕對 URL，只修復相對路徑
+              if (src && !src.startsWith('http') && !src.startsWith('/') && !src.startsWith('data:')) {
+                const fullUrl = new URL(src, window.location.origin).href;
+                img.setAttribute('src', fullUrl);
+                console.log(`[SPA Router] 修復圖片路徑: ${src} → ${fullUrl}`);
+              }
+            }
+
             // 恢復 topbar 到新頁面（確保常駐在頂部）
             if (topbarBackup) {
                 const newTopbarRoot = document.getElementById('topbar-root');

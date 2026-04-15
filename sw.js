@@ -7,22 +7,37 @@ let CACHE_NAME = `fuyu-forest-${CACHE_VERSION}`;
 // Asset manifest cache name
 const MANIFEST_CACHE_NAME = 'fuyu-asset-manifest-v1';
 
+// 檢測是否在 Electron 環境中運行
+// Service Worker 中 window 未定義，使用 self.location.origin 來判斷
+const IS_ELECTRON = typeof self !== 'undefined' &&
+                   (self.location.origin === 'http://localhost:3456' ||
+                    self.location.origin.includes('localhost'));
+const BASE_PATH = IS_ELECTRON ? '' : '/fuyu-academic-forest';
+
+// 路徑轉換函數
+function resolvePath(path) {
+  if (path.startsWith('/')) {
+    return BASE_PATH + path;
+  }
+  return path;
+}
+
 // Core assets to pre-cache on install
 // Note: HTML files are NOT pre-cached to ensure users always get the latest version
 // HTML will be cached on demand using Network First strategy
 const CORE_ASSETS = [
-  '/css/variables.css',
-  '/css/global.css',
-  '/css/topbar.css',
-  '/js/topbar.js',
-  '/js/spa-router.js',
-  '/js/pwa-register.js',
-  '/js/asset-update-manager.js',
-  '/assets/images/fuyu-logo.webp',
-  '/assets/images/hero-forest.webp',
-  '/assets/pannellum/pannellum.min.js',
-  '/assets/pannellum/pannellum.min.css'
-];
+  'css/variables.css',
+  'css/global.css',
+  'css/topbar.css',
+  'js/topbar.js',
+  'js/spa-router.js',
+  'js/pwa-register.js',
+  'js/asset-update-manager.js',
+  'assets/images/fuyu-logo.webp',
+  'assets/images/hero-forest.webp',
+  'assets/pannellum/pannellum.min.js',
+  'assets/pannellum/pannellum.min.css'
+].map(resolvePath);
 
 // Install event - pre-cache core assets
 self.addEventListener('install', event => {
