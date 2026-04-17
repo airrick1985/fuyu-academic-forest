@@ -1,7 +1,7 @@
 {
-  "version": "1.0.80",
-  "timestamp": 1776408291745,
-  "generatedAt": "2026-04-17T06:44:51.745Z",
+  "version": "1.0.81",
+  "timestamp": 1776410655604,
+  "generatedAt": "2026-04-17T07:24:15.604Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "e2be2b0eff05",
@@ -499,9 +499,9 @@
       "mtime": 1774585340922.8955
     },
     "assets/images/layout/1F.webp": {
-      "hash": "ce66e3d3d36f",
-      "size": 1138558,
-      "mtime": 1775908413708.3298
+      "hash": "5c0044fd8dd4",
+      "size": 593288,
+      "mtime": 1776409570940.3325
     },
     "assets/images/layout/2F.webp": {
       "hash": "915473b47bba",
@@ -514,9 +514,9 @@
       "mtime": 1774526415037.588
     },
     "assets/images/layout/4-14F.webp": {
-      "hash": "607eae26383b",
-      "size": 494450,
-      "mtime": 1774850636951.0967
+      "hash": "4fb347d6c9d8",
+      "size": 371328,
+      "mtime": 1776410607811.6401
     },
     "assets/images/layout/A1.webp": {
       "hash": "c3e28b06e5f0",
