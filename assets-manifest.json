@@ -1,7 +1,7 @@
 {
-  "version": "1.0.81",
-  "timestamp": 1776410655604,
-  "generatedAt": "2026-04-17T07:24:15.604Z",
+  "version": "1.0.82",
+  "timestamp": 1776423539895,
+  "generatedAt": "2026-04-17T10:58:59.895Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "e2be2b0eff05",
@@ -499,9 +499,9 @@
       "mtime": 1774585340922.8955
     },
     "assets/images/layout/1F.webp": {
-      "hash": "5c0044fd8dd4",
-      "size": 593288,
-      "mtime": 1776409570940.3325
+      "hash": "d79d4f1032bd",
+      "size": 587180,
+      "mtime": 1776423408996.9905
     },
     "assets/images/layout/2F.webp": {
       "hash": "915473b47bba",
@@ -514,9 +514,9 @@
       "mtime": 1774526415037.588
     },
     "assets/images/layout/4-14F.webp": {
-      "hash": "4fb347d6c9d8",
-      "size": 371328,
-      "mtime": 1776410607811.6401
+      "hash": "8816b58d6d51",
+      "size": 356460,
+      "mtime": 1776423368571.904
     },
     "assets/images/layout/A1.webp": {
       "hash": "c3e28b06e5f0",
@@ -554,19 +554,19 @@
       "mtime": 1775723381543.6902
     },
     "assets/images/layout/B1.webp": {
-      "hash": "3a8a05ffc8e0",
-      "size": 327482,
-      "mtime": 1776408182201.1975
+      "hash": "74c23bff7daa",
+      "size": 329492,
+      "mtime": 1776423518731.0862
     },
     "assets/images/layout/B2.webp": {
-      "hash": "57fb346b2c0b",
-      "size": 525292,
-      "mtime": 1776408169468.1067
+      "hash": "0f2771a3f0ed",
+      "size": 398392,
+      "mtime": 1776423485877.0613
     },
     "assets/images/layout/B3.webp": {
-      "hash": "f43dfb9422c5",
-      "size": 426206,
-      "mtime": 1776408151949.3083
+      "hash": "f0fba8cd739b",
+      "size": 426210,
+      "mtime": 1776423447076.1995
     },
     "assets/images/layout/background.webp": {
       "hash": "15a9db011b4e",
