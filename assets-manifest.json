@@ -1,7 +1,7 @@
 {
-  "version": "1.0.82",
-  "timestamp": 1776423539895,
-  "generatedAt": "2026-04-17T10:58:59.895Z",
+  "version": "1.0.83",
+  "timestamp": 1777262768798,
+  "generatedAt": "2026-04-27T04:06:08.798Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "e2be2b0eff05",
@@ -9,9 +9,9 @@
       "mtime": 1774516760651.5183
     },
     "assets/images/3D-01.webp": {
-      "hash": "730a07d47044",
-      "size": 770182,
-      "mtime": 1776321095594.6726
+      "hash": "51e5c54337b1",
+      "size": 759538,
+      "mtime": 1777262703645.6711
     },
     "assets/images/3D-02.webp": {
       "hash": "059f07abc120",
