@@ -1,0 +1,375 @@
+/* css/public-3d.css — 公設3D 全螢幕圖片輪播 + 文字介紹 + Zoom In 效果 */
+
+/* 容器 */
+.pub3d-viewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* 每張幻燈片 */
+.pub3d-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.pub3d-slide.active {
+    opacity: 1;
+    z-index: 2;
+    pointer-events: auto;
+}
+
+/* 圖片包裝 (用於 Zoom In 動畫，與互動縮放解耦) */
+.pub3d-img-wrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    transform-origin: center center;
+}
+
+/* 圖片 */
+.pub3d-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform-origin: center center;
+    will-change: transform;
+    pointer-events: none;
+    display: block;
+}
+
+/* ===== 緩慢 Zoom In 動畫 ===== */
+@keyframes pub3d-zoomIn {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.12);
+    }
+}
+
+.pub3d-slide.active .pub3d-img-wrap img {
+    animation: pub3d-zoomIn 25s ease-out forwards;
+}
+
+/* ===== 左右切換箭頭 ===== */
+.pub3d-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+}
+
+.pub3d-arrow:hover {
+    opacity: 1;
+    background: rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.pub3d-arrow svg {
+    width: 24px;
+    height: 24px;
+}
+
+.pub3d-arrow-prev {
+    left: 30px;
+}
+
+.pub3d-arrow-next {
+    right: 30px;
+}
+
+/* ===== 底部指標 & 資訊列 ===== */
+.pub3d-bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 40px 25px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+/* 圓點指標 */
+.pub3d-dots {
+    display: flex;
+    gap: 12px;
+    pointer-events: auto;
+}
+
+.pub3d-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pub3d-dot.active {
+    background: var(--color-accent, #ffd700);
+    border-color: var(--color-accent, #ffd700);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    transform: scale(1.2);
+}
+
+.pub3d-dot:hover {
+    background: rgba(255, 255, 255, 0.6);
+}
+
+/* ===== 頁面標題浮層 ===== */
+.pub3d-title-overlay {
+    position: absolute;
+    top: calc(var(--topbar-height, 80px) + 20px);
+    left: 40px;
+    z-index: 10;
+    pointer-events: none;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.pub3d-title-overlay h2 {
+    font-size: 2rem;
+    margin: 0 0 5px 0;
+    letter-spacing: 3px;
+    font-weight: 600;
+}
+
+.pub3d-title-overlay p {
+    font-size: 0.9rem;
+    margin: 0;
+    opacity: 0.75;
+    letter-spacing: 2px;
+    font-family: var(--font-english-serif, serif);
+}
+
+/* ===== 計數器 (1 / 6) ===== */
+.pub3d-counter {
+    position: absolute;
+    top: calc(var(--topbar-height, 80px) + 25px);
+    right: 40px;
+    z-index: 10;
+    pointer-events: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: var(--font-english-serif, serif);
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== 公設介紹文字卡片（精簡版，懸停展開） ===== */
+.pub3d-info-card {
+    position: absolute;
+    left: 30px;
+    bottom: 70px;
+    z-index: 11;
+    max-width: 320px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, rgba(10, 31, 10, 0.55) 0%, rgba(20, 45, 20, 0.35) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 215, 0, 0.18);
+    border-radius: 10px;
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.6s ease, transform 0.6s ease, background 0.3s ease, border-color 0.3s ease, max-width 0.4s ease;
+    pointer-events: auto;
+}
+
+.pub3d-info-card.visible {
+    opacity: 0.82;
+    transform: translateY(0);
+}
+
+.pub3d-info-card.visible:hover {
+    opacity: 1;
+    background: linear-gradient(135deg, rgba(10, 31, 10, 0.78) 0%, rgba(20, 45, 20, 0.6) 100%);
+    border-color: rgba(255, 215, 0, 0.35);
+}
+
+.pub3d-info-card .info-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0 0 2px 0;
+    letter-spacing: 2px;
+    color: #fff;
+    font-family: var(--font-serif, serif);
+}
+
+.pub3d-info-card .info-subtitle {
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0 0 8px 0;
+    font-family: var(--font-english-serif, serif);
+    text-transform: uppercase;
+}
+
+.pub3d-info-card .info-divider {
+    width: 28px;
+    height: 1.5px;
+    background: var(--color-accent, #ffd700);
+    margin: 0 0 8px 0;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+}
+
+.pub3d-info-card .info-description {
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+    letter-spacing: 0.5px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.45s ease, opacity 0.35s ease, margin 0.4s ease;
+}
+
+.pub3d-info-card.visible:hover .info-description {
+    max-height: 200px;
+    opacity: 1;
+    margin-top: 2px;
+}
+
+.pub3d-info-card.visible:hover .info-divider {
+    width: 48px;
+}
+
+/* ===== 3D渲染圖免責聲明 ===== */
+.pub3d-disclaimer {
+    position: absolute;
+    bottom: 60px;
+    right: 40px;
+    z-index: 10;
+    pointer-events: none;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== 操作提示（自動消失） ===== */
+.pub3d-hint {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: pub3d-fadeOut 2.5s ease forwards;
+    animation-delay: 4s;
+}
+
+@keyframes pub3d-fadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+}
+
+/* ===== 響應式：較小螢幕 ===== */
+@media (max-width: 768px) {
+    .pub3d-info-card {
+        left: 16px;
+        right: 16px;
+        bottom: 60px;
+        max-width: none;
+        padding: 12px 16px;
+    }
+
+    .pub3d-info-card .info-title {
+        font-size: 1.05rem;
+        letter-spacing: 1.5px;
+    }
+
+    .pub3d-info-card .info-description {
+        font-size: 0.78rem;
+        line-height: 1.55;
+    }
+
+    /* 手機觸控優先：直接顯示完整內容 */
+    .pub3d-info-card.visible .info-description {
+        max-height: 200px;
+        opacity: 1;
+        margin-top: 2px;
+    }
+
+    .pub3d-title-overlay {
+        left: 20px;
+    }
+
+    .pub3d-title-overlay h2 {
+        font-size: 1.4rem;
+    }
+
+    .pub3d-counter {
+        right: 20px;
+    }
+
+    .pub3d-arrow {
+        width: 44px;
+        height: 44px;
+    }
+
+    .pub3d-arrow-prev {
+        left: 12px;
+    }
+
+    .pub3d-arrow-next {
+        right: 12px;
+    }
+
+    .pub3d-disclaimer {
+        font-size: 12px;
+        right: 20px;
+    }
+}

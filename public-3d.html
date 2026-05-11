@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="app-version" content="1.0.3">
+    <meta name="app-version" content="1.0.4">
     <script>
       if (!window.location.hostname.includes('localhost') && window.location.hostname !== '127.0.0.1' && !window.location.hostname.includes('pages.dev')) {
         document.write('<base href="/fuyu-academic-forest/">');
@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="css/variables.css?v=1.0.2">
     <link rel="stylesheet" href="css/global.css?v=1.0.2">
     <link rel="stylesheet" href="css/topbar.css?v=1.0.2">
-    <link rel="stylesheet" href="css/coming-soon.css?v=1.0.2">
+    <link rel="stylesheet" href="css/public-3d.css?v=1.0.0">
     <!-- PWA Update Loading Screen -->
     <style id="pwa-loading-style">
       #pwa-loading-overlay {
@@ -71,7 +71,7 @@
     </style>
 </head>
 
-<body>
+<body class="pano-page">
     <!-- PWA Loading Overlay -->
     <div id="pwa-loading-overlay">
       <div class="pwa-loading-content">
@@ -82,19 +82,189 @@
     <!-- Top Bar (由 topbar.js 統一注入) -->
     <div id="topbar-root"></div>
 
-    <main class="coming-soon-page">
-        <div class="coming-soon-overlay"></div>
-        <div class="coming-soon-content">
-            <div class="cs-icon">🏢</div>
-            <h1 class="cs-title">公設3D</h1>
-            <div class="cs-en">PUBLIC FACILITIES 3D</div>
-            <h2 class="cs-subtitle">精彩內容籌備中</h2>
-            <button class="cs-back-btn" onclick="window.history.back()">回前頁</button>
+    <!-- 全螢幕公設3D 圖片檢視器 -->
+    <div class="pub3d-viewer" id="pub3dViewer">
+
+        <!-- 圖片輪播 -->
+        <div class="pub3d-slide active" data-index="0"
+             data-tag="01"
+             data-title="學森大廳"
+             data-subtitle="GRAND LOBBY"
+             data-desc="挑高氣派的迎賓門廳，以溫潤木質與石材鋪陳，搭配藝術燈光與綠意中庭意象，迎來富宇學森第一道優雅序章。">
+            <div class="pub3d-img-wrap">
+                <img src="assets/images/3D-03.webp" alt="富宇學森 公設3D - 學森大廳" draggable="false">
+            </div>
         </div>
-    </main>
+        <div class="pub3d-slide" data-index="1"
+             data-tag="02"
+             data-title="雅森會客區"
+             data-subtitle="ELEGANT LOUNGE"
+             data-desc="低調奢華的會客交流空間，融合柔軟坐席與精品設計家具，提供住戶迎賓接待、靜謐閱讀與輕鬆社交的場域。">
+            <div class="pub3d-img-wrap">
+                <img src="assets/images/3D-04.webp" alt="富宇學森 公設3D - 雅森會客區" draggable="false">
+            </div>
+        </div>
+        <div class="pub3d-slide" data-index="2"
+             data-tag="03"
+             data-title="知森家教室"
+             data-subtitle="STUDY ROOM"
+             data-desc="為下一代量身打造的靜謐學習空間，明亮自然光與專屬書桌規劃，培養孩子專注學習的最佳場景。">
+            <div class="pub3d-img-wrap">
+                <img src="assets/images/3D-05.webp" alt="富宇學森 公設3D - 知森家教室" draggable="false">
+            </div>
+        </div>
+        <div class="pub3d-slide" data-index="3"
+             data-tag="04"
+             data-title="氧森健身房"
+             data-subtitle="FITNESS CENTER"
+             data-desc="採光通透的專業健身空間，配備有氧與重訓器材，於家中即可輕鬆完成日常運動，常保健康活力。">
+            <div class="pub3d-img-wrap">
+                <img src="assets/images/3D-06.webp" alt="富宇學森 公設3D - 氧森健身房" draggable="false">
+            </div>
+        </div>
+        <div class="pub3d-slide" data-index="4"
+             data-tag="05"
+             data-title="悅森 Lounge"
+             data-subtitle="JOYFUL LOUNGE"
+             data-desc="溫潤悠閒的休憩交誼廳，吧檯、沙發與品味擺設交織出夜晚最舒心的角落，獨享或共聚都自在從容。">
+            <div class="pub3d-img-wrap">
+                <img src="assets/images/3D-07.webp" alt="富宇學森 公設3D - 悅森Lounge" draggable="false">
+            </div>
+        </div>
+        <div class="pub3d-slide" data-index="5"
+             data-tag="06"
+             data-title="沐森景觀庭園"
+             data-subtitle="LANDSCAPE GARDEN"
+             data-desc="以森林意象延伸的戶外綠意庭園，喬木、灌木與水景層層堆疊，提供住戶日常散步、靜心冥想的療癒之所。">
+            <div class="pub3d-img-wrap">
+                <img src="assets/images/3D-08.webp" alt="富宇學森 公設3D - 沐森景觀庭園" draggable="false">
+            </div>
+        </div>
+
+        <!-- 左右箭頭 -->
+        <button class="pub3d-arrow pub3d-arrow-prev" id="pubPrevBtn" title="上一張">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+        <button class="pub3d-arrow pub3d-arrow-next" id="pubNextBtn" title="下一張">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+
+        <!-- 公設介紹文字卡片 -->
+        <div class="pub3d-info-card" id="pub3dInfoCard">
+            <h3 class="info-title" id="pub3dInfoTitle">學森大廳</h3>
+            <p class="info-subtitle" id="pub3dInfoSubtitle">GRAND LOBBY</p>
+            <div class="info-divider"></div>
+            <p class="info-description" id="pub3dInfoDesc"></p>
+        </div>
+
+        <!-- 底部導航 -->
+        <div class="pub3d-bottom-bar">
+            <div class="pub3d-dots" id="pub3dDots"></div>
+        </div>
+
+        <!-- 頁面標題 -->
+        <div class="pub3d-title-overlay">
+            <h2>公設3D</h2>
+            <p>PUBLIC FACILITIES 3D</p>
+        </div>
+
+        <!-- 計數器 -->
+        <div class="pub3d-counter" id="pub3dCounter">1 / 6</div>
+
+        <!-- 3D透視圖免責聲明 -->
+        <div class="pub3d-disclaimer">本3D透視圖僅供參考，實際以建造變更核准圖面為準。</div>
+
+        <!-- 操作提示 -->
+        <div class="pub3d-hint">
+            <span>提示</span>
+            <span>左右箭頭切換</span>
+        </div>
+
+    </div>
 
     <!-- JS -->
     <script src="js/topbar.js"></script>
+    <script>
+        (() => {
+            const viewer = document.getElementById('pub3dViewer');
+            const slides = viewer.querySelectorAll('.pub3d-slide');
+            const dotsContainer = document.getElementById('pub3dDots');
+            const counter = document.getElementById('pub3dCounter');
+            const prevBtn = document.getElementById('pubPrevBtn');
+            const nextBtn = document.getElementById('pubNextBtn');
+            const infoCard = document.getElementById('pub3dInfoCard');
+            const infoTitle = document.getElementById('pub3dInfoTitle');
+            const infoSubtitle = document.getElementById('pub3dInfoSubtitle');
+            const infoDesc = document.getElementById('pub3dInfoDesc');
+            const totalSlides = slides.length;
+
+            let currentIndex = 0;
+
+            // ===== 建立圓點導航 =====
+            slides.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = 'pub3d-dot' + (i === 0 ? ' active' : '');
+                dot.addEventListener('click', () => goToSlide(i));
+                dotsContainer.appendChild(dot);
+            });
+
+            // ===== 更新介紹卡片 =====
+            function updateInfoCard(index) {
+                const slide = slides[index];
+                infoCard.classList.remove('visible');
+                // 短暫等待後再更新內容並淡入
+                setTimeout(() => {
+                    infoTitle.textContent = slide.dataset.title || '';
+                    infoSubtitle.textContent = slide.dataset.subtitle || '';
+                    infoDesc.textContent = slide.dataset.desc || '';
+                    infoCard.classList.add('visible');
+                }, 250);
+            }
+
+            // ===== 重設 Zoom In 動畫 =====
+            function restartZoom(index) {
+                const wrap = slides[index].querySelector('.pub3d-img-wrap');
+                const img = wrap.querySelector('img');
+                if (!img) return;
+                // 透過移除/重新觸發 reflow，使動畫從頭播放
+                img.style.animation = 'none';
+                // 強制 reflow
+                void img.offsetWidth;
+                img.style.animation = '';
+            }
+
+            function goToSlide(index) {
+                slides[currentIndex].classList.remove('active');
+                dotsContainer.children[currentIndex].classList.remove('active');
+
+                currentIndex = (index + totalSlides) % totalSlides;
+
+                slides[currentIndex].classList.add('active');
+                dotsContainer.children[currentIndex].classList.add('active');
+                counter.textContent = `${currentIndex + 1} / ${totalSlides}`;
+
+                restartZoom(currentIndex);
+                updateInfoCard(currentIndex);
+            }
+
+            prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
+            nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
+
+            // ===== 鍵盤左右箭頭 =====
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') goToSlide(currentIndex - 1);
+                if (e.key === 'ArrowRight') goToSlide(currentIndex + 1);
+            });
+
+            // ===== 初始化第一張的文字卡片 =====
+            updateInfoCard(0);
+
+        })();
+    </script>
     <script src="js/spa-router.js?v=1.0.2"></script>
     <!-- Asset Update Manager -->
     <script src="js/asset-update-manager.js"></script>

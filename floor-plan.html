@@ -271,6 +271,8 @@
             <canvas id="fpMeasureCanvas"></canvas>
             <div id="fpMeasureButtonsContainer"></div>
             <button id="btnFloatingFinish" class="fp-floating-btn">✔ 完成此區塊</button>
+            <!-- 1F 燈箱熱點 (僅在 1F 圖面顯示) -->
+            <div class="fp-hotspot-layer" id="fpHotspotLayer"></div>
         </div>
 
         <div class="fp-lightbox-hint">滾輪縮放 · 拖曳移動 · ESC 關閉</div>
@@ -286,6 +288,102 @@
             <p>PANORAMA</p>
         </div>
         <div id="panoramaViewer" style="width: 100vw; height: 100vh;"></div>
+    </div>
+
+    <!-- 1F 熱點子燈箱 (公設 3D 風格：慢推近 + 左右切換 + 文字卡) -->
+    <div class="fp-info-lightbox" id="fpInfoLightbox">
+        <!-- 圖片輪播 -->
+        <div class="fp-info-slide active" data-id="hall"
+             data-title="學森大廳" data-subtitle="GRAND LOBBY"
+             data-desc="挑高氣派的迎賓門廳，以溫潤木質與石材鋪陳，搭配藝術燈光與綠意中庭意象，迎來富宇學森第一道優雅序章。">
+            <div class="fp-info-img-wrap">
+                <img src="assets/images/3D-03.webp" alt="富宇學森 1F - 學森大廳" draggable="false">
+            </div>
+        </div>
+        <div class="fp-info-slide" data-id="meeting"
+             data-title="雅森會客區" data-subtitle="ELEGANT LOUNGE"
+             data-desc="低調奢華的會客交流空間，融合柔軟坐席與精品設計家具，提供住戶迎賓接待、靜謐閱讀與輕鬆社交的場域。">
+            <div class="fp-info-img-wrap">
+                <img src="assets/images/3D-04.webp" alt="富宇學森 1F - 雅森會客區" draggable="false">
+            </div>
+        </div>
+        <div class="fp-info-slide" data-id="class"
+             data-title="知森家教室" data-subtitle="STUDY ROOM"
+             data-desc="為下一代量身打造的靜謐學習空間，明亮自然光與專屬書桌規劃，培養孩子專注學習的最佳場景。">
+            <div class="fp-info-img-wrap">
+                <img src="assets/images/3D-05.webp" alt="富宇學森 1F - 知森家教室" draggable="false">
+            </div>
+        </div>
+        <div class="fp-info-slide" data-id="gym"
+             data-title="氧森健身房" data-subtitle="FITNESS CENTER"
+             data-desc="採光通透的專業健身空間，配備有氧與重訓器材，於家中即可輕鬆完成日常運動，常保健康活力。">
+            <div class="fp-info-img-wrap">
+                <img src="assets/images/3D-06.webp" alt="富宇學森 1F - 氧森健身房" draggable="false">
+            </div>
+        </div>
+        <div class="fp-info-slide" data-id="lounge"
+             data-title="悅森 Lounge" data-subtitle="JOYFUL LOUNGE"
+             data-desc="溫潤悠閒的休憩交誼廳，吧檯、沙發與品味擺設交織出夜晚最舒心的角落，獨享或共聚都自在從容。">
+            <div class="fp-info-img-wrap">
+                <img src="assets/images/3D-07.webp" alt="富宇學森 1F - 悅森Lounge" draggable="false">
+            </div>
+        </div>
+        <div class="fp-info-slide" data-id="garden"
+             data-title="沐森景觀庭園" data-subtitle="LANDSCAPE GARDEN"
+             data-desc="以森林意象延伸的戶外綠意庭園，喬木、灌木與水景層層堆疊，提供住戶日常散步、靜心冥想的療癒之所。">
+            <div class="fp-info-img-wrap">
+                <img src="assets/images/3D-08.webp" alt="富宇學森 1F - 沐森景觀庭園" draggable="false">
+            </div>
+        </div>
+
+        <!-- 關閉 -->
+        <button class="fp-info-lightbox-close" id="fpInfoLightboxClose" title="關閉">✕</button>
+
+        <!-- 左右箭頭 -->
+        <button class="fp-info-arrow fp-info-arrow-prev" id="fpInfoPrevBtn" title="上一張">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+        <button class="fp-info-arrow fp-info-arrow-next" id="fpInfoNextBtn" title="下一張">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+
+        <!-- 左下文字卡 -->
+        <div class="fp-info-card" id="fpInfoCard">
+            <h3 class="info-title" id="fpInfoTitle">學森大廳</h3>
+            <p class="info-subtitle" id="fpInfoSubtitle">GRAND LOBBY</p>
+            <div class="info-divider"></div>
+            <p class="info-description" id="fpInfoDesc"></p>
+        </div>
+
+        <!-- 底部圓點 -->
+        <div class="fp-info-bottom-bar">
+            <div class="fp-info-dots" id="fpInfoDots"></div>
+        </div>
+
+        <!-- 計數器 -->
+        <div class="fp-info-counter" id="fpInfoCounter">1 / 6</div>
+
+        <!-- 免責聲明 -->
+        <div class="fp-info-disclaimer">本3D透視圖僅供參考，實際以建造變更核准圖面為準。</div>
+
+        <!-- 操作提示 -->
+        <div class="fp-info-hint" id="fpInfoHint">
+            <span>提示</span>
+            <span>← → 切換 · ESC 關閉</span>
+        </div>
+    </div>
+
+    <!-- 1F 熱點 Debug 面板 (連按 5 次 D 鍵切換) -->
+    <div class="fp-hotspot-debug-toast" id="fpHotspotDebugToast"></div>
+    <div class="fp-hotspot-debug-panel" id="fpHotspotDebugPanel">
+        <h3>🔴 1F Hotspot Debug 面板</h3>
+        <div class="fp-hotspot-debug-list" id="fpHotspotDebugList"></div>
+        <button class="fp-hotspot-debug-export" id="fpHotspotDebugExport">📋 匯出座標 (複製到剪貼簿)</button>
+        <div class="fp-hotspot-debug-hint">先點開 1F 平面圖後，於燈箱中拖曳紅點調整位置。<br>連按 5 次 D 鍵或 ESC 可關閉本面板。</div>
     </div>
 
     <!-- 列印設定 Modal 對話框 -->
@@ -525,6 +623,10 @@
                     lightbox.classList.add('active');
                     document.body.classList.add('lightbox-active'); // 給 body 加上特殊 class
                     document.body.style.overflow = 'hidden';
+                    // 顯示/隱藏 1F 熱點
+                    if (typeof showHotspotsForCurrentImage === 'function') {
+                        showHotspotsForCurrentImage();
+                    }
                     // 重新觸發提示動畫
                     lightboxHint.style.animation = 'none';
                     lightboxHint.offsetHeight; // 強制 reflow
@@ -868,6 +970,10 @@
                         btn.style.transform = `translate(-50%, -50%) scale(${invScale})`;
                     }
                 });
+                // 1F 熱點：保持視覺尺寸不被縮放，避免縮放圖面時點太大或太小
+                document.querySelectorAll('.fp-hotspot').forEach(el => {
+                    el.style.transform = `translate(-50%, -50%) scale(${invScale})`;
+                });
             }
 
             // 拖曳
@@ -877,6 +983,8 @@
                 if (e.target.closest('.fp-measure-tools')) return; // 防止點擊工具列拖曳
                 // 防止點擊到彈出資訊框也觸發背景圖案的拖曳
                 if (e.target.closest('.fp-lightbox-info')) return;
+                // 點到熱點(hotspot) 時，由熱點專屬邏輯處理 (打開子燈箱或拖曳)
+                if (e.target.closest('.fp-hotspot')) return;
 
                 e.preventDefault(); // 防止圖片的原生拖曳行為
                 lbDragging = true;
@@ -1460,6 +1568,347 @@
             const styleEl = document.createElement('style');
             styleEl.innerHTML = orbStyles;
             document.head.appendChild(styleEl);
+
+            // ===== 1F 燈箱熱點 (Hotspots) =====
+            // 6 個公設空間熱點。x / y 為相對於 1F 圖片自然尺寸的百分比座標。
+            // 預設座標皆放在中央，可使用 Debug 面板拖曳精準定位 (連按 5 次 D 鍵)。
+            const hotspotsData = [
+  {
+    "id": "hall",
+    "label": "學森大廳",
+    "img": "assets/images/3D-03.webp",
+    "x": 57.6,
+    "y": 54.2
+  },
+  {
+    "id": "meeting",
+    "label": "雅森會客區",
+    "img": "assets/images/3D-04.webp",
+    "x": 57.6,
+    "y": 63.1
+  },
+  {
+    "id": "class",
+    "label": "知森家教室",
+    "img": "assets/images/3D-05.webp",
+    "x": 57.6,
+    "y": 77.3
+  },
+  {
+    "id": "gym",
+    "label": "氧森健身房",
+    "img": "assets/images/3D-06.webp",
+    "x": 47.4,
+    "y": 73.3
+  },
+  {
+    "id": "lounge",
+    "label": "悅森Lounge",
+    "img": "assets/images/3D-07.webp",
+    "x": 40.6,
+    "y": 66.4
+  },
+  {
+    "id": "garden",
+    "label": "沐森景觀庭園",
+    "img": "assets/images/3D-08.webp",
+    "x": 11.8,
+    "y": 75.7
+  }
+];
+
+            
+
+            const hotspotLayer = document.getElementById('fpHotspotLayer');
+            const infoLightbox = document.getElementById('fpInfoLightbox');
+            const infoLightboxClose = document.getElementById('fpInfoLightboxClose');
+            const infoSlides = infoLightbox.querySelectorAll('.fp-info-slide');
+            const infoPrevBtn = document.getElementById('fpInfoPrevBtn');
+            const infoNextBtn = document.getElementById('fpInfoNextBtn');
+            const infoDotsContainer = document.getElementById('fpInfoDots');
+            const infoCounter = document.getElementById('fpInfoCounter');
+            const infoCard = document.getElementById('fpInfoCard');
+            const infoTitle = document.getElementById('fpInfoTitle');
+            const infoSubtitle = document.getElementById('fpInfoSubtitle');
+            const infoDesc = document.getElementById('fpInfoDesc');
+            const infoHint = document.getElementById('fpInfoHint');
+            const infoTotal = infoSlides.length;
+            let infoCurrentIndex = 0;
+            const hotspotDebugPanel = document.getElementById('fpHotspotDebugPanel');
+            const hotspotDebugList = document.getElementById('fpHotspotDebugList');
+            const hotspotDebugExport = document.getElementById('fpHotspotDebugExport');
+            const hotspotDebugToast = document.getElementById('fpHotspotDebugToast');
+
+            let hotspotDebugMode = false;
+            let hotspotDragTarget = null;
+            let hotspotDragMoved = false;
+            let hotspotDragOffsetX = 0;
+            let hotspotDragOffsetY = 0;
+
+            function buildHotspots() {
+                hotspotLayer.innerHTML = '';
+                const invScale = 1 / (lbScale || 1);
+                hotspotsData.forEach(hs => {
+                    const el = document.createElement('div');
+                    el.className = 'fp-hotspot';
+                    el.dataset.id = hs.id;
+                    el.style.left = `${hs.x}%`;
+                    el.style.top = `${hs.y}%`;
+                    el.style.transform = `translate(-50%, -50%) scale(${invScale})`;
+                    el.innerHTML = `
+                        <div class="hotspot-ring"></div>
+                        <div class="hotspot-ring-outer"></div>
+                        <div class="hotspot-core"></div>
+                        <span class="hotspot-label">${hs.label}</span>
+                    `;
+                    el.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (hotspotDragMoved) {
+                            // 剛拖曳完，避免誤觸開啟子燈箱
+                            hotspotDragMoved = false;
+                            return;
+                        }
+                        if (hotspotDebugMode) return; // Debug 模式下不開啟子燈箱
+                        openInfoLightbox(hs);
+                    });
+                    hotspotLayer.appendChild(el);
+                });
+            }
+
+            // 依當前燈箱顯示的圖面決定是否顯示熱點 (僅 1F)
+            function showHotspotsForCurrentImage() {
+                const src = lightboxImg.src || '';
+                const alt = lightboxImg.alt || '';
+                const is1F = /\/1F\.webp(\?|$)/i.test(src) || /(^|[^\d])1F([^\d]|$)/.test(alt);
+                if (is1F) {
+                    hotspotLayer.classList.add('active');
+                } else {
+                    hotspotLayer.classList.remove('active');
+                }
+            }
+
+            // ===== 子燈箱輪播 (公設 3D 風格) =====
+            // 建立底部圓點導航
+            infoSlides.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = 'fp-info-dot' + (i === 0 ? ' active' : '');
+                dot.addEventListener('click', () => goToInfoSlide(i));
+                infoDotsContainer.appendChild(dot);
+            });
+
+            function updateInfoCard(index) {
+                const slide = infoSlides[index];
+                infoCard.classList.remove('visible');
+                setTimeout(() => {
+                    infoTitle.textContent = slide.dataset.title || '';
+                    infoSubtitle.textContent = slide.dataset.subtitle || '';
+                    infoDesc.textContent = slide.dataset.desc || '';
+                    infoCard.classList.add('visible');
+                }, 250);
+            }
+
+            // 重新觸發圖片慢推近動畫
+            function restartInfoZoom(index) {
+                const img = infoSlides[index].querySelector('img');
+                if (!img) return;
+                img.style.animation = 'none';
+                void img.offsetWidth; // 強制 reflow
+                img.style.animation = '';
+            }
+
+            function goToInfoSlide(index) {
+                infoSlides[infoCurrentIndex].classList.remove('active');
+                infoDotsContainer.children[infoCurrentIndex].classList.remove('active');
+
+                infoCurrentIndex = (index + infoTotal) % infoTotal;
+
+                infoSlides[infoCurrentIndex].classList.add('active');
+                infoDotsContainer.children[infoCurrentIndex].classList.add('active');
+                infoCounter.textContent = `${infoCurrentIndex + 1} / ${infoTotal}`;
+
+                restartInfoZoom(infoCurrentIndex);
+                updateInfoCard(infoCurrentIndex);
+            }
+
+            function openInfoLightbox(hs) {
+                const idx = Array.from(infoSlides).findIndex(s => s.dataset.id === hs.id);
+                const target = idx >= 0 ? idx : 0;
+
+                // 模態顯示前先把對應 slide 設為 active，避免開啟瞬間看到第一張再切換
+                if (infoCurrentIndex !== target) {
+                    infoSlides[infoCurrentIndex].classList.remove('active');
+                    infoDotsContainer.children[infoCurrentIndex].classList.remove('active');
+                    infoCurrentIndex = target;
+                    infoSlides[target].classList.add('active');
+                    infoDotsContainer.children[target].classList.add('active');
+                }
+                infoCounter.textContent = `${target + 1} / ${infoTotal}`;
+
+                infoLightbox.classList.add('active');
+
+                restartInfoZoom(target);
+                updateInfoCard(target);
+
+                // 每次開啟重新觸發提示淡出動畫
+                infoHint.classList.remove('show');
+                void infoHint.offsetWidth;
+                infoHint.classList.add('show');
+            }
+
+            function closeInfoLightbox() {
+                infoLightbox.classList.remove('active');
+                infoCard.classList.remove('visible');
+            }
+
+            infoLightboxClose.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeInfoLightbox();
+            });
+            infoPrevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                goToInfoSlide(infoCurrentIndex - 1);
+            });
+            infoNextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                goToInfoSlide(infoCurrentIndex + 1);
+            });
+
+            // 捕獲階段處理鍵盤：子燈箱開啟時優先攔截 ESC / ArrowLeft / ArrowRight
+            document.addEventListener('keydown', (e) => {
+                if (!infoLightbox.classList.contains('active')) return;
+                if (e.key === 'Escape') {
+                    closeInfoLightbox();
+                    e.stopImmediatePropagation();
+                } else if (e.key === 'ArrowLeft') {
+                    goToInfoSlide(infoCurrentIndex - 1);
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                } else if (e.key === 'ArrowRight') {
+                    goToInfoSlide(infoCurrentIndex + 1);
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                }
+            }, true);
+
+            // 初始化文字卡內容 (第一張)
+            updateInfoCard(0);
+
+            // ===== Debug 模式 (連按 5 次 D 鍵 切換) =====
+            const HS_D_THRESHOLD = 5;
+            const HS_D_WINDOW = 2000;
+            let hsDKeyPresses = [];
+
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                if (e.key === 'Escape' && hotspotDebugMode) {
+                    toggleHotspotDebug(false);
+                    return;
+                }
+                if (e.key === 'd' || e.key === 'D') {
+                    const now = Date.now();
+                    hsDKeyPresses.push(now);
+                    hsDKeyPresses = hsDKeyPresses.filter(t => now - t < HS_D_WINDOW);
+                    if (hsDKeyPresses.length >= HS_D_THRESHOLD) {
+                        hsDKeyPresses = [];
+                        toggleHotspotDebug(!hotspotDebugMode);
+                    }
+                }
+            });
+
+            function toggleHotspotDebug(on) {
+                hotspotDebugMode = on;
+                hotspotDebugPanel.classList.toggle('active', on);
+                document.body.classList.toggle('fp-hotspot-debug', on);
+                updateHotspotDebugList();
+                showHotspotDebugToast(on ? '🔧 1F Hotspot Debug 已啟用' : '🔒 1F Hotspot Debug 已關閉');
+            }
+
+            function showHotspotDebugToast(msg) {
+                hotspotDebugToast.textContent = msg;
+                hotspotDebugToast.classList.add('show');
+                clearTimeout(hotspotDebugToast._timer);
+                hotspotDebugToast._timer = setTimeout(() => {
+                    hotspotDebugToast.classList.remove('show');
+                }, 2500);
+            }
+
+            function updateHotspotDebugList() {
+                hotspotDebugList.innerHTML = '';
+                hotspotsData.forEach(hs => {
+                    const item = document.createElement('div');
+                    item.className = 'fp-hotspot-debug-item';
+                    item.innerHTML = `
+                        <span class="debug-name">${hs.label}</span>
+                        <span class="debug-pos">x: ${hs.x.toFixed(1)}% y: ${hs.y.toFixed(1)}%</span>
+                    `;
+                    hotspotDebugList.appendChild(item);
+                });
+            }
+
+            hotspotDebugExport.addEventListener('click', () => {
+                const exportData = hotspotsData.map(hs => ({
+                    id: hs.id,
+                    label: hs.label,
+                    img: hs.img,
+                    x: parseFloat(hs.x.toFixed(1)),
+                    y: parseFloat(hs.y.toFixed(1))
+                }));
+                const jsonStr = JSON.stringify(exportData, null, 2);
+                navigator.clipboard.writeText(jsonStr).then(() => {
+                    hotspotDebugExport.textContent = '✅ 已複製！';
+                    setTimeout(() => {
+                        hotspotDebugExport.textContent = '📋 匯出座標 (複製到剪貼簿)';
+                    }, 2000);
+                }).catch(() => {
+                    prompt('請複製以下座標 JSON：', jsonStr);
+                });
+            });
+
+            // ===== Debug 模式下：拖曳熱點 =====
+            hotspotLayer.addEventListener('mousedown', (e) => {
+                if (!hotspotDebugMode) return;
+                const target = e.target.closest('.fp-hotspot');
+                if (!target) return;
+                e.preventDefault();
+                e.stopPropagation();
+                hotspotDragTarget = target;
+                hotspotDragMoved = false;
+                const rect = target.getBoundingClientRect();
+                hotspotDragOffsetX = e.clientX - (rect.left + rect.width / 2);
+                hotspotDragOffsetY = e.clientY - (rect.top + rect.height / 2);
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!hotspotDragTarget) return;
+                const imgRect = lightboxImg.getBoundingClientRect();
+                if (!imgRect.width || !imgRect.height) return;
+                const x = ((e.clientX - hotspotDragOffsetX - imgRect.left) / imgRect.width) * 100;
+                const y = ((e.clientY - hotspotDragOffsetY - imgRect.top) / imgRect.height) * 100;
+                const cx = Math.max(0, Math.min(100, x));
+                const cy = Math.max(0, Math.min(100, y));
+                hotspotDragTarget.style.left = `${cx}%`;
+                hotspotDragTarget.style.top = `${cy}%`;
+                hotspotDragMoved = true;
+                const id = hotspotDragTarget.dataset.id;
+                const hs = hotspotsData.find(h => h.id === id);
+                if (hs) {
+                    hs.x = cx;
+                    hs.y = cy;
+                }
+                updateHotspotDebugList();
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (hotspotDragTarget) {
+                    hotspotDragTarget = null;
+                    // 延遲清旗標讓接續 click 知道剛剛是拖曳
+                    setTimeout(() => { hotspotDragMoved = false; }, 50);
+                }
+            });
+
+            // 初始建立熱點 DOM (預設常駐顯示紅點；連按 5 次 D 鍵進入 Debug 模式編輯座標)
+            buildHotspots();
+            updateHotspotDebugList();
 
         })();
     </script>
