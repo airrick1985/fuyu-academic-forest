@@ -1,7 +1,7 @@
 {
-  "version": "1.0.86",
-  "timestamp": 1779772171474,
-  "generatedAt": "2026-05-26T05:09:31.474Z",
+  "version": "1.0.87",
+  "timestamp": 1779776346983,
+  "generatedAt": "2026-05-26T06:19:06.983Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "e2be2b0eff05",
@@ -723,16 +723,6 @@
       "size": 6501,
       "mtime": 1774942235948.653
     },
-    "css/price-registry-admin.css": {
-      "hash": "3676b6231e1f",
-      "size": 6651,
-      "mtime": 1778750635876.8684
-    },
-    "css/price-registry.css": {
-      "hash": "fae23e14ee3d",
-      "size": 12217,
-      "mtime": 1779334195894.2808
-    },
     "css/public-3d.css": {
       "hash": "5a07af1714d4",
       "size": 8105,
@@ -768,16 +758,6 @@
       "size": 2718,
       "mtime": 1774155032212.1345
     },
-    "js/price-registry-admin.js": {
-      "hash": "9e7d0630f089",
-      "size": 10249,
-      "mtime": 1778750693452.6333
-    },
-    "js/price-registry.js": {
-      "hash": "4729040eafd8",
-      "size": 30016,
-      "mtime": 1779334205632.89
-    },
     "js/pwa-register.js": {
       "hash": "f2457cf903ca",
       "size": 14508,
@@ -789,9 +769,9 @@
       "mtime": 1776240343939.2778
     },
     "js/topbar.js": {
-      "hash": "96acd62abf59",
-      "size": 24838,
-      "mtime": 1778570111627.199
+      "hash": "df3fab3dc19f",
+      "size": 24739,
+      "mtime": 1779776332382.447
     }
   }
 }
