@@ -1182,9 +1182,25 @@ body.fp-hotspot-debug .fp-hotspot .hotspot-label::after {
     padding-bottom: 8px;
 }
 
+.fp-hotspot-debug-section {
+    margin: 14px 0 6px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: #4dabf7;
+}
+
+.fp-hotspot-debug-section:first-of-type {
+    margin-top: 0;
+}
+
 .fp-hotspot-debug-list {
     max-height: 360px;
     overflow-y: auto;
+}
+
+.fp-print-debug-list {
+    max-height: 220px;
 }
 
 .fp-hotspot-debug-item {
@@ -1202,6 +1218,12 @@ body.fp-hotspot-debug .fp-hotspot .hotspot-label::after {
 
 .fp-hotspot-debug-item .debug-pos {
     color: #6bcb77;
+    white-space: nowrap;
+}
+
+.fp-hotspot-debug-item .debug-meta {
+    margin-left: 8px;
+    color: rgba(255, 255, 255, 0.42);
 }
 
 .fp-hotspot-debug-export {
@@ -1608,3 +1630,604 @@ body.fp-hotspot-debug .fp-hotspot .hotspot-label::after {
     @page { size: landscape; margin: 0; }
     body > * { display: none !important; }
 }
+
+/* =========================================================================
+   ★ 自 LAMOUR 移植：面積明細手風琴 + 基本資料中央燈箱 ★
+   ========================================================================= */
+
+/* ===== 標準層坪數表：可點擊展開面積明細 ===== */
+.area-hint {
+    font-size: 18px;
+    color: #a08a55;
+    letter-spacing: 3px;
+    text-align: center;
+    margin-bottom: 10px;
+    opacity: 0.85;
+}
+
+.area-table-interactive .area-mrow {
+    cursor: pointer;
+    transition: background 0.25s ease;
+}
+
+.area-table-interactive .area-mrow:hover td {
+    background: rgba(180, 165, 130, 0.12);
+}
+
+.area-table-interactive .area-mrow.open td {
+    background: rgba(180, 165, 130, 0.18);
+    border-bottom-color: transparent;
+}
+
+.area-table-interactive .area-mrow td:first-child {
+    border-radius: 10px 0 0 10px;
+}
+
+.area-table-interactive .area-mrow td:last-child {
+    border-radius: 0 10px 10px 0;
+    white-space: nowrap;
+}
+
+/* 展開指示箭頭 */
+.row-chevron {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-left: 14px;
+    border-right: 3px solid #b4a582;
+    border-bottom: 3px solid #b4a582;
+    transform: rotate(45deg) translateY(-3px);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    vertical-align: middle;
+}
+
+.area-mrow.open .row-chevron {
+    transform: rotate(225deg) translateY(-2px);
+    border-color: #8b6914;
+}
+
+/* 明細列：平滑展開/收合 */
+.area-drow td {
+    padding: 0 !important;
+    border-bottom: none !important;
+}
+
+.area-drow-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0 28px;
+    margin: 0 4px;
+    background: linear-gradient(180deg, rgba(180, 165, 130, 0.10), rgba(180, 165, 130, 0.04));
+    border-left: 3px solid rgba(139, 105, 20, 0.45);
+    border-radius: 0 0 12px 12px;
+    transform: translateY(-8px);
+    transition: max-height 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+                opacity 0.35s ease,
+                padding 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+                transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.area-drow.open .area-drow-inner {
+    max-height: 320px;
+    opacity: 1;
+    padding: 22px 28px;
+    transform: translateY(0);
+}
+
+.drow-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 60px;
+    font-size: 24px;
+    color: #666;
+    letter-spacing: 2px;
+}
+
+.drow-line span:last-child {
+    font-weight: 600;
+    font-family: var(--font-english-sans, 'Arial', sans-serif);
+    color: #333;
+}
+
+.drow-line.drow-total {
+    margin-top: 4px;
+    padding-top: 14px;
+    border-top: 2px solid rgba(180, 165, 130, 0.55);
+    font-size: 27px;
+    font-weight: 700;
+    color: #8b6914;
+}
+
+.drow-line.drow-total span:last-child {
+    color: #8b6914;
+}
+
+/* 露臺面積列（總建坪之外的附加項目，以較淡色階區隔） */
+.drow-line.drow-terrace {
+    font-size: 22px;
+    color: #8a7a55;
+    letter-spacing: 2px;
+}
+
+.drow-line.drow-terrace span:last-child {
+    color: #8a7a55;
+    font-weight: 600;
+}
+
+/* ===== 基本資料（開啟鈕 + 畫面中央燈箱；資料同列印 basicInfoData，維護統一）===== */
+.fp-basicinfo-open {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 12;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 46px;
+    padding: 20px 0;
+    border: none;
+    border-radius: 15px 0 0 15px;
+    background: linear-gradient(160deg, #dcc78f 0%, #bd984c 55%, #a8863f 100%);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: -7px 0 22px rgba(60, 50, 30, 0.3);
+    font-family: var(--font-sans, system-ui);
+    transition: filter 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.fp-basicinfo-open.available {
+    display: flex;
+}
+
+.fp-basicinfo-open:hover {
+    filter: brightness(1.07);
+    box-shadow: -10px 0 28px rgba(60, 50, 30, 0.4);
+}
+
+.fp-basicinfo-open .tab-icon {
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.28);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    text-align: center;
+}
+
+.fp-basicinfo-open .tab-label {
+    writing-mode: vertical-rl;
+    letter-spacing: 6px;
+    font-size: 17px;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.fp-basicinfo-modal {
+    position: absolute;
+    inset: 0;
+    z-index: 100004;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: rgba(28, 24, 18, 0.5);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+    pointer-events: none;
+}
+
+.fp-basicinfo-modal.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.fp-basicinfo-dialog {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(680px, 94vw);
+    max-height: 86vh;
+    background: #fdfbf5;
+    border: 1px solid rgba(180, 165, 130, 0.5);
+    border-radius: 22px;
+    box-shadow: 0 30px 90px rgba(28, 22, 12, 0.5);
+    overflow: hidden;
+    transform: translateY(18px) scale(0.94);
+    opacity: 0;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+}
+
+.fp-basicinfo-modal.open .fp-basicinfo-dialog {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.fp-basicinfo-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 3;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(180, 165, 130, 0.5);
+    background: rgba(255, 255, 255, 0.7);
+    color: #8b6914;
+    font-size: 19px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.35s ease;
+}
+
+.fp-basicinfo-close:hover {
+    background: #8b6914;
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+.fp-basicinfo-dialog .bi-head {
+    flex: 0 0 auto;
+    padding: 38px 44px 24px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(139, 105, 20, 0.09), rgba(139, 105, 20, 0));
+}
+
+.bi-eyebrow {
+    display: block;
+    font-size: 13px;
+    letter-spacing: 8px;
+    color: #b3924b;
+    margin-bottom: 12px;
+    font-family: var(--font-sans, system-ui);
+}
+
+.fp-basicinfo-dialog .bi-title {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 12px;
+    text-indent: 12px;
+    color: #6f5410;
+    font-family: var(--font-sans, system-ui);
+}
+
+.bi-title-en {
+    display: block;
+    margin-top: 9px;
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: rgba(139, 105, 20, 0.55);
+    font-family: var(--font-english-sans, 'Arial', sans-serif);
+}
+
+.bi-head-rule {
+    display: block;
+    width: 56px;
+    height: 2px;
+    margin: 20px auto 0;
+    background: linear-gradient(90deg, transparent, #c8a05a, transparent);
+}
+
+.fp-basicinfo-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(180, 165, 130, 0.6) transparent;
+}
+
+.fp-basicinfo-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.fp-basicinfo-body::-webkit-scrollbar-thumb {
+    background: rgba(180, 165, 130, 0.5);
+    border-radius: 4px;
+}
+
+.fp-basicinfo-body .bi-rows {
+    padding: 4px 48px 26px;
+}
+
+.fp-basicinfo-body .bi-row {
+    display: grid;
+    grid-template-columns: 5em 1fr;
+    align-items: baseline;
+    column-gap: 24px;
+    padding: 8px 4px;
+    border-bottom: 1px solid rgba(180, 165, 130, 0.28);
+}
+
+.fp-basicinfo-body .bi-row:last-child {
+    border-bottom: none;
+}
+
+.fp-basicinfo-body .bi-lb {
+    position: relative;
+    color: #8b6914;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 3px;
+    white-space: nowrap;
+    padding-left: 14px;
+}
+
+.fp-basicinfo-body .bi-lb::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.35em;
+    bottom: 0.2em;
+    width: 3px;
+    border-radius: 2px;
+    background: #c8a05a;
+}
+
+.fp-basicinfo-body .bi-val {
+    color: #3a3a3a;
+    font-size: 17px;
+    line-height: 1.55;
+    letter-spacing: 0.5px;
+    overflow-wrap: break-word;
+    text-wrap: pretty;
+}
+
+/* Debug 模式：坪數卡整塊可拖曳、基本資料開啟鈕可上下拖曳 → 游標與虛線提示 */
+body.fp-hotspot-debug .fp-lightbox-info .info-content-wrap,
+body.fp-hotspot-debug .fp-lightbox-info .info-toggle-btn {
+    cursor: grab;
+}
+
+body.fp-hotspot-debug .fp-lightbox-info.visible .info-content-wrap {
+    outline: 2px dashed rgba(47, 127, 224, 0.75);
+    outline-offset: 4px;
+}
+
+body.fp-hotspot-debug .fp-basicinfo-open {
+    cursor: ns-resize;
+    outline: 2px dashed rgba(47, 127, 224, 0.9);
+    outline-offset: 3px;
+}
+
+/* =========================================================================
+   ★ 自 LAMOUR 移植：列印選銷售經理 + A3 排版檢視器 ★
+   ========================================================================= */
+
+/* 列印設定 Modal：銷售經理下拉選單 */
+.fp-print-modal-manager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 0 22px;
+}
+
+.fp-print-modal-manager label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    white-space: nowrap;
+}
+
+.fp-print-modal-manager select {
+    flex: 0 1 220px;
+    padding: 9px 12px;
+    border: 1.5px solid #d8cfba;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333;
+    background: #fff;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.25s ease;
+}
+
+.fp-print-modal-manager select:focus {
+    border-color: #8b6914;
+}
+
+/* ===== Debug：A3 橫式列印排版檢視器 ===== */
+.fp-print-preview {
+    position: fixed;
+    inset: 0;
+    z-index: 1000000;
+    display: none;
+    flex-direction: column;
+    background: rgba(18, 20, 24, 0.94);
+}
+
+.fp-print-preview.active {
+    display: flex;
+}
+
+.fp-print-preview-toolbar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 18px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #eee;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+}
+
+.fp-print-preview-toolbar button {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.25s ease;
+}
+
+.fp-print-preview-toolbar button:hover {
+    background: rgba(255, 255, 255, 0.22);
+}
+
+.fp-print-preview-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#fpPrintPreviewFrame {
+    flex: 0 0 auto;
+    width: 1587px;
+    height: 1123px;
+    border: none;
+    background: #fff;
+    box-shadow: 0 12px 60px rgba(0, 0, 0, 0.65);
+    transform-origin: center center;
+}
+
+/* =========================================================================
+   ★ 自 LAMOUR 移植：4-14F 各戶矩形熱點 + 返回平面圖按鈕 ★
+   ========================================================================= */
+
+/* 燈箱換圖淡出 */
+#fpLightboxImg { transition: opacity 0.26s ease; }
+#fpLightboxImg.fp-img-fading { opacity: 0; }
+
+/* ===== 返回 4-14F 樓層平面按鈕（僅各戶傢俱配置圖顯示） ===== */
+.fp-back-floor-btn {
+    position: fixed;
+    top: 7px;
+    left: 16px;
+    z-index: 100002;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 22px 9px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: linear-gradient(135deg, #c89b45 0%, #8b6914 55%, #a67c1f 100%);
+    color: #fff;
+    font-family: var(--font-sans, system-ui);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(139, 105, 20, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease,
+                transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.25s ease,
+                filter 0.25s ease;
+}
+
+.fp-back-floor-btn.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    animation: backBtnGlow 2.8s ease-in-out infinite;
+}
+
+@keyframes backBtnGlow {
+    0%, 100% { box-shadow: 0 4px 14px rgba(139, 105, 20, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
+    50% { box-shadow: 0 4px 22px rgba(200, 155, 69, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
+}
+
+.fp-back-floor-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
+    transform: skewX(-20deg);
+    transition: left 0.55s ease;
+    pointer-events: none;
+}
+
+.fp-back-floor-btn:hover::after { left: 120%; }
+
+.fp-back-floor-btn svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.fp-back-floor-btn:hover {
+    filter: brightness(1.12);
+    box-shadow: 0 6px 24px rgba(200, 155, 69, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.fp-back-floor-btn:hover svg { transform: translateX(-3px); }
+.fp-back-floor-btn:active { transform: translateY(1px); }
+
+/* ===== 4-14F 各戶矩形熱點 ===== */
+/* 平常隱形（僅可點擊區）；Debug 顯示紅色虛線框，可拖曳移動、右下角手把調整大小 */
+.fp-lightbox.measuring .fp-hotspot-rect {
+    pointer-events: none;
+    opacity: 0 !important;
+}
+
+.fp-hotspot-rect {
+    position: absolute;
+    background: transparent;
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 9;
+}
+
+.fp-unit-rect {
+    border-radius: 10px;
+    transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.fp-hotspot-rect .rect-resize-handle {
+    display: none;
+    position: absolute;
+    right: -7px;
+    bottom: -7px;
+    width: 14px;
+    height: 14px;
+    background: #ff4444;
+    border: 2px solid #fff;
+    border-radius: 3px;
+    cursor: nwse-resize;
+    z-index: 2;
+}
+
+body.fp-hotspot-debug .fp-hotspot-rect {
+    border: 2px dashed rgba(255, 68, 68, 0.85);
+    background: rgba(255, 68, 68, 0.15);
+    cursor: grab;
+}
+
+body.fp-hotspot-debug .fp-hotspot-rect:active { cursor: grabbing; }
+body.fp-hotspot-debug .fp-hotspot-rect .rect-resize-handle { display: block; }
+

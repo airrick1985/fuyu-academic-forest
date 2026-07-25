@@ -1,7 +1,7 @@
 {
-  "version": "1.0.99",
-  "timestamp": 1782903177387,
-  "generatedAt": "2026-07-01T10:52:57.387Z",
+  "version": "1.0.100",
+  "timestamp": 1784968286723,
+  "generatedAt": "2026-07-25T08:31:26.723Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "c6c3785fd4e1",
@@ -258,11 +258,6 @@
       "size": 616646,
       "mtime": 1774606374953.4504
     },
-    "assets/images/equipment/LEICHT-4.webp": {
-      "hash": "180871cb53fd",
-      "size": 587482,
-      "mtime": 1774607398999.9905
-    },
     "assets/images/equipment/LEICHT.md": {
       "hash": "6e35171941f6",
       "size": 402,
@@ -312,21 +307,6 @@
       "hash": "08f154efc365",
       "size": 199160,
       "mtime": 1774686004999.5215
-    },
-    "assets/images/equipment/TOTO蓮蓬頭.webp": {
-      "hash": "a29168854a1d",
-      "size": 49492,
-      "mtime": 1774686957910.8193
-    },
-    "assets/images/equipment/TOTO馬桶.webp": {
-      "hash": "d1875f7038e6",
-      "size": 364850,
-      "mtime": 1774686542427.6282
-    },
-    "assets/images/equipment/waferlock.webp": {
-      "hash": "a273cee81c94",
-      "size": 22800,
-      "mtime": 1774586816860.353
     },
     "assets/images/equipment/YKK-1.webp": {
       "hash": "2ba65ddd45ca",
@@ -559,9 +539,9 @@
       "mtime": 1774526415037.588
     },
     "assets/images/layout/4-14F.webp": {
-      "hash": "8816b58d6d51",
-      "size": 356460,
-      "mtime": 1776423368571.904
+      "hash": "b76f96a588fd",
+      "size": 339654,
+      "mtime": 1784967655752.2815
     },
     "assets/images/layout/A1.webp": {
       "hash": "c3e28b06e5f0",
@@ -579,14 +559,14 @@
       "mtime": 1775723381525.703
     },
     "assets/images/layout/A5.webp": {
-      "hash": "95925c80b16f",
-      "size": 423500,
-      "mtime": 1775723381530.3745
+      "hash": "c219f318b6a3",
+      "size": 677796,
+      "mtime": 1784967618109.621
     },
     "assets/images/layout/A6.webp": {
-      "hash": "e258ed0ffd42",
-      "size": 373740,
-      "mtime": 1775723381533.6821
+      "hash": "5f5cf98d9420",
+      "size": 578932,
+      "mtime": 1784967640217.8027
     },
     "assets/images/layout/A7.webp": {
       "hash": "c8621ddf2a78",
@@ -714,9 +694,9 @@
       "mtime": 1780480896557.265
     },
     "css/floor-plan.css": {
-      "hash": "6ff2f3bafb99",
-      "size": 37671,
-      "mtime": 1778484838698.1335
+      "hash": "77c2b7fe8196",
+      "size": 52812,
+      "mtime": 1784967357010.6145
     },
     "css/global.css": {
       "hash": "3ae12bd09be5",
@@ -777,6 +757,11 @@
       "hash": "5eea9680646d",
       "size": 2957,
       "mtime": 1774156285910.8396
+    },
+    "js/debug-panel.js": {
+      "hash": "ea10205869a9",
+      "size": 8061,
+      "mtime": 1784966939509.4324
     },
     "js/fireflies.js": {
       "hash": "908cf6e0f791",

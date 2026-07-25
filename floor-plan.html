@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="app-version" content="1.0.3">
+    <meta name="app-version" content="1.0.6">
     <script>
       if (!window.location.hostname.includes('localhost') && window.location.hostname !== '127.0.0.1' && !window.location.hostname.includes('pages.dev')) {
         document.write('<base href="/fuyu-academic-forest/">');
@@ -22,10 +22,10 @@
     <meta name="apple-mobile-web-app-title" content="富宇學森">
     <link rel="apple-touch-icon" href="assets/images/fuyu-logo.webp">
     <!-- CSS -->
-    <link rel="stylesheet" href="css/variables.css?v=1.0.2">
-    <link rel="stylesheet" href="css/global.css?v=1.0.2">
-    <link rel="stylesheet" href="css/topbar.css?v=1.0.2">
-    <link rel="stylesheet" href="css/floor-plan.css?v=1.0.2">
+    <link rel="stylesheet" href="css/variables.css?v=1.0.6">
+    <link rel="stylesheet" href="css/global.css?v=1.0.6">
+    <link rel="stylesheet" href="css/topbar.css?v=1.0.6">
+    <link rel="stylesheet" href="css/floor-plan.css?v=1.0.6">
     <!-- Pannellum 360 全景套件（本地版本） -->
     <link rel="stylesheet" href="assets/pannellum/pannellum.min.css">
     <!-- PWA Update Loading Screen -->
@@ -285,7 +285,33 @@
         <div class="fp-lightbox-hint">滾輪縮放 · 拖曳移動 · ESC 關閉</div>
         <!-- 坪數資訊面板 -->
         <div class="fp-lightbox-info" id="fpLightboxInfo"></div>
+        <!-- 基本資料開啟鈕（所有平面／單元圖顯示；Debug 可上下拖曳） -->
+        <button class="fp-basicinfo-open" id="fpBasicInfoTab" type="button" title="檢視基本資料" aria-haspopup="dialog">
+            <span class="tab-icon" aria-hidden="true">ℹ</span>
+            <span class="tab-label">基本資料</span>
+        </button>
+        <!-- 基本資料燈箱（畫面中央彈出；內容同列印 basicInfoData） -->
+        <div class="fp-basicinfo-modal" id="fpBasicInfoCard" role="dialog" aria-modal="true" aria-label="基本資料">
+            <div class="fp-basicinfo-dialog">
+                <button class="fp-basicinfo-close" id="fpBasicInfoClose" type="button" title="關閉">✕</button>
+                <div class="bi-head">
+                    <span class="bi-eyebrow">富宇學森</span>
+                    <h3 class="bi-title">基本資料</h3>
+                    <span class="bi-title-en">PROJECT INFORMATION</span>
+                    <span class="bi-head-rule" aria-hidden="true"></span>
+                </div>
+                <div class="fp-basicinfo-body" id="fpBasicInfoPanel"></div>
+            </div>
+        </div>
     </div>
+
+    <!-- 傢俱配置圖 → 返回 4-14F 樓層平面（各戶傢俱配置圖顯示） -->
+    <button class="fp-back-floor-btn" id="fpBackFloorBtn" title="返回 4-14F 樓層平面">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span>4-14F平面圖</span>
+    </button>
 
     <!-- 獨立的 360 環景燈箱 (360 Panorama Modal) -->
     <div class="fp-lightbox" id="fpPanoLightbox" style="z-index: 999998; background-color: #000;">
@@ -387,10 +413,15 @@
     <!-- 1F 熱點 Debug 面板 (連按 5 次 D 鍵切換) -->
     <div class="fp-hotspot-debug-toast" id="fpHotspotDebugToast"></div>
     <div class="fp-hotspot-debug-panel" id="fpHotspotDebugPanel">
-        <h3>🔴 1F Hotspot Debug 面板</h3>
+        <h3>🔴 Hotspot Debug 面板</h3>
+        <div class="fp-hotspot-debug-section" id="fpHotspotDebugSectionTitle">1F 熱點座標</div>
         <div class="fp-hotspot-debug-list" id="fpHotspotDebugList"></div>
+        <div class="fp-hotspot-debug-section">4-14F 列印排版座標</div>
+        <div class="fp-hotspot-debug-list fp-print-debug-list" id="fpPrintLayoutDebugList"></div>
         <button class="fp-hotspot-debug-export" id="fpHotspotDebugExport">📋 匯出座標 (複製到剪貼簿)</button>
-        <div class="fp-hotspot-debug-hint">先點開 1F 平面圖後，於燈箱中拖曳紅點調整位置。<br>連按 5 次 D 鍵或 ESC 可關閉本面板。</div>
+        <button class="fp-hotspot-debug-export" id="fpHotspotDebugPreviewBtn">🖨️ A3 列印排版檢視器 (4-14F)</button>
+        <button class="fp-hotspot-debug-export" id="fpPrintLayoutExportBtn">📋 匯出列印座標 (4-14F)</button>
+        <div class="fp-hotspot-debug-hint">先點開 1F 平面圖後，於燈箱中拖曳紅點調整位置。<br>拖曳標題列可移動本面板，點右上角 — / ▢ (或雙擊標題列) 可收合展開。<br>連按 5 次 D 鍵或 ESC 可關閉本面板。</div>
     </div>
 
     <!-- 列印設定 Modal 對話框 -->
@@ -398,11 +429,28 @@
         <div class="fp-print-modal">
             <button class="fp-print-modal-close" id="fpPrintModalClose" title="關閉">✕</button>
             <h3>列印設定</h3>
-            <p>是否要包含面積資訊?</p>
+            <p id="fpPrintModalQuestion">是否要包含面積資訊?</p>
+            <div class="fp-print-modal-manager">
+                <label for="fpPrintManagerSelect">標註銷售經理</label>
+                <select id="fpPrintManagerSelect">
+                    <option value="">不標註</option>
+                </select>
+            </div>
             <div class="fp-print-modal-options">
                 <button class="fp-print-modal-btn fp-print-modal-btn-confirm" id="fpPrintIncludeArea">包含面積</button>
                 <button class="fp-print-modal-btn fp-print-modal-btn-cancel" id="fpPrintExcludeArea">只列印圖面</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Debug：A3 橫式列印排版檢視器（與實際列印共用同一份頁面 HTML/CSS，所見即所得） -->
+    <div class="fp-print-preview" id="fpPrintPreview">
+        <div class="fp-print-preview-toolbar">
+            <span class="fp-print-preview-hint">🖨️ A3 橫式列印排版檢視器　—　拖曳卡片＝調位置｜卡片右下角手把＝調寬度｜滾輪在卡片上＝字體大小｜拖曳圖面＝移動底圖｜滾輪在空白處＝縮放底圖｜雙擊圖面＝重設底圖｜ESC 關閉</span>
+            <button id="fpPrintPreviewClose" title="關閉檢視器">✕</button>
+        </div>
+        <div class="fp-print-preview-body" id="fpPrintPreviewBody">
+            <iframe id="fpPrintPreviewFrame" title="A3 列印排版預覽"></iframe>
         </div>
     </div>
 
@@ -421,6 +469,7 @@
 
     <!-- JS -->
     <script src="js/topbar.js"></script>
+    <script src="js/debug-panel.js?v=1.0.6"></script>
     <script>
         (() => {
             // ===== 導覽列折叠/展開功能 =====
@@ -557,6 +606,238 @@
                 'A8': { main: 20.58, balc: 2.29, pub: 12.21, total: 35.08 }
             };
 
+            // =========================================================================
+            // ★★★ 銷售資料維護區（名單 / 電話 / 基本資料 / 列印座標，改這裡即可）★★★
+            //   ※ 下方 basicInfoData 與 salesManagers 內容暫自「樂慕 LAMOUR」沿用，
+            //     請改成「富宇學森」的實際基地/銷售資料。
+            // =========================================================================
+
+            // 銷售經理名單（列印設定視窗的下拉選單；依姓名筆畫排序）
+            const salesManagers = [
+                { name: '方慧真', phone: '0912302385' },
+                { name: '王育君', phone: '0933188876' },
+                { name: '王智慧', phone: '0975123036' },
+                { name: '何旻熙', phone: '0976210088' },
+                { name: '徐滋惠', phone: '0925679707' },
+                { name: '陳文賢', phone: '0980371014' },
+                { name: '蔡頤樺', phone: '0986183777' },
+                { name: '蔡瓏君', phone: '0933116761' },
+                { name: '謝功振', phone: '0900394313' }
+            ];
+
+            // 手機號碼顯示格式：0933188876 → 0933-188-876
+            function formatPhone(p) {
+                return String(p).replace(/^(\d{4})(\d{3})(\d{3})$/, '$1-$2-$3');
+            }
+
+            // 基本資料（瀏覽「基本資料」燈箱 + 列印基本資料卡共用，維護統一）
+            const basicInfoData = [
+                { label: '基地位置', value: '新竹市東區長春街' },
+                { label: '基地面積', value: '約573坪　地上14F/B3' },
+                { label: '規劃戶數', value: '住家 89戶' },
+                { label: '停車位',   value: '汽車位 91個　機車位 110個' },
+                { label: '公設比',   value: '34.8%' },
+                { label: '樓高',     value: '住家 3.2米　一樓大廳挑高 7.4米' },
+                { label: '電梯',     value: '15人份　速率 120 公尺/分鐘' },
+                { label: '車位售價', value: 'B1-325　B2-300　B3-275' },
+                { label: '管理費',   value: '住家 90/坪　車位 300/個' },
+                { label: '學區',     value: '關埔國小、光武國中、竹科實中、康橋國際學校(規劃中)' }
+            ];
+
+            // 4-14F 標準層各戶面積（由上方 areaData 衍生，維護統一；學森標準層無露臺 → terrace: 0）
+            const floorAreaData = {
+                '4-14F': areaData['全區'].map(r => {
+                    const d = areaData[r.unit] || {};
+                    return { unit: r.unit, main: d.main, balc: d.balc, pub: d.pub, total: d.total, terrace: 0 };
+                })
+            };
+
+            // 4-14F 列印版面座標（座標為套用起點，請於 Debug「A3 排版檢視器」拖曳後匯出貼回）。
+            // x / y = 卡片左上角相對圖框百分比；w = 卡片寬(% 圖框寬)；fs = 字級倍率。
+            const printLayout4_14F = {
+                unitLabels: [
+                    { unit: 'A1', x: 47.9, y: -2.7, w: 9, fs: 1.1 },
+                    { unit: 'A2', x: 64.7, y: -3.1, w: 9, fs: 1.1 },
+                    { unit: 'A3', x: 79.5, y: 44.6, w: 9, fs: 1.1 },
+                    { unit: 'A5', x: 79.6, y: 69.8, w: 9, fs: 1.1 },
+                    { unit: 'A6', x: 47.9, y: 89.8, w: 9, fs: 1.1 },
+                    { unit: 'A7', x: 12.8, y: 72.7, w: 9, fs: 1.1 },
+                    { unit: 'A8', x: 12.8, y: 44.1, w: 9, fs: 1.1 }
+                ],
+                infoBlock: { x: 79.6, y: -3.9, w: 22.1, fs: 1.29 },
+                baseImage: { scale: 0.93, x: 0.8, y: 1.1 }
+            };
+
+            // 4-14F 瀏覽模式資訊卡位置（螢幕顯示用；null = 沿用 CSS 預設）
+            const browseLayout4_14F = { areaCard: null, infoCard: null };
+            // ========================= ★ 維護區結束 ★ =========================
+
+            // ===== 列印排版共用產生器（列印視窗與 Debug「A3 排版檢視器」共用）=====
+            const PU_CARD_BASE_FONT = 0.75;  // 各戶面積卡
+            const PI_CARD_BASE_FONT = 0.78;  // 基本資料卡
+
+            function printCardSizeStyle(pl, defW, baseFont) {
+                const w = pl.w || defW;
+                const fs = pl.fs || 1;
+                return `width:${w}cqw;font-size:${(baseFont * fs).toFixed(3)}cqw;`;
+            }
+
+            // 4-14F 疊在圖面上的列印卡片 HTML（data-print-key 供檢視器拖曳識別）
+            function buildPrint4_14FOverlayHtml() {
+                let html = '';
+                printLayout4_14F.unitLabels.forEach(pl => {
+                    const d = floorAreaData['4-14F'].find(r => r.unit === pl.unit);
+                    if (!d) return;
+                    html += `
+                        <div class="pu-card" data-print-key="unit-${pl.unit}" style="left:${pl.x}%;top:${pl.y}%;${printCardSizeStyle(pl, 9, PU_CARD_BASE_FONT)}">
+                            <h4>${pl.unit}</h4>
+                            <div class="rows">
+                                <div class="pu-row"><span>主建物</span><span>${d.main.toFixed(2)} 坪</span></div>
+                                <div class="pu-row"><span>陽台</span><span>${d.balc.toFixed(2)} 坪</span></div>
+                                <div class="pu-row"><span>公設</span><span>${d.pub.toFixed(2)} 坪</span></div>
+                                <div class="pu-row total"><span>權狀坪數</span><span>${d.total.toFixed(2)} 坪</span></div>
+                            </div>
+                        </div>`;
+                });
+                let infoRows = '';
+                basicInfoData.forEach(r => {
+                    infoRows += `<div class="pi-row"><span class="lb">${r.label}</span><span class="val">${r.value}</span></div>`;
+                });
+                html += `
+                    <div class="pi-card" data-print-key="info" style="left:${printLayout4_14F.infoBlock.x}%;top:${printLayout4_14F.infoBlock.y}%;${printCardSizeStyle(printLayout4_14F.infoBlock, 17.5, PI_CARD_BASE_FONT)}">
+                        <h4>基本資料</h4>
+                        <div class="rows">${infoRows}</div>
+                    </div>`;
+                return html;
+            }
+
+            // 4-14F 列印底圖縮放/位移的 transform 樣式
+            function buildPrintBaseImgStyle() {
+                const bi = printLayout4_14F.baseImage || { scale: 1, x: 0, y: 0 };
+                return `transform: translate(${bi.x}%, ${bi.y}%) scale(${bi.scale}); transform-origin: center center;`;
+            }
+
+            // 頁首銷售經理標註 HTML
+            function buildManagerHtml(manager) {
+                return manager
+                    ? `<div class="ph-manager"><span class="mg-role">銷售經理</span><b>${manager.name}</b><span class="mg-phone">${formatPhone(manager.phone)}</span></div>`
+                    : '';
+            }
+
+            // 由圖片 alt 判斷對應的樓層面積表（本案僅 4-14F 標準層有各戶面積）
+            function floorKeyFromAlt(alt) {
+                if (alt.includes('4-14F')) return '4-14F';
+                return null;
+            }
+
+            // 產生樓層面積資訊面板（點擊戶別列展開明細；露臺 > 0 才顯示露臺列）
+            function buildAreaTableHtml(floorKey) {
+                const rows = floorAreaData[floorKey];
+                if (!rows) return '';
+                let html = '<div class="area-hint">點擊戶別可展開面積明細</div>';
+                html += '<table class="area-table area-table-interactive"><tbody>';
+                rows.forEach(d => {
+                    html += `<tr class="area-mrow" data-unit="${d.unit}">
+                        <td class="unit-name">${d.unit}</td>
+                        <td class="unit-val">${d.total.toFixed(2)}</td>
+                        <td class="unit-txt">坪<span class="row-chevron" aria-hidden="true"></span></td>
+                    </tr>`;
+                    const terraceLine = d.terrace > 0
+                        ? `<div class="drow-line drow-terrace"><span>露臺面積</span><span>${d.terrace.toFixed(2)} 坪</span></div>`
+                        : '';
+                    html += `<tr class="area-drow" data-unit="${d.unit}"><td colspan="3">
+                        <div class="area-drow-inner">
+                            <div class="drow-line"><span>主建物</span><span>${d.main.toFixed(2)} 坪</span></div>
+                            <div class="drow-line"><span>陽台</span><span>${d.balc.toFixed(2)} 坪</span></div>
+                            <div class="drow-line"><span>公設合計</span><span>${d.pub.toFixed(2)} 坪</span></div>
+                            <div class="drow-line drow-total"><span>權狀坪數</span><span>${d.total.toFixed(2)} 坪</span></div>
+                            ${terraceLine}
+                        </div>
+                    </td></tr>`;
+                });
+                html += '</tbody></table>';
+                return html;
+            }
+
+            // ===== 基本資料燈箱（畫面中央彈出；資料同列印 basicInfoData，維護統一）=====
+            const basicInfoCard = document.getElementById('fpBasicInfoCard');    // 燈箱遮罩層
+            const basicInfoTab = document.getElementById('fpBasicInfoTab');      // 開啟鈕
+            const basicInfoPanel = document.getElementById('fpBasicInfoPanel');  // 內容容器
+            const basicInfoClose = document.getElementById('fpBasicInfoClose');  // 關閉鈕
+            let basicInfoOpen = false; // 燈箱開啟狀態
+            // 開啟鈕 Debug 拖曳狀態（垂直移動按鈕）
+            let tabDragging = false, tabDragMoved = false, tabStartY = 0, tabStartTop = 0, tabRectH = 0;
+
+            // 產生基本資料內容列（label / value 分欄，value 可換行且避免孤字）
+            function buildBasicInfoCardHtml() {
+                let rows = '';
+                basicInfoData.forEach(r => {
+                    rows += `<div class="bi-row"><span class="bi-lb">${r.label}</span><span class="bi-val">${r.value}</span></div>`;
+                });
+                return `<div class="bi-rows">${rows}</div>`;
+            }
+
+            // 依 browseLayout4_14F 套用坪數卡位置（有座標＝套用 inline left/top，否則沿用 CSS 預設）
+            function applyBrowseCardPos(el, pos) {
+                if (!el) return;
+                if (pos && typeof pos.x === 'number') {
+                    el.style.left = `${pos.x}%`;
+                    el.style.top = `${pos.y}%`;
+                    el.style.right = 'auto';
+                    el.style.bottom = 'auto';
+                    el.style.transformOrigin = 'top left';
+                } else {
+                    el.style.left = '';
+                    el.style.top = '';
+                    el.style.right = '';
+                    el.style.bottom = '';
+                    el.style.transformOrigin = '';
+                }
+            }
+
+            // 開啟鈕垂直位置（Debug 拖曳可調整；top = % 相對燈箱視窗）
+            function applyDrawerTop() {
+                const p = browseLayout4_14F.infoCard;
+                basicInfoTab.style.top = (p && typeof p.top === 'number') ? `${p.top}%` : '';
+            }
+
+            // 開啟／關閉基本資料燈箱（縮放淡入特效由 CSS transition 處理）
+            function setBasicInfoOpen(open) {
+                basicInfoOpen = open;
+                basicInfoCard.classList.toggle('open', open);
+                basicInfoTab.setAttribute('aria-expanded', String(open));
+            }
+            if (basicInfoTab && basicInfoCard) {
+                basicInfoTab.addEventListener('click', () => {
+                    if (tabDragMoved) return;         // 剛在 Debug 拖曳過按鈕，不觸發開啟
+                    setBasicInfoOpen(true);
+                });
+                basicInfoClose.addEventListener('click', () => setBasicInfoOpen(false));
+                // 點遮罩空白處關閉
+                basicInfoCard.addEventListener('click', (e) => {
+                    if (e.target === basicInfoCard) setBasicInfoOpen(false);
+                });
+                // ESC 先關閉基本資料燈箱（不連帶關閉整個平面圖燈箱）
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && basicInfoOpen) {
+                        setBasicInfoOpen(false);
+                        e.stopImmediatePropagation();
+                    }
+                }, true);
+            }
+
+            // 顯示開啟鈕（基地資料屬全案資訊 → 所有平面規劃單元皆顯示；換圖時燈箱先關閉）
+            function updateBasicInfoCard() {
+                if (!basicInfoPanel) return;
+                if (!basicInfoPanel.dataset.filled) {
+                    basicInfoPanel.innerHTML = buildBasicInfoCardHtml();
+                    basicInfoPanel.dataset.filled = '1';
+                }
+                applyDrawerTop();
+                setBasicInfoOpen(false);          // 每次換圖預設收合，避免遮住圖面
+                basicInfoTab.classList.add('available');
+            }
+
             let lbScale = 1, lbTx = 0, lbTy = 0;
             let lbDragging = false, lbStartX = 0, lbStartY = 0;
             let lbDragMoved = false; // 用來區分「點擊」與「拖曳」
@@ -581,16 +862,15 @@
 
                     lightboxImg.src = img.src;
                     lightboxImg.alt = img.alt;
+                    // 各戶傢俱配置圖顯示「返回 4-14F 平面圖」按鈕
+                    if (backFloorBtn) backFloorBtn.classList.toggle('visible', /A[1-8]/.test(img.alt) && img.alt.includes('傢俱配置'));
 
                     // 判斷要顯示的資訊
                     let infoHtml = '';
-                    if (img.alt.includes('4-14F')) {
-                        // 全區總坪數
-                        infoHtml = '<table class="area-table"><tbody>';
-                        areaData['全區'].forEach(row => {
-                            infoHtml += `<tr><td class="unit-name">${row.unit}</td><td class="unit-val">${row.area}</td><td class="unit-txt">坪</td></tr>`;
-                        });
-                        infoHtml += '</tbody></table>';
+                    const floorKey = floorKeyFromAlt(img.alt);
+                    if (floorKey) {
+                        // 標準層面積資訊面板（點擊戶別可展開面積明細）
+                        infoHtml = buildAreaTableHtml(floorKey);
                     } else {
                         // 個別戶別坪數
                         const match = img.alt.match(/A[1-8]/);
@@ -624,6 +904,9 @@
                         lightboxInfo.innerHTML = '';
                         lightboxInfo.classList.remove('visible');
                     }
+                    // 基本資料燈箱鈕（全案資訊，所有單元皆顯示）＋ 套用坪數卡瀏覽位置
+                    updateBasicInfoCard();
+                    applyBrowseCardPos(lightboxInfo, browseLayout4_14F.areaCard);
 
                     lbScale = 1; lbTx = 0; lbTy = 0;
                     updateLightboxTransform();
@@ -656,6 +939,9 @@
                 lightbox.classList.remove('active');
                 document.body.classList.remove('lightbox-active');
                 document.body.style.overflow = '';
+                if (basicInfoTab) basicInfoTab.classList.remove('available');
+                if (backFloorBtn) backFloorBtn.classList.remove('visible');
+                if (typeof setBasicInfoOpen === 'function') setBasicInfoOpen(false);
 
                 // 退出燈箱時，清除所有測量標記與比例尺狀態
                 const clearBtn = document.getElementById('btnMeasureClear');
@@ -668,292 +954,459 @@
 
             lightboxClose.addEventListener('click', closeLightbox);
 
-            // 列印功能 — 開新視窗列印（完全繞過原頁面 CSS 干擾）
+            // ===== 返回 4-14F 平面圖按鈕（僅各戶傢俱配置圖顯示） =====
+            const backFloorBtn = document.getElementById('fpBackFloorBtn');
+            if (backFloorBtn) {
+                backFloorBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (hotspotDebugMode) return; // Debug 模式下點擊不導頁
+                    backFloorBtn.classList.remove('visible');
+                    fadeSwapLightboxTo('#plan-4-14F .fp-image-wrapper img');
+                });
+            }
+
+
+            // ===== 標準層面積表：點擊戶別展開/收合面積明細（手風琴，單開） =====
+            lightboxInfo.addEventListener('click', (e) => {
+                const mrow = e.target.closest('.area-mrow');
+                if (!mrow) return;
+                e.stopPropagation();
+                const table = mrow.closest('.area-table');
+                const unit = mrow.dataset.unit;
+                const wasOpen = mrow.classList.contains('open');
+                // 單開模式：先收合其他已展開的列
+                table.querySelectorAll('.area-mrow.open, .area-drow.open').forEach(el => el.classList.remove('open'));
+                if (!wasOpen) {
+                    mrow.classList.add('open');
+                    const drow = table.querySelector(`.area-drow[data-unit="${unit}"]`);
+                    if (drow) drow.classList.add('open');
+                }
+            });
+            // 防止在明細列上按壓時觸發燈箱拖曳
+            lightboxInfo.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.area-mrow') || e.target.closest('.area-drow')) e.stopPropagation();
+            });
+
+            // ===== 列印功能（含選擇銷售經理 / 包含面積；自 LAMOUR 移植）=====
             const lightboxPrint = document.getElementById('fpLightboxPrint');
+
+            // 銷售經理下拉選單（列印設定 Modal；名單維護於上方 salesManagers）
+            const printManagerSelect = document.getElementById('fpPrintManagerSelect');
+            if (printManagerSelect) {
+                salesManagers.forEach((m, i) => {
+                    const opt = document.createElement('option');
+                    opt.value = String(i);
+                    opt.textContent = `${m.name}　${formatPhone(m.phone)}`;
+                    printManagerSelect.appendChild(opt);
+                });
+            }
+
             if (lightboxPrint) {
                 lightboxPrint.addEventListener('click', (e) => {
                     e.stopPropagation();
 
-                    // 讀取當前圖片
                     const imgSrc = lightboxImg.src;
                     const imgAlt = lightboxImg.alt || '平面圖';
 
                     // 讀取面積資訊（直接從 JS 資料取得）
                     let infoHtml = '';
                     const match = imgAlt.match(/A[1-8]/);
-                    if (imgAlt.includes('4-14F')) {
-                        infoHtml = '<h3>面積一覽</h3>';
-                        infoHtml += '<table>';
-                        areaData['全區'].forEach(row => {
-                            infoHtml += `<tr>
-                                <td>${row.unit}</td>
-                                <td>${row.area}</td>
-                                <td>坪</td>
-                            </tr>`;
+                    const printFloorKey = floorKeyFromAlt(imgAlt);
+                    if (printFloorKey) {
+                        const hasTerrace = floorAreaData[printFloorKey].some(d => d.terrace > 0);
+                        infoHtml = '<h3>面積一覽</h3><table>';
+                        floorAreaData[printFloorKey].forEach(d => {
+                            const terraceTxt = hasTerrace
+                                ? `<td style="color:#8a7a55;">${d.terrace > 0 ? '露臺 ' + d.terrace.toFixed(2) + ' 坪' : ''}</td>`
+                                : '';
+                            infoHtml += `<tr><td>${d.unit}</td><td>${d.total.toFixed(2)}</td><td>坪</td>${terraceTxt}</tr>`;
                         });
                         infoHtml += '</table>';
                     } else if (match && areaData[match[0]]) {
                         const d = areaData[match[0]];
-                        infoHtml = `<h3>${match[0]} 面積資訊</h3>`;
-                        infoHtml += '<table>';
-                        const rows = [
-                            ['主建物', d.main],
-                            ['附屬建物(陽台)', d.balc],
-                            ['共有部分(公設)', d.pub],
-                        ];
-                        rows.forEach(([label, val]) => {
-                            infoHtml += `<tr>
-                                <td>${label}</td>
-                                <td>${val}</td>
-                                <td>坪</td>
-                            </tr>`;
+                        infoHtml = `<h3>${match[0]} 面積資訊</h3><table>`;
+                        [['主建物', d.main], ['附屬建物(陽台)', d.balc], ['共有部分(公設)', d.pub]].forEach(([label, val]) => {
+                            infoHtml += `<tr><td>${label}</td><td>${val}</td><td>坪</td></tr>`;
                         });
-                        infoHtml += `<tr style="border-top:2px solid #8b6914;font-weight:700;color:#8b6914;">
-                            <td>權狀坪數</td>
-                            <td>${d.total}</td>
-                            <td>坪</td>
-                        </tr>`;
-                        infoHtml += '</table>';
+                        infoHtml += `<tr style="border-top:2px solid #8b6914;font-weight:700;color:#8b6914;"><td>權狀坪數</td><td>${d.total}</td><td>坪</td></tr></table>`;
                     }
 
-                    // 如果有面積資訊，詢問用戶是否要包含
-                    if (infoHtml) {
-                        // 顯示 modal 對話框
-                        const modalOverlay = document.getElementById('fpPrintModalOverlay');
-                        const btnInclude = document.getElementById('fpPrintIncludeArea');
-                        const btnExclude = document.getElementById('fpPrintExcludeArea');
-                        const btnClose = document.getElementById('fpPrintModalClose');
+                    // 顯示列印設定 Modal（一律顯示，供選擇銷售經理；有面積資訊時另可選擇是否包含面積）
+                    const modalOverlay = document.getElementById('fpPrintModalOverlay');
+                    const btnInclude = document.getElementById('fpPrintIncludeArea');
+                    const btnExclude = document.getElementById('fpPrintExcludeArea');
+                    const btnClose = document.getElementById('fpPrintModalClose');
+                    const modalQuestion = document.getElementById('fpPrintModalQuestion');
 
-                        modalOverlay.style.display = 'flex';
+                    const hasArea = !!infoHtml;
+                    if (modalQuestion) modalQuestion.style.display = hasArea ? '' : 'none';
+                    btnExclude.style.display = hasArea ? '' : 'none';
+                    btnInclude.textContent = hasArea ? '包含面積' : '🖨️ 開始列印';
 
-                        // 關閉 modal 函數
-                        const closeModal = () => {
-                            modalOverlay.style.display = 'none';
-                            btnInclude.removeEventListener('click', handleInclude);
-                            btnExclude.removeEventListener('click', handleExclude);
-                            btnClose.removeEventListener('click', closeModal);
-                            modalOverlay.removeEventListener('click', handleOverlayClick);
-                        };
+                    modalOverlay.style.display = 'flex';
 
-                        // 處理「包含面積」按鈕
-                        const handleInclude = () => {
-                            closeModal();
-                            doPrint(true);
-                        };
+                    const closeModal = () => {
+                        modalOverlay.style.display = 'none';
+                        btnInclude.removeEventListener('click', handleInclude);
+                        btnExclude.removeEventListener('click', handleExclude);
+                        btnClose.removeEventListener('click', closeModal);
+                        modalOverlay.removeEventListener('click', handleOverlayClick);
+                    };
+                    const handleInclude = () => { closeModal(); doPrint(hasArea); };
+                    const handleExclude = () => { closeModal(); doPrint(false); };
+                    const handleOverlayClick = (ev) => { if (ev.target === modalOverlay) closeModal(); };
 
-                        // 處理「只列印圖面」按鈕
-                        const handleExclude = () => {
-                            closeModal();
-                            doPrint(false);
-                        };
+                    btnInclude.addEventListener('click', handleInclude);
+                    btnExclude.addEventListener('click', handleExclude);
+                    btnClose.addEventListener('click', closeModal);
+                    modalOverlay.addEventListener('click', handleOverlayClick);
 
-                        // 點擊背景關閉 modal
-                        const handleOverlayClick = (e) => {
-                            if (e.target === modalOverlay) {
-                                closeModal();
-                            }
-                        };
-
-                        btnInclude.addEventListener('click', handleInclude);
-                        btnExclude.addEventListener('click', handleExclude);
-                        btnClose.addEventListener('click', closeModal);
-                        modalOverlay.addEventListener('click', handleOverlayClick);
-                    } else {
-                        // 沒有面積資訊，直接列印
-                        doPrint(true);
-                    }
-
-                    // 核心列印邏輯函數
                     function doPrint(includeArea) {
-                        // 建構面積信息欄的 HTML（根據用戶選擇）
-                        const infoCellHtml = (infoHtml && includeArea)
-                            ? infoHtml
-                            : '';
+                        const mgrSel = document.getElementById('fpPrintManagerSelect');
+                        const manager = (mgrSel && mgrSel.value !== '') ? salesManagers[parseInt(mgrSel.value, 10)] : null;
 
-                        // 開新視窗寫入完整的列印 HTML
+                        // 疊在圖面上的卡片與底圖縮放（僅 4-14F；與 A3 排版檢視器共用產生器）
+                        let overlayHtml = '';
+                        let panelHtml = '';
+                        let baseImgStyle = '';
+                        if (includeArea && printFloorKey === '4-14F') {
+                            overlayHtml = buildPrint4_14FOverlayHtml();
+                            baseImgStyle = buildPrintBaseImgStyle();
+                        } else if (includeArea && infoHtml) {
+                            panelHtml = `<div class="print-info-panel">${infoHtml}</div>`;
+                        }
+
                         const printWin = window.open('', '_blank', 'width=1200,height=800');
-                        printWin.document.write(`<!DOCTYPE html>
-                            <html>
-                            <head>
-                                <title>列印 - ${imgAlt}</title>
-                                <meta charset="UTF-8">
-                                <style>
-                                    @page {
-                                        size: A3 landscape;
-                                        margin: 3mm;
-                                        page-break-after: avoid;
-                                    }
-                                    * { margin: 0; padding: 0; box-sizing: border-box; }
-                                    html, body {
-                                        width: 100%;
-                                        height: auto;
-                                        background: #fff;
-                                    }
-                                    .print-container {
-                                        position: relative;
-                                        width: 100%;
-                                        min-height: 100vh;
-                                        page-break-inside: avoid;
-                                    }
-                                    .print-image-area {
-                                        width: 100%;
-                                        height: 100%;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        padding: 5mm;
-                                        page-break-inside: avoid;
-                                    }
-                                    .print-image-area img {
-                                        max-width: 100%;
-                                        max-height: 100%;
-                                        object-fit: contain;
-                                        page-break-inside: avoid;
-                                    }
-                                    .print-info-area {
-                                        position: absolute;
-                                        bottom: 30mm;
-                                        left: 10mm;
-                                        width: 260px;
-                                        ${(infoHtml && includeArea) ? 'display: block;' : 'display: none;'}
-                                        background: rgba(255, 255, 255, 0.95);
-                                        border: 2px solid #8b6914;
-                                        border-radius: 4px;
-                                        padding: 12px;
-                                        font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
-                                        font-size: 16px;
-                                        page-break-inside: avoid;
-                                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                                    }
-                                    .print-info-area h3 {
-                                        margin: 0 0 8px 0;
-                                        font-size: 16px;
-                                        color: #8b6914;
-                                        border-bottom: 2px solid #8b6914;
-                                        padding-bottom: 6px;
-                                        letter-spacing: 1px;
-                                        text-align: center;
-                                        font-weight: 700;
-                                    }
-                                    .print-info-area table {
-                                        width: 100%;
-                                        border-collapse: collapse;
-                                    }
-                                    .print-info-area tr {
-                                        page-break-inside: avoid;
-                                    }
-                                    .print-info-area td {
-                                        padding: 6px 4px;
-                                        border-bottom: 1px dashed #ddd;
-                                        font-size: 15px;
-                                        line-height: 1.4;
-                                    }
-                                    .print-info-area td:first-child {
-                                        font-weight: 700;
-                                        color: #8b6914;
-                                        width: 50%;
-                                    }
-                                    .print-info-area td:nth-child(2) {
-                                        text-align: right;
-                                        font-weight: 600;
-                                        color: #333;
-                                        width: 35%;
-                                    }
-                                    .print-info-area td:nth-child(3) {
-                                        text-align: center;
-                                        color: #888;
-                                        width: 15%;
-                                    }
-                                    .print-disclaimer {
-                                        position: absolute;
-                                        bottom: 5mm;
-                                        left: 0;
-                                        right: 0;
-                                        width: 100%;
-                                        border-top: 1px solid #ddd;
-                                        padding: 5px 10mm;
-                                        font-size: 8.5px;
-                                        color: rgba(100, 90, 70, 0.65);
-                                        line-height: 1.5;
-                                        text-align: center;
-                                        word-wrap: break-word;
-                                        overflow-wrap: break-word;
-                                        page-break-inside: avoid;
-                                    }
-                                </style>
-                                <!-- PWA Update Loading Screen -->
-    <style id="pwa-loading-style">
-      #pwa-loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, #0A1F0A 0%, #1a3a1a 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 99999;
-        opacity: 1;
-        transition: opacity 0.5s ease-out;
-      }
-      #pwa-loading-overlay.hidden {
-        pointer-events: none;
-        opacity: 0;
-      }
-      .pwa-loading-content {
-        text-align: center;
-        color: #fff;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      }
-      .pwa-loading-spinner {
-        width: 60px;
-        height: 60px;
-        margin: 0 auto 20px;
-        border: 3px solid rgba(255, 255, 255, 0.2);
-        border-top-color: #2D5016;
-        border-radius: 50%;
-        animation: pwa-spin 1s linear infinite;
-      }
-      @keyframes pwa-spin {
-        to { transform: rotate(360deg); }
-      }
-      .pwa-loading-text {
-        font-size: 16px;
-        font-weight: 500;
-        color: #ccc;
-      }
-    </style>
-</head>
-                            <body>
-                                <div class="print-container">
-                                    <div class="print-image-area">
-                                        <img src="${imgSrc}" alt="${imgAlt}">
-                                    </div>
-                                    <div class="print-info-area">
-                                        ${infoCellHtml}
-                                    </div>
-                                    <div class="print-disclaimer">
-                                        <div style="margin-bottom: 4px;">本房屋銷售平面圖僅供參考，實際規劃與建材設備依建造變更核准圖面及買賣合約書記載為準。設備位置（包含冷氣室外機 AC、家電設備、家具配置）之方向與角度僅供參考，實際依正式水電配置圖面為準。</div>
-                                        <div style="margin-top: 4px; font-weight: 600;">不動產經紀業：一研九鼎廣告策劃有限公司</div>
-                                    </div>
-                                </div>
-                                <script>
-                                    // 等圖片載入完成後再列印
-                                    const img = document.querySelector('img');
-                                    function doPrint() {
-                                        setTimeout(() => { window.print(); window.close(); }, 300);
-                                    }
-                                    if (img.complete) { doPrint(); }
-                                    else { img.onload = doPrint; }
-                                <\/script>
-                            </body>
-                            </html>
-                        `);
+                        printWin.document.write(buildPrintPageHtml({
+                            imgAlt, imgSrc,
+                            managerHtml: buildManagerHtml(manager),
+                            overlayHtml, panelHtml, baseImgStyle,
+                            autoPrint: true
+                        }));
                         printWin.document.close();
                     }
                 });
             }
+
+            // ===== 列印頁 HTML 產生器（列印視窗與 Debug「A3 排版檢視器」共用，確保所見即所得）=====
+            function buildPrintPageHtml(opts) {
+                const { imgAlt, imgSrc, managerHtml, overlayHtml, panelHtml, baseImgStyle, autoPrint } = opts;
+                return (`<!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>列印 - ${imgAlt}</title>
+                        <meta charset="UTF-8">
+                        <style>
+                            @page { size: A3 landscape; margin: 5mm 8mm; }
+                            * { margin: 0; padding: 0; box-sizing: border-box; }
+                            html, body { width: 100%; background: #fff; }
+                            body {
+                                font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+                                color: #3d3628; height: 100vh; display: flex; flex-direction: column;
+                                overflow: hidden; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+                            }
+                            .print-header {
+                                flex: 0 0 auto; position: relative; display: flex; align-items: flex-end;
+                                justify-content: space-between; gap: 16px; padding: 2px 2px 7px; border-bottom: 2.5px solid #8b6914;
+                            }
+                            .ph-brand { display: flex; align-items: baseline; gap: 10px; }
+                            .ph-brand .zh { font-size: 24px; font-weight: 700; letter-spacing: 8px; color: #4A5759; }
+                            .ph-brand .en { font-size: 12px; letter-spacing: 4px; color: #8b6914; font-weight: 600; }
+                            .ph-title {
+                                position: absolute; left: 50%; bottom: 7px; transform: translateX(-50%);
+                                font-size: 19px; font-weight: 700; letter-spacing: 5px; color: #8b6914; white-space: nowrap;
+                            }
+                            .ph-manager { display: flex; align-items: baseline; gap: 12px; font-size: 13px; color: #4A5759; white-space: nowrap; }
+                            .ph-manager .mg-role { font-size: 13px; letter-spacing: 2px; color: #fff; background: #8b6914; border-radius: 999px; padding: 3px 12px; }
+                            .ph-manager b { font-size: 24px; font-weight: 700; letter-spacing: 3px; color: #4A5759; }
+                            .ph-manager .mg-phone { font-size: 24px; font-weight: 700; color: #8b6914; letter-spacing: 1px; }
+                            .print-stage { flex: 1 1 auto; min-height: 0; position: relative; display: flex; align-items: center; justify-content: center; padding: 4mm 0 2mm; }
+                            .print-image-wrap { position: relative; display: inline-block; }
+                            .print-image-wrap img { display: block; max-width: 100%; max-height: 248mm; width: auto; height: auto; }
+                            .print-overlay { position: absolute; inset: 0; container-type: inline-size; }
+                            .pu-card {
+                                position: absolute; width: 137px; width: 9cqw; font-size: 11.5px; font-size: 0.75cqw; line-height: 1.35;
+                                background: rgba(255,255,255,0.95); border: 1.5px solid #c8a05a; border-radius: 0.6em; box-shadow: 0 1px 5px rgba(0,0,0,0.12); overflow: hidden;
+                            }
+                            .pu-card h4 { background: linear-gradient(135deg, #8b6914, #b08a2e); color: #fff; text-align: center; font-size: 1.13em; font-weight: 700; letter-spacing: 0.25em; padding: 0.22em 0 0.26em; }
+                            .pu-card .rows { padding: 0.35em 0.7em 0.43em; }
+                            .pu-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.13em 0; border-bottom: 1px dashed #e6dcc4; white-space: nowrap; }
+                            .pu-row:last-child { border-bottom: none; }
+                            .pu-row span:first-child { color: #7a6c50; }
+                            .pu-row span:last-child { font-weight: 600; color: #333; }
+                            .pu-row.total { margin-top: 0.17em; border-top: 1.5px solid #c8a05a; padding-top: 0.26em; }
+                            .pu-row.total span { color: #8b6914; font-weight: 700; }
+                            .pi-card {
+                                position: absolute; width: 267px; width: 17.5cqw; font-size: 12px; font-size: 0.78cqw; line-height: 1.45;
+                                background: rgba(255,255,255,0.96); border: 1.5px solid #c8a05a; border-radius: 0.67em; box-shadow: 0 1px 6px rgba(0,0,0,0.13); overflow: hidden;
+                            }
+                            .pi-card h4 { background: linear-gradient(135deg, #4A5759, #5d6b6d); color: #fff; text-align: center; font-size: 1.13em; font-weight: 700; letter-spacing: 0.5em; padding: 0.29em 0 0.33em; }
+                            .pi-card .rows { padding: 0.42em 0.83em 0.58em; }
+                            .pi-row { display: flex; gap: 0.67em; padding: 0.17em 0; border-bottom: 1px dashed #e6dcc4; }
+                            .pi-row:last-child { border-bottom: none; }
+                            .pi-row .lb { flex: 0 0 5em; color: #8b6914; font-weight: 700; letter-spacing: 0.08em; }
+                            .pi-row .val { flex: 1; color: #333; }
+                            .print-info-panel {
+                                position: absolute; bottom: 12mm; left: 4mm; width: 272px; background: rgba(255,255,255,0.96);
+                                border: 1.5px solid #c8a05a; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 6px rgba(0,0,0,0.13);
+                            }
+                            .print-info-panel h3 { margin: 0 0 8px; font-size: 16px; color: #8b6914; border-bottom: 2px solid #8b6914; padding-bottom: 6px; letter-spacing: 2px; text-align: center; font-weight: 700; }
+                            .print-info-panel table { width: 100%; border-collapse: collapse; }
+                            .print-info-panel td { padding: 5px 4px; border-bottom: 1px dashed #e0d8c4; font-size: 14px; line-height: 1.4; }
+                            .print-info-panel tr:last-child td { border-bottom: none; }
+                            .print-info-panel td:first-child { font-weight: 700; color: #8b6914; }
+                            .print-info-panel td:nth-child(2) { text-align: right; font-weight: 600; color: #333; }
+                            .print-info-panel td:nth-child(3) { text-align: center; color: #888; }
+                            .print-disclaimer {
+                                flex: 0 0 auto; border-top: 1px solid #d8cfba; padding: 4px 6mm 0; font-size: 8.5px;
+                                color: rgba(100,90,70,0.75); line-height: 1.55; text-align: center; word-wrap: break-word; overflow-wrap: break-word;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <header class="print-header">
+                            <div class="ph-brand"><span class="zh">富宇學森</span><span class="en">THE ACADEMIC FOREST</span></div>
+                            <div class="ph-title">${imgAlt}</div>
+                            ${managerHtml}
+                        </header>
+                        <main class="print-stage">
+                            <div class="print-image-wrap">
+                                <img src="${imgSrc}" alt="${imgAlt}" style="${baseImgStyle}">
+                                <div class="print-overlay">${overlayHtml}</div>
+                            </div>
+                            ${panelHtml}
+                        </main>
+                        <footer class="print-disclaimer">
+                            <div>本房屋銷售平面圖僅供參考，實際規劃與建材設備依建造變更核准圖面及買賣合約書記載為準。設備位置（包含冷氣室外機 AC、家電設備、家具配置）之方向與角度僅供參考，實際依正式水電配置圖面為準。</div>
+                            <div style="margin-top: 2px; font-weight: 600;">不動產經紀業：一研九鼎廣告策劃有限公司</div>
+                        </footer>
+                        ${autoPrint ? `<script>
+                            const img = document.querySelector('img');
+                            function fireAutoPrint() { setTimeout(() => { window.print(); window.close(); }, 300); }
+                            if (img.complete) { fireAutoPrint(); } else { img.onload = fireAutoPrint; }
+                        <\/script>` : `<style>
+                            .pu-card, .pi-card { cursor: grab; }
+                            .pu-card:active, .pi-card:active { cursor: grabbing; }
+                            .print-image-wrap img { cursor: move; }
+                            .pp-resize { position: absolute; right: 0; bottom: 0; width: 14px; height: 14px; background: #2f7fe0; border: 2px solid #fff; border-radius: 3px 0 0 0; cursor: nwse-resize; z-index: 5; opacity: 0.85; }
+                        </style>`}
+                    </body>
+                    </html>
+                `);
+            }
+
+            // ===== Debug：A3 橫式列印排版檢視器（4-14F；所見即所得，拖曳後匯出座標貼回 printLayout4_14F）=====
+            const printPreview = document.getElementById('fpPrintPreview');
+            const printPreviewBody = document.getElementById('fpPrintPreviewBody');
+            const printPreviewFrame = document.getElementById('fpPrintPreviewFrame');
+            const printPreviewClose = document.getElementById('fpPrintPreviewClose');
+            const printPreviewBtn = document.getElementById('fpHotspotDebugPreviewBtn');
+            const printLayoutExportBtn = document.getElementById('fpPrintLayoutExportBtn');
+            const PP_PAGE_W = 1587, PP_PAGE_H = 1123; // A3 橫式 420×297mm @96dpi
+
+            function ppToast(msg) {
+                if (typeof showHotspotDebugToast === 'function') showHotspotDebugToast(msg);
+                else alert(msg);
+            }
+            // 座標即時存於 printLayout4_14F；同步顯示於 Debug 面板，並可用匯出鈕取得 JSON
+            function updatePrintReadout() { updatePrintLayoutDebugList(); }
+
+            function fitPrintPreview() {
+                if (!printPreview || !printPreview.classList.contains('active')) return;
+                const s = Math.min(
+                    printPreviewBody.clientWidth / PP_PAGE_W,
+                    printPreviewBody.clientHeight / PP_PAGE_H
+                ) * 0.96;
+                printPreviewFrame.style.transform = `scale(${s})`;
+            }
+            window.addEventListener('resize', fitPrintPreview);
+
+            function openPrintPreview() {
+                const alt = lightboxImg.alt || '';
+                if (!(lightbox.classList.contains('active') && alt.includes('4-14F'))) {
+                    ppToast('請先開啟 4-14F 平面圖燈箱再使用排版檢視器');
+                    return;
+                }
+                const mgrSel = document.getElementById('fpPrintManagerSelect');
+                const manager = (mgrSel && mgrSel.value !== '') ? salesManagers[parseInt(mgrSel.value, 10)] : null;
+                printPreviewFrame.onload = () => attachPrintPreviewInteractions();
+                printPreviewFrame.srcdoc = buildPrintPageHtml({
+                    imgAlt: alt || '4-14F 平面配置參考圖',
+                    imgSrc: lightboxImg.src,
+                    managerHtml: buildManagerHtml(manager),
+                    overlayHtml: buildPrint4_14FOverlayHtml(),
+                    panelHtml: '',
+                    baseImgStyle: buildPrintBaseImgStyle(),
+                    autoPrint: false
+                });
+                printPreview.classList.add('active');
+                fitPrintPreview();
+            }
+
+            function closePrintPreview() {
+                if (!printPreview) return;
+                printPreview.classList.remove('active');
+                printPreviewFrame.onload = null;
+                printPreviewFrame.srcdoc = '';
+            }
+
+            function attachPrintPreviewInteractions() {
+                const doc = printPreviewFrame.contentDocument;
+                if (!doc) return;
+                const overlay = doc.querySelector('.print-overlay');
+                const stage = doc.querySelector('.print-stage');
+                const pageImg = doc.querySelector('.print-image-wrap img');
+                if (!overlay || !stage || !pageImg) return;
+
+                doc.querySelectorAll('.pu-card, .pi-card').forEach(c => {
+                    const h = doc.createElement('div');
+                    h.className = 'pp-resize';
+                    h.title = '拖曳調整卡片寬度';
+                    c.appendChild(h);
+                });
+
+                function cardTarget(card) {
+                    const key = card.dataset.printKey;
+                    return key === 'info'
+                        ? printLayout4_14F.infoBlock
+                        : printLayout4_14F.unitLabels.find(u => 'unit-' + u.unit === key);
+                }
+
+                let dragCard = null, cardOffX = 0, cardOffY = 0;
+                let resizeCard = null;
+                let dragBase = false, baseSX = 0, baseSY = 0;
+
+                function applyBaseToImg() {
+                    pageImg.style.cssText = buildPrintBaseImgStyle();
+                    updatePrintReadout();
+                }
+
+                doc.addEventListener('mousedown', (e) => {
+                    const rz = e.target.closest('.pp-resize');
+                    if (rz) { e.preventDefault(); e.stopPropagation(); resizeCard = rz.closest('.pu-card, .pi-card'); return; }
+                    const card = e.target.closest('.pu-card, .pi-card');
+                    if (card) {
+                        e.preventDefault();
+                        dragCard = card;
+                        const r = card.getBoundingClientRect();
+                        cardOffX = e.clientX - r.left;
+                        cardOffY = e.clientY - r.top;
+                        return;
+                    }
+                    if (e.target.closest('.print-stage')) { e.preventDefault(); dragBase = true; baseSX = e.clientX; baseSY = e.clientY; }
+                });
+
+                doc.addEventListener('mousemove', (e) => {
+                    if (!dragCard && !dragBase && !resizeCard) return;
+                    const oRect = overlay.getBoundingClientRect();
+                    if (!oRect.width || !oRect.height) return;
+
+                    if (resizeCard) {
+                        const target = cardTarget(resizeCard);
+                        if (!target) return;
+                        const cr = resizeCard.getBoundingClientRect();
+                        let w = ((e.clientX - cr.left) / oRect.width) * 100;
+                        w = Math.max(4, Math.min(60, w));
+                        target.w = w;
+                        resizeCard.style.width = `${w}cqw`;
+                        updatePrintReadout();
+                        return;
+                    }
+                    if (dragCard) {
+                        const target = cardTarget(dragCard);
+                        if (!target) return;
+                        const cr = dragCard.getBoundingClientRect();
+                        const pageRect = doc.body.getBoundingClientRect();
+                        let leftPx = e.clientX - cardOffX;
+                        let topPx = e.clientY - cardOffY;
+                        leftPx = Math.max(pageRect.left, Math.min(pageRect.right - cr.width, leftPx));
+                        topPx = Math.max(pageRect.top, Math.min(pageRect.bottom - cr.height, topPx));
+                        const x = ((leftPx - oRect.left) / oRect.width) * 100;
+                        const y = ((topPx - oRect.top) / oRect.height) * 100;
+                        dragCard.style.left = `${x}%`;
+                        dragCard.style.top = `${y}%`;
+                        target.x = x;
+                        target.y = y;
+                        updatePrintReadout();
+                        return;
+                    }
+                    const b = printLayout4_14F.baseImage;
+                    b.x += ((e.clientX - baseSX) / oRect.width) * 100;
+                    b.y += ((e.clientY - baseSY) / oRect.height) * 100;
+                    baseSX = e.clientX; baseSY = e.clientY;
+                    applyBaseToImg();
+                });
+
+                const endPreviewDrag = () => { dragCard = null; dragBase = false; resizeCard = null; };
+                doc.addEventListener('mouseup', endPreviewDrag);
+                doc.addEventListener('mouseleave', endPreviewDrag);
+
+                doc.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const card = e.target.closest('.pu-card, .pi-card');
+                    if (card) {
+                        const target = cardTarget(card);
+                        if (!target) return;
+                        const base = card.classList.contains('pi-card') ? PI_CARD_BASE_FONT : PU_CARD_BASE_FONT;
+                        target.fs = Math.max(0.5, Math.min(2, (target.fs || 1) * (e.deltaY < 0 ? 1.05 : 0.95)));
+                        card.style.fontSize = `${(base * target.fs).toFixed(3)}cqw`;
+                        updatePrintReadout();
+                        return;
+                    }
+                    const b = printLayout4_14F.baseImage;
+                    b.scale = Math.max(0.4, Math.min(1.5, b.scale * (e.deltaY < 0 ? 1.04 : 0.96)));
+                    applyBaseToImg();
+                }, { passive: false });
+
+                doc.addEventListener('dblclick', (e) => {
+                    if (!e.target.closest('.print-stage')) return;
+                    Object.assign(printLayout4_14F.baseImage, { scale: 1, x: 0, y: 0 });
+                    applyBaseToImg();
+                });
+
+                doc.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePrintPreview(); });
+            }
+
+            if (printPreviewBtn) printPreviewBtn.addEventListener('click', openPrintPreview);
+            if (printPreviewClose) printPreviewClose.addEventListener('click', closePrintPreview);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && printPreview && printPreview.classList.contains('active')) {
+                    closePrintPreview();
+                    e.stopImmediatePropagation();
+                }
+            }, true);
+
+            // 匯出 4-14F 列印座標（複製 JSON，貼回 printLayout4_14F 即可固定）
+            if (printLayoutExportBtn) {
+                printLayoutExportBtn.addEventListener('click', () => {
+                    const data = {
+                        unitLabels: printLayout4_14F.unitLabels.map(u => ({
+                            unit: u.unit,
+                            x: parseFloat(u.x.toFixed(1)),
+                            y: parseFloat(u.y.toFixed(1)),
+                            w: parseFloat((u.w || 9).toFixed(1)),
+                            fs: parseFloat((u.fs || 1).toFixed(2))
+                        })),
+                        infoBlock: {
+                            x: parseFloat(printLayout4_14F.infoBlock.x.toFixed(1)),
+                            y: parseFloat(printLayout4_14F.infoBlock.y.toFixed(1)),
+                            w: parseFloat((printLayout4_14F.infoBlock.w || 17.5).toFixed(1)),
+                            fs: parseFloat((printLayout4_14F.infoBlock.fs || 1).toFixed(2))
+                        },
+                        baseImage: {
+                            scale: parseFloat(printLayout4_14F.baseImage.scale.toFixed(2)),
+                            x: parseFloat(printLayout4_14F.baseImage.x.toFixed(1)),
+                            y: parseFloat(printLayout4_14F.baseImage.y.toFixed(1))
+                        }
+                    };
+                    const jsonStr = JSON.stringify(data, null, 2);
+                    navigator.clipboard.writeText(jsonStr).then(() => {
+                        printLayoutExportBtn.textContent = '✅ 已複製列印座標！';
+                        setTimeout(() => { printLayoutExportBtn.textContent = '📋 匯出列印座標 (4-14F)'; }, 2000);
+                    }).catch(() => { prompt('請複製以下列印座標 JSON：', jsonStr); });
+                });
+            }
+
             // 只有在「沒有拖曳」的情況下，點擊背景才關閉
             lightbox.addEventListener('click', (e) => {
                 if (e.target === lightbox && !lbDragMoved) closeLightbox();
@@ -990,6 +1443,8 @@
                 if (e.target.closest('.fp-measure-tools')) return; // 防止點擊工具列拖曳
                 // 防止點擊到彈出資訊框也觸發背景圖案的拖曳
                 if (e.target.closest('.fp-lightbox-info')) return;
+                if (e.target.closest('.fp-basicinfo-open')) return;
+                if (e.target.closest('.fp-basicinfo-modal')) return;
                 // 點到熱點(hotspot) 時，由熱點專屬邏輯處理 (打開子燈箱或拖曳)
                 if (e.target.closest('.fp-hotspot')) return;
 
@@ -1019,6 +1474,8 @@
 
             // 滾輪縮放
             lightbox.addEventListener('wheel', (e) => {
+                // 滑鼠在基本資料燈箱上 → 讓內容原生捲動（不縮放、不攔截）
+                if (e.target.closest('.fp-basicinfo-modal')) return;
                 e.preventDefault();
                 const dir = e.deltaY < 0 ? 1 : -1;
                 let newScale = lbScale * Math.exp(dir * 0.1);
@@ -1646,52 +2103,105 @@
             const hotspotDebugExport = document.getElementById('fpHotspotDebugExport');
             const hotspotDebugToast = document.getElementById('fpHotspotDebugToast');
 
+            // Debug 面板：標題列可拖曳移動、右上角按鈕可收合/展開 (位置與收合狀態會記憶)
+            if (window.initDebugPanel) {
+                window.initDebugPanel(hotspotDebugPanel, { storageKey: 'fpHotspotDebugPanel' });
+            }
+
             let hotspotDebugMode = false;
             let hotspotDragTarget = null;
             let hotspotDragMoved = false;
             let hotspotDragOffsetX = 0;
             let hotspotDragOffsetY = 0;
 
+            // ===== 4-14F 各戶矩形熱點（點擊開啟該戶傢俱配置圖；Debug 可拖曳/縮放）=====
+            // x/y = 左上角％、w/h = 寬高％（相對 4-14F 圖片）。座標為起點，請用 Debug 拖曳定位後匯出貼回。
+            const unitHotspots4_14F = [
+                { id: 'unit-A1', unit: 'A1', x: 44,   y: 8.3,  w: 16.8, h: 29.2 },
+                { id: 'unit-A2', unit: 'A2', x: 61.1, y: 8.5,  w: 16.7, h: 28.6 },
+                { id: 'unit-A3', unit: 'A3', x: 60.6, y: 37.9, w: 15.3, h: 25 },
+                { id: 'unit-A5', unit: 'A5', x: 60.6, y: 63.2, w: 19.2, h: 26.4 },
+                { id: 'unit-A6', unit: 'A6', x: 44.2, y: 65.2, w: 16.3, h: 25.2 },
+                { id: 'unit-A7', unit: 'A7', x: 23.1, y: 64,   w: 17.1, h: 26.5 },
+                { id: 'unit-A8', unit: 'A8', x: 23.1, y: 37.6, w: 16.9, h: 26 }
+            ];
+            let currentHotspotFloor = '';   // 目前燈箱圖面：'1F' / '4-14F' / ''
+            let rectDragTarget = null, rectResizeTarget = null, rectDragOffsetX = 0, rectDragOffsetY = 0;
+
             function buildHotspots() {
                 hotspotLayer.innerHTML = '';
                 const invScale = 1 / (lbScale || 1);
-                hotspotsData.forEach(hs => {
-                    const el = document.createElement('div');
-                    el.className = 'fp-hotspot';
-                    el.dataset.id = hs.id;
-                    el.style.left = `${hs.x}%`;
-                    el.style.top = `${hs.y}%`;
-                    el.style.transform = `translate(-50%, -50%) scale(${invScale})`;
-                    el.innerHTML = `
-                        <div class="hotspot-ring"></div>
-                        <div class="hotspot-ring-outer"></div>
-                        <div class="hotspot-core"></div>
-                        <span class="hotspot-label">${hs.label}</span>
-                    `;
-                    el.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        if (hotspotDragMoved) {
-                            // 剛拖曳完，避免誤觸開啟子燈箱
-                            hotspotDragMoved = false;
-                            return;
-                        }
-                        if (hotspotDebugMode) return; // Debug 模式下不開啟子燈箱
-                        openInfoLightbox(hs);
+                if (currentHotspotFloor === '1F') {
+                    hotspotsData.forEach(hs => {
+                        const el = document.createElement('div');
+                        el.className = 'fp-hotspot';
+                        el.dataset.id = hs.id;
+                        el.style.left = `${hs.x}%`;
+                        el.style.top = `${hs.y}%`;
+                        el.style.transform = `translate(-50%, -50%) scale(${invScale})`;
+                        el.innerHTML = `
+                            <div class="hotspot-ring"></div>
+                            <div class="hotspot-ring-outer"></div>
+                            <div class="hotspot-core"></div>
+                            <span class="hotspot-label">${hs.label}</span>
+                        `;
+                        el.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (hotspotDragMoved) { hotspotDragMoved = false; return; }
+                            if (hotspotDebugMode) return;
+                            openInfoLightbox(hs);
+                        });
+                        hotspotLayer.appendChild(el);
                     });
-                    hotspotLayer.appendChild(el);
-                });
+                }
+                if (currentHotspotFloor === '4-14F') {
+                    unitHotspots4_14F.forEach(hs => {
+                        const el = document.createElement('div');
+                        el.className = 'fp-hotspot-rect fp-unit-rect';
+                        el.dataset.id = hs.id;
+                        el.style.left = `${hs.x}%`;
+                        el.style.top = `${hs.y}%`;
+                        el.style.width = `${hs.w}%`;
+                        el.style.height = `${hs.h}%`;
+                        el.innerHTML = `<div class="rect-resize-handle" title="拖曳調整大小"></div>`;
+                        el.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (hotspotDragMoved) { hotspotDragMoved = false; return; }
+                            if (hotspotDebugMode) return;
+                            openUnitPlan(hs.unit);
+                        });
+                        hotspotLayer.appendChild(el);
+                    });
+                }
             }
 
-            // 依當前燈箱顯示的圖面決定是否顯示熱點 (僅 1F)
+            // 依當前燈箱顯示的圖面決定顯示 1F 紅點或 4-14F 各戶矩形
             function showHotspotsForCurrentImage() {
                 const src = lightboxImg.src || '';
                 const alt = lightboxImg.alt || '';
                 const is1F = /\/1F\.webp(\?|$)/i.test(src) || /(^|[^\d])1F([^\d]|$)/.test(alt);
-                if (is1F) {
-                    hotspotLayer.classList.add('active');
-                } else {
-                    hotspotLayer.classList.remove('active');
-                }
+                const is4_14F = alt.includes('4-14F') || /\/4-14F\.webp(\?|$)/i.test(src);
+                currentHotspotFloor = is1F ? '1F' : (is4_14F ? '4-14F' : '');
+                buildHotspots();
+                updateHotspotDebugList();
+                if (currentHotspotFloor) hotspotLayer.classList.add('active');
+                else hotspotLayer.classList.remove('active');
+            }
+
+            // 於燈箱中切換至指定戶別的傢俱配置圖（淡出淡入 + 完整開圖流程）
+            function openUnitPlan(unit) {
+                fadeSwapLightboxTo(`#plan-${unit} .fp-image-wrapper img`);
+            }
+            function fadeSwapLightboxTo(imgSelector) {
+                const target = document.querySelector(imgSelector);
+                if (!target) return;
+                lightboxImg.classList.add('fp-img-fading');
+                setTimeout(() => {
+                    target.click(); // 沿用完整開圖流程（資訊面板、基本資料、熱點、丈量重設）
+                    requestAnimationFrame(() => requestAnimationFrame(() => {
+                        lightboxImg.classList.remove('fp-img-fading');
+                    }));
+                }, 260);
             }
 
             // ===== 子燈箱輪播 (公設 3D 風格) =====
@@ -1827,7 +2337,8 @@
                 hotspotDebugPanel.classList.toggle('active', on);
                 document.body.classList.toggle('fp-hotspot-debug', on);
                 updateHotspotDebugList();
-                showHotspotDebugToast(on ? '🔧 1F Hotspot Debug 已啟用' : '🔒 1F Hotspot Debug 已關閉');
+                updatePrintLayoutDebugList();
+                showHotspotDebugToast(on ? '🔧 Hotspot Debug 已啟用' : '🔒 Hotspot Debug 已關閉');
             }
 
             function showHotspotDebugToast(msg) {
@@ -1841,6 +2352,22 @@
 
             function updateHotspotDebugList() {
                 hotspotDebugList.innerHTML = '';
+                const sectionTitle = document.getElementById('fpHotspotDebugSectionTitle');
+                if (sectionTitle) {
+                    sectionTitle.textContent = currentHotspotFloor === '4-14F' ? '4-14F 戶別熱點座標' : '1F 熱點座標';
+                }
+                if (currentHotspotFloor === '4-14F') {
+                    unitHotspots4_14F.forEach(hs => {
+                        const item = document.createElement('div');
+                        item.className = 'fp-hotspot-debug-item';
+                        item.innerHTML = `
+                            <span class="debug-name">${hs.unit} 戶</span>
+                            <span class="debug-pos">x: ${hs.x.toFixed(1)}% y: ${hs.y.toFixed(1)}% w: ${hs.w.toFixed(1)}% h: ${hs.h.toFixed(1)}%</span>
+                        `;
+                        hotspotDebugList.appendChild(item);
+                    });
+                    return;
+                }
                 hotspotsData.forEach(hs => {
                     const item = document.createElement('div');
                     item.className = 'fp-hotspot-debug-item';
@@ -1852,32 +2379,84 @@
                 });
             }
 
-            hotspotDebugExport.addEventListener('click', () => {
-                const exportData = hotspotsData.map(hs => ({
-                    id: hs.id,
-                    label: hs.label,
-                    img: hs.img,
-                    x: parseFloat(hs.x.toFixed(1)),
-                    y: parseFloat(hs.y.toFixed(1))
+            // 4-14F 列印排版座標即時顯示 (A3 檢視器中拖曳 / 縮放時同步更新)
+            function updatePrintLayoutDebugList() {
+                const list = document.getElementById('fpPrintLayoutDebugList');
+                if (!list) return;
+                const num = (v, d = 1) => (typeof v === 'number' ? v : 0).toFixed(d);
+                const rows = printLayout4_14F.unitLabels.map(u => ({
+                    name: `${u.unit} 標籤`,
+                    pos: `x: ${num(u.x)} y: ${num(u.y)}`,
+                    meta: `w ${num(u.w || 9)} · fs ${num(u.fs || 1, 2)}`
                 }));
+                const ib = printLayout4_14F.infoBlock;
+                rows.push({
+                    name: '資訊卡',
+                    pos: `x: ${num(ib.x)} y: ${num(ib.y)}`,
+                    meta: `w ${num(ib.w || 17.5)} · fs ${num(ib.fs || 1, 2)}`
+                });
+                const bi = printLayout4_14F.baseImage;
+                rows.push({
+                    name: '底圖',
+                    pos: `x: ${num(bi.x)} y: ${num(bi.y)}`,
+                    meta: `scale ${num(bi.scale, 2)}`
+                });
+                list.innerHTML = rows.map(r => `
+                    <div class="fp-hotspot-debug-item">
+                        <span class="debug-name">${r.name}</span>
+                        <span class="debug-pos">${r.pos}<span class="debug-meta">${r.meta}</span></span>
+                    </div>
+                `).join('');
+            }
+
+            hotspotDebugExport.addEventListener('click', () => {
+                let exportData;
+                if (currentHotspotFloor === '4-14F') {
+                    exportData = unitHotspots4_14F.map(hs => ({
+                        id: hs.id, unit: hs.unit,
+                        x: parseFloat(hs.x.toFixed(1)),
+                        y: parseFloat(hs.y.toFixed(1)),
+                        w: parseFloat(hs.w.toFixed(1)),
+                        h: parseFloat(hs.h.toFixed(1))
+                    }));
+                } else {
+                    exportData = hotspotsData.map(hs => ({
+                        id: hs.id, label: hs.label, img: hs.img,
+                        x: parseFloat(hs.x.toFixed(1)),
+                        y: parseFloat(hs.y.toFixed(1))
+                    }));
+                }
                 const jsonStr = JSON.stringify(exportData, null, 2);
                 navigator.clipboard.writeText(jsonStr).then(() => {
                     hotspotDebugExport.textContent = '✅ 已複製！';
-                    setTimeout(() => {
-                        hotspotDebugExport.textContent = '📋 匯出座標 (複製到剪貼簿)';
-                    }, 2000);
-                }).catch(() => {
-                    prompt('請複製以下座標 JSON：', jsonStr);
-                });
+                    setTimeout(() => { hotspotDebugExport.textContent = '📋 匯出座標 (複製到剪貼簿)'; }, 2000);
+                }).catch(() => { prompt('請複製以下座標 JSON：', jsonStr); });
             });
 
-            // ===== Debug 模式下：拖曳熱點 =====
+            // ===== Debug 模式下：拖曳熱點 / 各戶矩形 =====
             hotspotLayer.addEventListener('mousedown', (e) => {
                 if (!hotspotDebugMode) return;
+                // 4-14F 各戶矩形：右下角手把 = 縮放，其餘區域 = 移動
+                const resizeHandle = e.target.closest('.rect-resize-handle');
+                if (resizeHandle) {
+                    e.preventDefault(); e.stopPropagation();
+                    rectResizeTarget = resizeHandle.closest('.fp-hotspot-rect');
+                    hotspotDragMoved = false;
+                    return;
+                }
+                const rectEl = e.target.closest('.fp-hotspot-rect');
+                if (rectEl) {
+                    e.preventDefault(); e.stopPropagation();
+                    rectDragTarget = rectEl;
+                    hotspotDragMoved = false;
+                    const r = rectEl.getBoundingClientRect();
+                    rectDragOffsetX = e.clientX - r.left;
+                    rectDragOffsetY = e.clientY - r.top;
+                    return;
+                }
                 const target = e.target.closest('.fp-hotspot');
                 if (!target) return;
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
                 hotspotDragTarget = target;
                 hotspotDragMoved = false;
                 const rect = target.getBoundingClientRect();
@@ -1886,9 +2465,39 @@
             });
 
             window.addEventListener('mousemove', (e) => {
-                if (!hotspotDragTarget) return;
+                if (!hotspotDragTarget && !rectDragTarget && !rectResizeTarget) return;
                 const imgRect = lightboxImg.getBoundingClientRect();
                 if (!imgRect.width || !imgRect.height) return;
+
+                if (rectDragTarget) {
+                    const hs = unitHotspots4_14F.find(h => h.id === rectDragTarget.dataset.id);
+                    if (!hs) return;
+                    let x = ((e.clientX - rectDragOffsetX - imgRect.left) / imgRect.width) * 100;
+                    let y = ((e.clientY - rectDragOffsetY - imgRect.top) / imgRect.height) * 100;
+                    x = Math.max(0, Math.min(100 - hs.w, x));
+                    y = Math.max(0, Math.min(100 - hs.h, y));
+                    rectDragTarget.style.left = `${x}%`;
+                    rectDragTarget.style.top = `${y}%`;
+                    hs.x = x; hs.y = y;
+                    hotspotDragMoved = true;
+                    updateHotspotDebugList();
+                    return;
+                }
+                if (rectResizeTarget) {
+                    const hs = unitHotspots4_14F.find(h => h.id === rectResizeTarget.dataset.id);
+                    if (!hs) return;
+                    let w = ((e.clientX - imgRect.left) / imgRect.width) * 100 - hs.x;
+                    let h = ((e.clientY - imgRect.top) / imgRect.height) * 100 - hs.y;
+                    w = Math.max(2, Math.min(100 - hs.x, w));
+                    h = Math.max(2, Math.min(100 - hs.y, h));
+                    rectResizeTarget.style.width = `${w}%`;
+                    rectResizeTarget.style.height = `${h}%`;
+                    hs.w = w; hs.h = h;
+                    hotspotDragMoved = true;
+                    updateHotspotDebugList();
+                    return;
+                }
+
                 const x = ((e.clientX - hotspotDragOffsetX - imgRect.left) / imgRect.width) * 100;
                 const y = ((e.clientY - hotspotDragOffsetY - imgRect.top) / imgRect.height) * 100;
                 const cx = Math.max(0, Math.min(100, x));
@@ -1898,17 +2507,15 @@
                 hotspotDragMoved = true;
                 const id = hotspotDragTarget.dataset.id;
                 const hs = hotspotsData.find(h => h.id === id);
-                if (hs) {
-                    hs.x = cx;
-                    hs.y = cy;
-                }
+                if (hs) { hs.x = cx; hs.y = cy; }
                 updateHotspotDebugList();
             });
 
             window.addEventListener('mouseup', () => {
-                if (hotspotDragTarget) {
+                if (hotspotDragTarget || rectDragTarget || rectResizeTarget) {
                     hotspotDragTarget = null;
-                    // 延遲清旗標讓接續 click 知道剛剛是拖曳
+                    rectDragTarget = null;
+                    rectResizeTarget = null;
                     setTimeout(() => { hotspotDragMoved = false; }, 50);
                 }
             });
@@ -1916,16 +2523,17 @@
             // 初始建立熱點 DOM (預設常駐顯示紅點；連按 5 次 D 鍵進入 Debug 模式編輯座標)
             buildHotspots();
             updateHotspotDebugList();
+            updatePrintLayoutDebugList();
 
         })();
     </script>
     <script src="js/fireflies.js?v=2"></script>
-    <script src="js/spa-router.js?v=1.0.2"></script>
+    <script src="js/spa-router.js?v=1.0.6"></script>
     <!-- Pannellum 360 必須在初始化前加載（同步加載，不用 defer）（本地版本） -->
     <script src="assets/pannellum/pannellum.min.js"></script>
     <!-- Asset Update Manager -->
     <script src="js/asset-update-manager.js"></script>
-    <script src="js/pwa-register.js?v=1.0.2" defer></script>
+    <script src="js/pwa-register.js?v=1.0.6" defer></script>
 </body>
 
 </html>
