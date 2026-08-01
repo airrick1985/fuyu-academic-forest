@@ -1813,7 +1813,8 @@ body.fp-hotspot-debug .fp-hotspot .hotspot-label::after {
 }
 
 .fp-basicinfo-modal {
-    position: absolute;
+    /* fixed + 高於 .fp-lightbox(99999) → 主頁與平面圖燈箱內皆可置頂顯示 */
+    position: fixed;
     inset: 0;
     z-index: 100004;
     display: flex;

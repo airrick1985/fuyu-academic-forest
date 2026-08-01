@@ -290,18 +290,19 @@
             <span class="tab-icon" aria-hidden="true">ℹ</span>
             <span class="tab-label">基本資料</span>
         </button>
-        <!-- 基本資料燈箱（畫面中央彈出；內容同列印 basicInfoData） -->
-        <div class="fp-basicinfo-modal" id="fpBasicInfoCard" role="dialog" aria-modal="true" aria-label="基本資料">
-            <div class="fp-basicinfo-dialog">
-                <button class="fp-basicinfo-close" id="fpBasicInfoClose" type="button" title="關閉">✕</button>
-                <div class="bi-head">
-                    <span class="bi-eyebrow">富宇學森</span>
-                    <h3 class="bi-title">基本資料</h3>
-                    <span class="bi-title-en">PROJECT INFORMATION</span>
-                    <span class="bi-head-rule" aria-hidden="true"></span>
-                </div>
-                <div class="fp-basicinfo-body" id="fpBasicInfoPanel"></div>
+    </div>
+
+    <!-- 基本資料燈箱（畫面中央彈出；內容同列印 basicInfoData；置於燈箱外層 → 主頁導覽列與平面圖內皆可開啟） -->
+    <div class="fp-basicinfo-modal" id="fpBasicInfoCard" role="dialog" aria-modal="true" aria-label="基本資料">
+        <div class="fp-basicinfo-dialog">
+            <button class="fp-basicinfo-close" id="fpBasicInfoClose" type="button" title="關閉">✕</button>
+            <div class="bi-head">
+                <span class="bi-eyebrow">富宇學森</span>
+                <h3 class="bi-title">基本資料</h3>
+                <span class="bi-title-en">PROJECT INFORMATION</span>
+                <span class="bi-head-rule" aria-hidden="true"></span>
             </div>
+            <div class="fp-basicinfo-body" id="fpBasicInfoPanel"></div>
         </div>
     </div>
 
@@ -607,9 +608,8 @@
             };
 
             // =========================================================================
-            // ★★★ 銷售資料維護區（名單 / 電話 / 基本資料 / 列印座標，改這裡即可）★★★
-            //   ※ 下方 basicInfoData 與 salesManagers 內容暫自「樂慕 LAMOUR」沿用，
-            //     請改成「富宇學森」的實際基地/銷售資料。
+            // ★★★ 銷售資料維護區（名單 / 電話 / 列印座標，改這裡即可）★★★
+            //   ※ 基本資料（basicInfoData）已統一移至 js/topbar.js 的 window.FY_BASIC_INFO 維護。
             // =========================================================================
 
             // 銷售經理名單（列印設定視窗的下拉選單；依姓名筆畫排序）
@@ -630,21 +630,9 @@
                 return String(p).replace(/^(\d{4})(\d{3})(\d{3})$/, '$1-$2-$3');
             }
 
-            // 基本資料（瀏覽「基本資料」燈箱 + 列印基本資料卡共用，維護統一）
-            const basicInfoData = [
-                { label: '基地位置', value: '新竹市東區長春街' },
-                { label: '基地面積', value: '約573坪　地上14F/B3' },
-                { label: '規劃戶數', value: '住家 89戶' },
-                { label: '停車位',   value: '汽車位 91個　機車位 110個' },
-                { label: '公設比',   value: '34.8%' },
-                { label: '樓高',     value: '住家 3.2米　一樓大廳挑高 7.4米' },
-                { label: '電梯',     value: '15人份　速率 120 公尺/分鐘' },
-                { label: '車位售價', value: 'B1-325　B2-300　B3-275' },
-                { label: '管理費',   value: '住家 90/坪　車位 300/個' },
-                { label: '學區',     value: '關埔國小、光武國中、竹科實中、康橋國際學校(規劃中)' },
-                { label: '開工日',   value: '2026年5月' },
-                { label: '交屋日',   value: '2034年第三季' }
-            ];
+            // 基本資料（瀏覽「基本資料」燈箱 + 列印基本資料卡共用）
+            // ※ 資料統一維護於 js/topbar.js 的 window.FY_BASIC_INFO（全站導覽列「基本資料」燈箱同源）
+            const basicInfoData = window.FY_BASIC_INFO || [];
 
             // 4-14F 標準層各戶面積（由上方 areaData 衍生，維護統一；學森標準層無露臺 → terrace: 0）
             const floorAreaData = {
@@ -666,7 +654,7 @@
                     { unit: 'A7', x: 12.8, y: 72.7, w: 9, fs: 1.1 },
                     { unit: 'A8', x: 12.8, y: 44.1, w: 9, fs: 1.1 }
                 ],
-                infoBlock: { x: 79.6, y: -3.9, w: 22.1, fs: 1.29 },
+                infoBlock: { x: 79.6, y: -2.1, w: 22.8, fs: 1.05 },
                 baseImage: { scale: 0.93, x: 0.8, y: 1.1 }
             };
 

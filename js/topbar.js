@@ -1,5 +1,26 @@
 /* js/topbar.js */
 (() => {
+  // ===== 建案基本資料（全站唯一資料來源）=====
+  // 頂部導覽列「基本資料」燈箱 + floor-plan.html 的燈箱／列印基本資料卡皆引用此處，維護統一。
+  window.FY_BASIC_INFO = [
+    { label: '投資興建', value: '富宇建設股份有限公司' },
+    { label: '代銷公司', value: '一研九鼎廣告策劃有限公司' },
+    { label: '基地位置', value: '新竹市東區長春街' },
+    { label: '地號',     value: '新竹市長春段650-4地號等8筆' },
+    { label: '建照號碼', value: '新竹市(114)府都建字第00082號' },
+    { label: '基地面積', value: '約573坪　地上14F/B3' },
+    { label: '規劃戶數', value: '住家 89戶' },
+    { label: '停車位',   value: '汽車位 91個　機車位 110個' },
+    { label: '公設比',   value: '34.8%' },
+    { label: '樓高',     value: '住家 3.2米　一樓大廳挑高 7.4米' },
+    { label: '電梯',     value: '15人份　速率 120 公尺/分鐘' },
+    { label: '車位售價', value: 'B1-325　B2-300　B3-275' },
+    { label: '管理費',   value: '住家 90/坪　車位 300/個' },
+    { label: '學區',     value: '關埔國小、光武國中、竹科實中、康橋國際學校(規劃中)' },
+    { label: '開工日',   value: '2026年5月' },
+    { label: '交屋日',   value: '2034年第三季' }
+  ];
+
   // 統一維護的全域 Topbar HTML 模板
   const topbarHTML = `
     <header class="topbar">
@@ -15,6 +36,9 @@
                     <div class="submenu-item"><a href="brand-fuyu.html">富宇機構</a></div>
                     <div class="submenu-item"><a href="brand-team.html">建築團隊</a></div>
                 </div>
+            </div>
+            <div class="nav-item">
+                <a href="#basic-info" class="nav-link tb-basicinfo-link">基本資料</a>
             </div>
             <div class="nav-item">
                 <a href="panorama.html" class="nav-link">地段環境</a>
@@ -298,6 +322,86 @@
       }
     });
   }
+
+  // ===== 全站「基本資料」燈箱（導覽列直達；資料同 window.FY_BASIC_INFO）=====
+  (function initBasicInfoModal() {
+    // 樣式只注入一次（設計沿用 floor-plan 基本資料卡：米白卡 + 金棕標題 + label/值分欄）
+    if (!document.getElementById('tb-basicinfo-style')) {
+      const style = document.createElement('style');
+      style.id = 'tb-basicinfo-style';
+      style.textContent = `
+        .tb-basicinfo-modal{position:fixed;inset:0;z-index:1000000;display:flex;align-items:center;justify-content:center;padding:40px;background:rgba(28,24,18,.5);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s ease;pointer-events:none;}
+        .tb-basicinfo-modal.open{opacity:1;visibility:visible;pointer-events:auto;}
+        .tb-basicinfo-dialog{position:relative;display:flex;flex-direction:column;width:min(680px,94vw);max-height:86vh;background:#fdfbf5;border:1px solid rgba(180,165,130,.5);border-radius:22px;box-shadow:0 30px 90px rgba(28,22,12,.5);overflow:hidden;transform:translateY(18px) scale(.94);opacity:0;transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .4s ease;}
+        .tb-basicinfo-modal.open .tb-basicinfo-dialog{transform:translateY(0) scale(1);opacity:1;}
+        .tb-basicinfo-close{position:absolute;top:16px;right:16px;z-index:3;width:40px;height:40px;border-radius:50%;border:1px solid rgba(180,165,130,.5);background:rgba(255,255,255,.7);color:#8b6914;font-size:19px;line-height:1;cursor:pointer;transition:background .25s ease,color .25s ease,transform .35s ease;}
+        .tb-basicinfo-close:hover{background:#8b6914;color:#fff;transform:rotate(90deg);}
+        .tb-basicinfo-dialog .bi-head{flex:0 0 auto;padding:38px 44px 24px;text-align:center;background:linear-gradient(180deg,rgba(139,105,20,.09),rgba(139,105,20,0));}
+        .tb-basicinfo-dialog .bi-eyebrow{display:block;font-size:13px;letter-spacing:8px;color:#b3924b;margin-bottom:12px;font-family:var(--font-sans,system-ui);}
+        .tb-basicinfo-dialog .bi-title{margin:0;font-size:30px;font-weight:700;letter-spacing:12px;text-indent:12px;color:#6f5410;font-family:var(--font-sans,system-ui);}
+        .tb-basicinfo-dialog .bi-title-en{display:block;margin-top:9px;font-size:12px;letter-spacing:4px;color:rgba(139,105,20,.55);font-family:var(--font-english-sans,'Arial',sans-serif);}
+        .tb-basicinfo-dialog .bi-head-rule{display:block;width:56px;height:2px;margin:20px auto 0;background:linear-gradient(90deg,transparent,#c8a05a,transparent);}
+        .tb-basicinfo-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;}
+        .tb-basicinfo-body .bi-rows{padding:4px 48px 26px;}
+        .tb-basicinfo-body .bi-row{display:grid;grid-template-columns:5em 1fr;align-items:baseline;column-gap:24px;padding:8px 4px;border-bottom:1px solid rgba(180,165,130,.28);}
+        .tb-basicinfo-body .bi-row:last-child{border-bottom:none;}
+        .tb-basicinfo-body .bi-lb{position:relative;color:#8b6914;font-weight:700;font-size:16px;letter-spacing:3px;white-space:nowrap;padding-left:14px;}
+        .tb-basicinfo-body .bi-lb::before{content:"";position:absolute;left:0;top:.35em;bottom:.2em;width:3px;border-radius:2px;background:#c8a05a;}
+        .tb-basicinfo-body .bi-val{color:#3a3a3a;font-size:17px;line-height:1.55;letter-spacing:.5px;overflow-wrap:break-word;text-wrap:pretty;}
+      `;
+      document.head.appendChild(style);
+    }
+
+    // 燈箱節點只建立一次（SPA 換頁若被清掉會自動重建）
+    let modal = document.getElementById('tbBasicInfoModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'tbBasicInfoModal';
+      modal.className = 'tb-basicinfo-modal';
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.setAttribute('aria-label', '基本資料');
+      const rows = window.FY_BASIC_INFO.map(r =>
+        `<div class="bi-row"><span class="bi-lb">${r.label}</span><span class="bi-val">${r.value}</span></div>`
+      ).join('');
+      modal.innerHTML = `
+        <div class="tb-basicinfo-dialog">
+            <button class="tb-basicinfo-close" type="button" title="關閉">✕</button>
+            <div class="bi-head">
+                <span class="bi-eyebrow">富宇學森</span>
+                <h3 class="bi-title">基本資料</h3>
+                <span class="bi-title-en">PROJECT INFORMATION</span>
+                <span class="bi-head-rule" aria-hidden="true"></span>
+            </div>
+            <div class="tb-basicinfo-body"><div class="bi-rows">${rows}</div></div>
+        </div>`;
+      document.body.appendChild(modal);
+      modal.querySelector('.tb-basicinfo-close').addEventListener('click', () => modal.classList.remove('open'));
+      // 點遮罩空白處關閉
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('open');
+      });
+    }
+
+    // ESC 關閉（全域只註冊一次）
+    if (!window._tbBasicInfoEscHandler) {
+      window._tbBasicInfoEscHandler = (e) => {
+        const m = document.getElementById('tbBasicInfoModal');
+        if (e.key === 'Escape' && m && m.classList.contains('open')) m.classList.remove('open');
+      };
+      document.addEventListener('keydown', window._tbBasicInfoEscHandler, true);
+    }
+
+    // 導覽列「基本資料」連結（topbar 每次重建都要重綁）
+    const basicInfoLink = topbar.querySelector('.tb-basicinfo-link');
+    if (basicInfoLink) {
+      basicInfoLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // 攔在 SPA 路由委派之前，避免被當成頁面導航
+        modal.classList.add('open');
+      });
+    }
+  })();
 
   // ===== 全域閒置自動返回首頁邏輯 =====
   if (!window._idleTimerInitialized) {
