@@ -211,10 +211,15 @@
 }
 
 /* 分類色 dot */
+.con-nav-dot[data-cat="geology"]    { border-color: rgba(196, 168, 106, 0.5); }
 .con-nav-dot[data-cat="waterproof"] { border-color: rgba(74, 155, 217, 0.5); }
 .con-nav-dot[data-cat="structure"]  { border-color: rgba(212, 145, 92, 0.5);  }
 .con-nav-dot[data-cat="smart"]      { border-color: rgba(107, 201, 143, 0.5); }
 
+.con-nav-item.active .con-nav-dot[data-cat="geology"] {
+    border-color: #C4A86A; background: #C4A86A;
+    box-shadow: 0 0 10px rgba(196, 168, 106, 0.6);
+}
 .con-nav-item.active .con-nav-dot[data-cat="waterproof"] {
     border-color: #4A9BD9; background: #4A9BD9;
     box-shadow: 0 0 10px rgba(74, 155, 217, 0.6);
@@ -424,6 +429,12 @@
     border-radius: 20px;
     margin-bottom: 20px;
     transition: background 0.4s ease, color 0.4s ease;
+}
+
+.con-category-badge[data-cat="geology"] {
+    background: rgba(196, 168, 106, 0.15);
+    color: #D9C08A;
+    border: 1px solid rgba(196, 168, 106, 0.3);
 }
 
 .con-category-badge[data-cat="waterproof"] {
@@ -1039,5 +1050,394 @@
         bottom: auto;
         top: 50%;
         transform: translateY(-50%);
+    }
+}
+
+/* ==========================================================
+   EMS 電動車充電匯流排 專屬版面（左側圖區）
+   ========================================================== */
+.con-ems-layout {
+    width: 100%;
+    max-width: 780px;
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 8px 6px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(45, 80, 22, 0.25) transparent;
+}
+
+.con-ems-layout::-webkit-scrollbar {
+    width: 4px;
+}
+
+.con-ems-layout::-webkit-scrollbar-thumb {
+    background: rgba(45, 80, 22, 0.25);
+    border-radius: 4px;
+}
+
+/* 區塊標題 */
+.con-ems-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #2D5016;
+    margin-bottom: 14px;
+}
+
+.con-ems-section-title::before {
+    content: '';
+    width: 4px;
+    height: 18px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #4E9B6B, #2D5016);
+    flex-shrink: 0;
+}
+
+.con-ems-vs {
+    font-family: var(--font-english-sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #4E9B6B;
+}
+
+/* 建置三步驟 */
+.con-ems-steps {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 26px;
+}
+
+.con-ems-step-card {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(45, 80, 22, 0.10);
+    border-radius: 14px;
+    padding: 18px 14px 14px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.con-ems-step-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 1px solid rgba(45, 80, 22, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.con-ems-step-icon img {
+    width: 74%;
+    height: 74%;
+    object-fit: contain;
+}
+
+.con-ems-step-num {
+    font-family: var(--font-english-sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #4E9B6B;
+    margin-bottom: 4px;
+}
+
+.con-ems-step-name {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 700;
+    color: #24351A;
+    margin-bottom: 4px;
+}
+
+.con-ems-step-desc {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    line-height: 1.6;
+    color: #5E6E56;
+    margin-bottom: 8px;
+}
+
+.con-ems-step-time {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #2D5016;
+    background: rgba(78, 155, 107, 0.14);
+    border: 1px solid rgba(78, 155, 107, 0.25);
+    border-radius: 20px;
+    padding: 2px 12px;
+}
+
+.con-ems-arrow {
+    align-self: center;
+    font-size: 18px;
+    color: rgba(45, 80, 22, 0.35);
+    flex-shrink: 0;
+}
+
+/* 匯流排槽 vs 電纜線槽 對照表 */
+.con-ems-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(45, 80, 22, 0.10);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    font-family: var(--font-sans);
+}
+
+.con-ems-table th,
+.con-ems-table td {
+    padding: 9px 14px;
+    font-size: 13.5px;
+    text-align: center;
+    border-bottom: 1px solid rgba(45, 80, 22, 0.06);
+}
+
+.con-ems-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.con-ems-table thead th {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 10px 14px;
+    background: rgba(45, 80, 22, 0.05);
+}
+
+.con-ems-th-busway {
+    color: #2D5016;
+    background: rgba(78, 155, 107, 0.16) !important;
+}
+
+.con-ems-th-cable {
+    color: #8B8B85;
+}
+
+.con-ems-td-label {
+    text-align: left;
+    width: 32%;
+    font-weight: 600;
+    color: #4A5544;
+}
+
+.con-ems-td-busway {
+    color: #2F6B3F;
+    font-weight: 600;
+    background: rgba(78, 155, 107, 0.08);
+}
+
+.con-ems-td-cable {
+    color: #9A9A93;
+}
+
+/* 分頁切換列 */
+.con-ems-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+
+.con-ems-tab {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #4A5544;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(45, 80, 22, 0.18);
+    border-radius: 24px;
+    padding: 9px 22px;
+    transition: background 0.3s ease, color 0.3s ease,
+                border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.con-ems-tab:hover {
+    border-color: rgba(45, 80, 22, 0.45);
+    box-shadow: 0 4px 12px rgba(45, 80, 22, 0.12);
+}
+
+.con-ems-tab.active {
+    color: #F2F7EE;
+    background: linear-gradient(135deg, #3E6B2A, #2D5016);
+    border-color: #2D5016;
+    box-shadow: 0 6px 16px rgba(45, 80, 22, 0.28);
+}
+
+.con-ems-tab-vs {
+    font-family: var(--font-english-sans);
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.75;
+}
+
+/* 分頁面板 */
+.con-ems-panel {
+    display: none;
+}
+
+.con-ems-panel.active {
+    display: block;
+    animation: emsPanelIn 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes emsPanelIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* EMS 介紹分頁 */
+.con-ems-intro {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.8;
+    color: #4A5544;
+    margin: -4px 0 18px;
+}
+
+.con-ems-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.con-ems-feature-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(45, 80, 22, 0.10);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.con-ems-feature-icon {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: rgba(78, 155, 107, 0.14);
+    border: 1px solid rgba(78, 155, 107, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+}
+
+.con-ems-feature-name {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 700;
+    color: #24351A;
+    margin-bottom: 4px;
+}
+
+.con-ems-feature-desc {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #5E6E56;
+}
+
+/* EMS 版面響應式 */
+@media (max-width: 1024px) {
+    .con-ems-section-title {
+        font-size: 15px;
+    }
+
+    .con-ems-step-icon {
+        width: 52px;
+        height: 52px;
+    }
+
+    .con-ems-table th,
+    .con-ems-table td {
+        padding: 7px 10px;
+        font-size: 12.5px;
+    }
+}
+
+@media (max-width: 768px) {
+    .con-ems-steps {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .con-ems-arrow {
+        transform: rotate(90deg);
+        text-align: center;
+        margin: -2px 0;
+    }
+
+    .con-ems-step-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-align: left;
+        padding: 12px 14px;
+    }
+
+    .con-ems-step-icon {
+        width: 44px;
+        height: 44px;
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    .con-ems-step-body {
+        flex: 1;
+    }
+
+    .con-ems-step-num {
+        margin-bottom: 2px;
+    }
+
+    .con-ems-step-desc {
+        margin-bottom: 4px;
+    }
+
+    .con-ems-tabs {
+        gap: 6px;
+        margin-bottom: 18px;
+    }
+
+    .con-ems-tab {
+        font-size: 12.5px;
+        padding: 7px 14px;
+    }
+
+    .con-ems-features {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .con-ems-feature-card {
+        padding: 12px 14px;
     }
 }

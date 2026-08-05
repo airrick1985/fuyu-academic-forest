@@ -11,7 +11,7 @@
       }
     </script>
     <title>工法介紹 - 富宇學森 The Academic Forest</title>
-    <meta name="description" content="富宇學森工法介紹，包括衛浴防水、窗框防水、樑柱綁筋、智慧設備等精密施工工法展示。">
+    <meta name="description" content="富宇學森工法介紹，包括地質安心、衛浴防水、窗框防水、樑柱綁筋、智慧設備等精密施工工法展示。">
     <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <!-- PWA -->
@@ -124,9 +124,9 @@
 
                 <!-- 可捲動內容區 -->
                 <div class="con-info-content entrance" id="conInfoContent">
-                    <div class="con-category-badge" id="conCategoryBadge" data-cat="waterproof">防水工法</div>
-                    <h1 class="con-info-title" id="conInfoTitle">衛浴防水</h1>
-                    <p class="con-info-subtitle" id="conInfoSubtitle">BATHROOM WATERPROOFING</p>
+                    <div class="con-category-badge" id="conCategoryBadge" data-cat="geology">地質安心</div>
+                    <h1 class="con-info-title" id="conInfoTitle">堅實岩盤地質</h1>
+                    <p class="con-info-subtitle" id="conInfoSubtitle">SOLID BEDROCK FOUNDATION</p>
                     <div class="con-info-divider"></div>
                     <div class="con-info-desc" id="conInfoDesc">載入中...</div>
                 </div>
@@ -135,7 +135,7 @@
             <!-- 免責聲明（限定於展示區，不遮擋左側功能列） -->
             <div class="con-disclaimer">
                 <span class="con-disclaimer-icon">※</span>
-                <span class="con-disclaimer-text">以上工法圖片為 <strong>3D 示意</strong>，僅供參考，實際依施工圖面為準。</span>
+                <span class="con-disclaimer-text">以上工法圖片為 <strong>3D 示意</strong>，僅供參考，實際依施工圖面為準；地質安心內容依據本基地地基調查報告書。</span>
             </div>
         </div>
     </main>
@@ -153,6 +153,66 @@
         (() => {
             // ===== 工法資料定義 =====
             const methods = [
+                {
+                    id: 'geo-bedrock',
+                    title: '堅實岩盤地質',
+                    subtitle: 'SOLID BEDROCK FOUNDATION',
+                    category: 'geology',
+                    categoryLabel: '地質安心',
+                    image: 'assets/images/geology/堅實岩盤地質.webp',
+                    description: '經專業地質鑽探調查，基地地表下約 9 公尺即為砂質泥岩岩盤，依耐震設計規範分析屬「第一類地盤（堅實地盤）」，為三類地盤中最穩固的等級。',
+                    isStepList: false
+                },
+                {
+                    id: 'geo-foundation',
+                    title: '建築坐落岩盤',
+                    subtitle: 'FOUNDATION ON BEDROCK',
+                    category: 'geology',
+                    categoryLabel: '地質安心',
+                    image: 'assets/images/geology/建築坐落岩盤.webp',
+                    description: '地下室開挖 12.7 公尺，採筏式基礎設計，基礎深入岩盤 3.5 公尺以上，承載力經分析大於建築總重量，沉陷量符合建築法規要求，穩固紮實。',
+                    isStepList: false
+                },
+                {
+                    id: 'geo-liquefaction',
+                    title: '土壤液化低潛勢',
+                    subtitle: 'LOW LIQUEFACTION POTENTIAL',
+                    category: 'geology',
+                    categoryLabel: '地質安心',
+                    image: 'assets/images/geology/土壤液化低潛勢.webp',
+                    description: '經政府「土壤液化潛勢查詢系統」查詢，本基地屬低潛勢區；鑽探分析結果，在一般及設計地震下無土壤液化情形。',
+                    isStepList: false
+                },
+                {
+                    id: 'geo-sensitive',
+                    title: '非地質敏感區',
+                    subtitle: 'NON-SENSITIVE GEOLOGICAL AREA',
+                    category: 'geology',
+                    categoryLabel: '地質安心',
+                    image: 'assets/images/geology/非地質敏感區.webp',
+                    description: '經查詢中央地質調查所公告資料，基地未坐落於任何地質敏感區範圍，土地條件單純安心。',
+                    isStepList: false
+                },
+                {
+                    id: 'geo-fault',
+                    title: '斷層未經過基地',
+                    subtitle: 'NO FAULT CROSSING SITE',
+                    category: 'geology',
+                    categoryLabel: '地質安心',
+                    image: 'assets/images/geology/斷層未經過基地.webp',
+                    description: '鄰近之新城斷層（約 2.1 公里）與新竹斷層（約 1.5 公里）均未通過基地，且建築耐震設計已依最新規範納入近斷層效應加強，結構安全再升級。',
+                    isStepList: false
+                },
+                {
+                    id: 'geo-clear',
+                    title: '無其他地質疑慮',
+                    subtitle: 'CLEAR GEOLOGICAL CONDITIONS',
+                    category: 'geology',
+                    categoryLabel: '地質安心',
+                    image: 'assets/images/geology/無其他地質疑慮.webp',
+                    description: '基地地形平坦，無崩塌、滑動情形，無礦坑、隧道；地下水位在地表下約 6.4 公尺，設計並採更保守之水位條件分析，層層把關。',
+                    isStepList: false
+                },
                 {
                     id: 'bathroom-waterproof',
                     title: '衛浴防水',
@@ -296,12 +356,21 @@
                 {
                     id: 'ems-busbar',
                     title: '電動車充電匯流排',
-                    subtitle: 'EV CHARGING BUSWAY',
+                    subtitle: 'EV CHARGING BUSWAY & EMS',
                     category: 'smart',
                     categoryLabel: '智慧設備',
-                    image: 'assets/images/construction method/匯流排EMS.webp',
-                    description: '地下室各層車道預留電動車充電專用匯流排（Busway），未來住戶擴充個人充電樁時，可直接由匯流排引電，實現社區配電智慧化。',
-                    isStepList: false
+                    image: '',
+                    customType: 'ems',
+                    description: '',
+                    isStepList: true,
+                    steps: [
+                        '全區規劃：初期佈建即考量社區現況與未來擴充需求，避免基礎設施反覆變更，兼顧美觀與安全。',
+                        '專設一戶電動車電表：向台電申請獨立電表，與家用、公設用電完全分開，無超載疑慮，用電更安全。',
+                        '匯流排槽（Busway）於高科技廠房、醫院、商辦已使用超過 60 年，耐燃、檢修容易，安全穩定可靠。',
+                        '收費公平：在自己車位安心充電，費用不因車位距離遠近而不同，相同容量價格相同。',
+                        'EMS 電能管理系統：預約尖離峰充電享便宜費率、充電狀態即時監控、自動計費免人工抄表。',
+                        '彈性擴充：住戶有充電需求時再安裝付費，未來每一個車位都能充得到電。'
+                    ]
                 }
             ];
 
@@ -350,6 +419,7 @@
             function buildNavList() {
                 let lastCategory = '';
                 const categoryNames = {
+                    geology: { zh: '地質安心', en: 'GEOLOGY' },
                     waterproof: { zh: '防水工法', en: 'WATERPROOF' },
                     structure: { zh: '結構工法', en: 'STRUCTURE' },
                     smart: { zh: '智慧設備', en: 'SMART SYSTEM' }
@@ -463,8 +533,106 @@
                 }, 1050);
             }
 
+            // ===== EMS 專屬版面（電動車充電匯流排）：三分頁 =====
+            function buildEmsLayout() {
+                const steps = [
+                    { icon: 'assets/images/construction method/EMS步驟1-電表.webp', num: 'STEP 1', name: '申請專設一戶電表', desc: '向台電申請獨立電動車充電電表', time: '約 1~3 個月' },
+                    { icon: 'assets/images/construction method/EMS步驟2-匯流排槽.webp', num: 'STEP 2', name: '匯流排槽佈建', desc: '全區規劃、全區佈建匯流排槽', time: '約 1~2 個月' },
+                    { icon: 'assets/images/construction method/EMS步驟3-充電樁.webp', num: 'STEP 3', name: '安裝充電樁', desc: '依住戶需求隨時申請加裝', time: '約 2~3 週' }
+                ];
+                const rows = [
+                    ['耐燃性', '〇 耐燃', '✕ 易燃'],
+                    ['所需空間', '小', '大'],
+                    ['擴充性', '可隨時調整', '需重新佈線'],
+                    ['通訊 / 網路', '內建', '需另外加裝'],
+                    ['檢修維護', '容易', '困難'],
+                    ['使用年限', '長', '短'],
+                    ['住戶拉線費用', '相同容量價格相同', '依距離長度而不同']
+                ];
+                const emsFeatures = [
+                    { icon: '⏱️', name: '預約充電', desc: '自主選擇尖離峰時段充電，享便宜離峰費率；使用者付費，尖離峰分開計費。' },
+                    { icon: '🛡️', name: '用電安全', desc: '台電專設一戶獨立電表，與家庭用電完全分開，無超載疑慮，在自己車位安心充電。' },
+                    { icon: '⚡', name: '充電速度', desc: '充電樁容量可自由選擇，使用夜間離峰時間充電，起床時就已經充飽電。' },
+                    { icon: '🔌', name: '彈性擴充', desc: '於住戶安裝時再進行擴充付費，讓未來每一個車位都能充得到電。' }
+                ];
+
+                const stepsHtml = steps.map((s, i) => `
+                    ${i > 0 ? '<div class="con-ems-arrow">➜</div>' : ''}
+                    <div class="con-ems-step-card">
+                        <div class="con-ems-step-icon"><img src="${s.icon}" alt="${s.name}" draggable="false"></div>
+                        <div class="con-ems-step-body">
+                            <div class="con-ems-step-num">${s.num}</div>
+                            <div class="con-ems-step-name">${s.name}</div>
+                            <div class="con-ems-step-desc">${s.desc}</div>
+                            <div class="con-ems-step-time">${s.time}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                const rowsHtml = rows.map(r => `
+                    <tr>
+                        <td class="con-ems-td-label">${r[0]}</td>
+                        <td class="con-ems-td-busway">${r[1]}</td>
+                        <td class="con-ems-td-cable">${r[2]}</td>
+                    </tr>
+                `).join('');
+
+                const featuresHtml = emsFeatures.map(f => `
+                    <div class="con-ems-feature-card">
+                        <div class="con-ems-feature-icon">${f.icon}</div>
+                        <div class="con-ems-feature-body">
+                            <div class="con-ems-feature-name">${f.name}</div>
+                            <div class="con-ems-feature-desc">${f.desc}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="con-ems-layout">
+                        <div class="con-ems-tabs">
+                            <button class="con-ems-tab active" data-panel="steps">社區充電・建置三步驟</button>
+                            <button class="con-ems-tab" data-panel="compare">匯流排槽 <span class="con-ems-tab-vs">VS</span> 電纜線槽</button>
+                            <button class="con-ems-tab" data-panel="ems">電能管理系統 EMS</button>
+                        </div>
+                        <div class="con-ems-panels">
+                            <div class="con-ems-panel active" data-panel="steps">
+                                <div class="con-ems-section-title">社區充電・建置三步驟</div>
+                                <div class="con-ems-steps">${stepsHtml}</div>
+                            </div>
+                            <div class="con-ems-panel" data-panel="compare">
+                                <div class="con-ems-section-title">匯流排槽 Busway <span class="con-ems-vs">VS</span> 傳統電纜線槽</div>
+                                <table class="con-ems-table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th class="con-ems-th-busway">匯流排槽</th>
+                                            <th class="con-ems-th-cable">電纜線槽</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${rowsHtml}</tbody>
+                                </table>
+                            </div>
+                            <div class="con-ems-panel" data-panel="ems">
+                                <div class="con-ems-section-title">電能管理系統（EMS）</div>
+                                <p class="con-ems-intro">EMS 即時管理充電樁狀態與電流，進行安全管控；並協助社區自動計費、收費管理，免人工抄表，更加便利可靠。</p>
+                                <div class="con-ems-features">${featuresHtml}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
             // ===== 載入圖片到圖層 =====
             function loadMethodImage(method, layer, isEntrance) {
+                // 專屬版面（非單張圖片）
+                if (method.customType === 'ems') {
+                    if (isEntrance) layer.classList.add('entrance');
+                    layer.innerHTML = buildEmsLayout();
+                    zoomHint.style.display = 'none';
+                    return;
+                }
+                zoomHint.style.display = '';
+
                 kenBurnsCounter++;
                 const kbClass = kenBurnsCounter % 2 === 0 ? 'ken-burns-1' : 'ken-burns-2';
 
@@ -608,26 +776,16 @@
                 }
             });
 
-            // ===== 滑鼠滾輪控制（帶防抖） =====
-            let wheelTimeout = null;
-            let wheelLocked = false;
+            // ===== 滑鼠滾輪切換頁面：已停用（保留捲動內容的原生行為） =====
 
-            conImageArea.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                if (wheelLocked || isTransitioning) return;
-
-                wheelLocked = true;
-
-                if (e.deltaY > 0) {
-                    goNext();
-                } else {
-                    goPrev();
-                }
-
-                wheelTimeout = setTimeout(() => {
-                    wheelLocked = false;
-                }, 1200);
-            }, { passive: false });
+            // ===== EMS 版面分頁切換（事件委派，版面重建後仍有效） =====
+            conImageArea.addEventListener('click', (e) => {
+                const tab = e.target.closest('.con-ems-tab');
+                if (!tab) return;
+                const layout = tab.closest('.con-ems-layout');
+                layout.querySelectorAll('.con-ems-tab').forEach(t => t.classList.toggle('active', t === tab));
+                layout.querySelectorAll('.con-ems-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === tab.dataset.panel));
+            });
 
             // ===== 觸控滑動控制 =====
             let touchStartX = 0;
@@ -655,7 +813,7 @@
             // ===== 圖片預載 =====
             const preloadedImages = new Set();
             function preloadImage(src) {
-                if (preloadedImages.has(src)) return;
+                if (!src || preloadedImages.has(src)) return;
                 preloadedImages.add(src);
                 const img = new Image();
                 img.src = src;
