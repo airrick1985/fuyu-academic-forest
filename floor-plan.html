@@ -1087,13 +1087,20 @@
                         <title>列印 - ${imgAlt}</title>
                         <meta charset="UTF-8">
                         <style>
-                            @page { size: A3 landscape; margin: 5mm 8mm; }
+                            @page { size: A3 landscape; margin: 0; }
                             * { margin: 0; padding: 0; box-sizing: border-box; }
-                            html, body { width: 100%; background: #fff; }
+                            html, body { background: #fff; overflow: hidden; }
                             body {
                                 font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
-                                color: #3d3628; height: 100vh; display: flex; flex-direction: column;
-                                overflow: hidden; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+                                color: #3d3628;
+                                -webkit-print-color-adjust: exact; print-color-adjust: exact;
+                            }
+                            /* 固定實體尺寸紙張畫布（A3 橫式 420×297mm）：版面不隨各電腦的紙張/邊界/縮放設定重排，
+                               列印縮放只會等比縮放整張紙，圖卡相對位置與尺寸恆定 */
+                            .print-sheet {
+                                width: 420mm; height: 297mm; padding: 5mm 8mm;
+                                display: flex; flex-direction: column;
+                                overflow: hidden; background: #fff;
                             }
                             .print-header {
                                 flex: 0 0 auto; position: relative; display: flex; align-items: flex-end;
@@ -1154,6 +1161,7 @@
                         </style>
                     </head>
                     <body>
+                    <div class="print-sheet">
                         <header class="print-header">
                             <div class="ph-brand"><span class="zh">富宇學森</span><span class="en">THE ACADEMIC FOREST</span></div>
                             <div class="ph-title">${imgAlt}</div>
@@ -1170,8 +1178,32 @@
                             <div>本房屋銷售平面圖僅供參考，實際規劃與建材設備依建造變更核准圖面及買賣合約書記載為準。設備位置（包含冷氣室外機 AC、家電設備、家具配置）之方向與角度僅供參考，實際依正式水電配置圖面為準。</div>
                             <div style="margin-top: 2px; font-weight: 600;">不動產經紀業：一研九鼎廣告策劃有限公司</div>
                         </footer>
-                        ${autoPrint ? `<script>
+                    </div>
+                        ${autoPrint ? `<style>
+                            /* 螢幕上將整張 A3 畫布等比縮放置中顯示（僅影響螢幕預覽，不影響列印） */
+                            @media screen {
+                                body {
+                                    background: #4b4b4b; min-height: 100vh;
+                                    display: flex; align-items: center; justify-content: center;
+                                }
+                                .print-sheet {
+                                    transform: scale(var(--fit-scale, 1));
+                                    transform-origin: center center;
+                                    box-shadow: 0 8px 40px rgba(0,0,0,0.45);
+                                }
+                            }
+                            @media print {
+                                .print-sheet { transform: none !important; }
+                            }
+                        </style><script>
                             const img = document.querySelector('img');
+                            const sheet = document.querySelector('.print-sheet');
+                            function fitScreen() {
+                                const s = Math.min(window.innerWidth / sheet.offsetWidth, window.innerHeight / sheet.offsetHeight, 1);
+                                sheet.style.setProperty('--fit-scale', s.toFixed(4));
+                            }
+                            fitScreen();
+                            window.addEventListener('resize', fitScreen);
                             function fireAutoPrint() { setTimeout(() => { window.print(); window.close(); }, 300); }
                             if (img.complete) { fireAutoPrint(); } else { img.onload = fireAutoPrint; }
                         <\/script>` : `<style>
