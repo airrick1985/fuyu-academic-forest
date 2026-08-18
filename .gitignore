@@ -15,3 +15,6 @@ node_modules/
 .env
 dist/
 package-lock.json
+
+# 不需要發布的內部文件與本機工具
+ignore/
