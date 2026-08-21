@@ -33,6 +33,7 @@
     width: 72px;
     min-width: 72px;
     height: 100%;
+    padding-top: 80px; /* 避開左上角 Logo 玻璃小卡 */
     background: rgba(10, 25, 15, 0.95);
     backdrop-filter: blur(20px);
     border-right: 1px solid rgba(91, 168, 200, 0.12);

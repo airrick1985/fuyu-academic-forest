@@ -1,108 +1,202 @@
-/* css/topbar.css */
+/* css/topbar.css — macOS Dock 風格：頂部懸浮白色液態玻璃圓角容器
+   預設收起於畫面上方，hover 左上角 logo（或觸控點擊 logo，.revealed）才滑出；首頁常駐（.pinned）。
+   Logo 獨立為左上角常駐玻璃小卡（.topbar-brand）。 */
 .topbar {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: var(--topbar-height);
-    background: rgba(10, 31, 10, 0.6);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%) translateY(calc(-100% - 40px));
+    opacity: 0;
+    width: max-content;
+    max-width: calc(100vw - 40px);
+    height: auto;
     z-index: 9999;
-    transition: background var(--transition-standard), backdrop-filter var(--transition-standard);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 60px;
-    border-bottom: 1px solid rgba(143, 191, 95, 0.15);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding: 10px 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.62) 100%);
+    backdrop-filter: blur(30px) saturate(1.7);
+    -webkit-backdrop-filter: blur(30px) saturate(1.7);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 30px;
+    box-shadow:
+        0 24px 60px rgba(20, 32, 38, 0.30),
+        0 6px 18px rgba(20, 32, 38, 0.16),
+        inset 0 1px 1px rgba(255, 255, 255, 0.95),
+        inset 0 -1px 8px rgba(120, 145, 155, 0.10);
+    transition:
+        transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+        opacity 0.35s ease;
+    /* 收合時稍作延遲，讓滑鼠有時間從 logo 移到選單上 */
+    transition-delay: 0.5s;
 }
 
-.topbar.scrolled {
-    background: var(--color-glass);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid var(--color-border);
+/* 顯示狀態：首頁常駐 / hover 左上角 logo / 滑鼠停留在列上 / 觸控展開（.revealed） */
+.topbar.pinned,
+.topbar.revealed,
+.topbar:hover,
+.topbar-brand:hover + .topbar {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    transition-delay: 0s;
 }
 
-.topbar-logo a {
+/* 左上角常駐 Logo 玻璃小卡
+   本專案 logo 是金色字，改用深墨綠玻璃底以確保對比（白玻璃底會吃掉金字） */
+.topbar-brand {
+    position: fixed;
+    top: 18px;
+    left: 20px;
+    z-index: 9998;
+    background: linear-gradient(135deg, rgba(14, 36, 14, 0.88) 0%, rgba(24, 52, 24, 0.78) 100%);
+    backdrop-filter: blur(25px) saturate(1.6);
+    -webkit-backdrop-filter: blur(25px) saturate(1.6);
+    border: 1px solid rgba(201, 162, 39, 0.45);
+    border-radius: 22px;
+    padding: 9px 18px;
+    box-shadow:
+        0 12px 32px rgba(10, 20, 12, 0.35),
+        inset 0 1px 1px rgba(255, 255, 255, 0.18);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow var(--transition-standard);
+}
+
+.topbar-brand:hover {
+    transform: scale(1.06);
+    box-shadow:
+        0 16px 40px rgba(10, 20, 12, 0.45),
+        inset 0 1px 1px rgba(255, 255, 255, 0.18);
+}
+
+.topbar-brand a {
     display: flex;
     align-items: center;
-    font-family: var(--font-english-serif);
-    font-size: 28px;
-    color: var(--color-text-primary);
-    font-weight: 700;
-    letter-spacing: 2px;
 }
 
-.topbar-logo img {
-    height: 50px;
-    margin-right: 15px;
+.topbar-brand img {
+    height: 38px;
     object-fit: contain;
+    /* 本專案 xuesen_logo.webp 是金色字，在白玻璃上直接可見，不需 filter */
 }
 
+/* Nav */
 .topbar-nav {
     display: flex;
-    gap: 40px;
+    align-items: center;
+    gap: 4px;
+    margin-right: 14px;
+    padding-right: 16px;
+    border-right: 1px solid rgba(53, 63, 65, 0.12);
 }
 
 .nav-item {
     position: relative;
-    font-family: var(--font-sans);
-    font-weight: 500;
-    font-size: 22px;
 }
 
 .nav-link {
-    color: #E8F5E9;
-    padding: 10px 0;
-    display: block;
-    transition: color var(--transition-standard);
-    font-weight: 500;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 7px 16px 11px;
+    border-radius: 18px;
+    transform-origin: top center;
+    transition:
+        transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+        background-color var(--transition-standard),
+        box-shadow var(--transition-standard);
 }
 
+/* 英文書寫體小字 */
+.nav-en {
+    font-family: var(--font-script);
+    font-size: 14px;
+    line-height: 1;
+    color: rgba(45, 80, 22, 0.62);
+    letter-spacing: 0.5px;
+    transition: color var(--transition-standard);
+    pointer-events: none;
+}
+
+/* 中文：宋體（Noto Serif TC）加粗 */
+.nav-zh {
+    font-family: var(--font-serif);
+    font-weight: 900;
+    font-size: 21px;
+    line-height: 1.35;
+    color: #1E2E14;
+    letter-spacing: 3px;
+    text-indent: 3px; /* 平衡 letter-spacing 造成的右側空隙 */
+    transition: color var(--transition-standard);
+}
+
+/* Hover：macOS Dock 式放大浮出（頂部版向下浮出） */
+.nav-item:hover .nav-link {
+    transform: scale(1.14) translateY(5px);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow:
+        0 12px 26px rgba(20, 32, 38, 0.16),
+        inset 0 1px 1px rgba(255, 255, 255, 1);
+}
+
+.nav-item:hover .nav-zh,
+.nav-item.active .nav-zh {
+    color: #3D6B22;
+}
+
+.nav-item:hover .nav-en,
+.nav-item.active .nav-en {
+    color: rgba(61, 107, 34, 0.85);
+}
+
+/* Active：Dock 式圓點指示 */
 .nav-link::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0%;
-    height: 2px;
-    background-color: var(--color-accent);
-    transition: width var(--transition-standard);
-    box-shadow: 0 0 10px var(--color-accent);
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #C9A227;
+    box-shadow: 0 0 6px rgba(201, 162, 39, 0.8);
+    transition: transform var(--transition-standard);
 }
 
-.nav-item:hover .nav-link,
-.nav-item.active .nav-link {
-    color: var(--color-accent);
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-}
-
-.nav-item:hover .nav-link::after,
 .nav-item.active .nav-link::after {
-    width: 100%;
+    transform: translateX(-50%) scale(1);
 }
 
-/* Submenu */
+/* Submenu：往下展開 */
 .submenu {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 14px);
     left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: var(--color-bg-card);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    padding: 15px 0;
-    min-width: 160px;
+    transform: translateX(-50%) translateY(-10px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.8) 100%);
+    backdrop-filter: blur(25px) saturate(1.6);
+    -webkit-backdrop-filter: blur(25px) saturate(1.6);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 18px;
+    padding: 10px 8px;
+    min-width: 170px;
     opacity: 0;
     visibility: hidden;
-    transition: all var(--transition-standard);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow:
+        0 18px 44px rgba(20, 32, 38, 0.22),
+        inset 0 1px 1px rgba(255, 255, 255, 0.95);
+}
+
+/* 填補 submenu 與 Dock 之間的 hover 空隙 */
+.submenu::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    height: 16px;
 }
 
 .nav-item:hover .submenu {
@@ -113,24 +207,35 @@
 
 .submenu-item a {
     display: block;
-    padding: 10px 25px;
-    color: #E8F5E9;
-    font-size: 20px;
+    padding: 9px 22px;
+    border-radius: 12px;
+    color: #1E2E14;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-align: center;
     white-space: nowrap;
     transition: all var(--transition-standard);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .submenu-item a:hover {
-    background: rgba(255, 215, 0, 0.1);
-    color: var(--color-accent);
+    background: rgba(61, 107, 34, 0.10);
+    color: #3D6B22;
+    transform: scale(1.05);
 }
 
-/* Fullscreen Button */
-.fullscreen-btn {
-    background: transparent;
-    border: 1px solid var(--color-border);
-    color: var(--color-text-primary);
+/* Actions（BGM / 全螢幕） */
+.topbar-actions {
+    display: flex;
+    align-items: center;
+}
+
+.fullscreen-btn,
+.bgm-btn {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(53, 63, 65, 0.16);
+    color: #2A3A20;
     border-radius: 50%;
     width: 44px;
     height: 44px;
@@ -138,61 +243,36 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all var(--transition-standard);
-    margin-left: 20px;
+    transition:
+        transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+        background-color var(--transition-standard),
+        color var(--transition-standard),
+        border-color var(--transition-standard),
+        box-shadow var(--transition-standard);
 }
 
-.fullscreen-btn:hover {
-    background: rgba(255, 215, 0, 0.1);
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+.fullscreen-btn {
+    margin-left: 12px;
 }
 
-.fullscreen-btn svg {
-    transition: transform var(--transition-standard);
+.fullscreen-btn:hover,
+.bgm-btn:hover {
+    transform: scale(1.15) translateY(3px);
+    background: rgba(255, 255, 255, 0.95);
+    color: #3D6B22;
+    border-color: rgba(61, 107, 34, 0.55);
+    box-shadow: 0 10px 22px rgba(20, 32, 38, 0.16);
 }
 
-.fullscreen-btn:hover svg {
-    transform: scale(1.1);
-}
-
-/* BGM Button & Control Wrapper */
+/* BGM Control */
 .bgm-control {
     position: relative;
     display: flex;
     align-items: center;
-    margin-right: 12px;
 }
 
 .bgm-btn {
-    background: transparent;
-    border: 1px solid var(--color-border);
-    color: var(--color-text-primary);
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all var(--transition-standard);
     z-index: 2;
-}
-
-.bgm-btn:hover {
-    background: rgba(255, 215, 0, 0.1);
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-}
-
-.bgm-btn svg {
-    transition: transform 0.3s ease;
-}
-
-.bgm-btn:hover svg {
-    transform: scale(1.1);
 }
 
 .bgm-volume-slider {
@@ -200,10 +280,10 @@
     top: 50%;
     right: 100%;
     transform: translateY(-50%) translateX(20px);
-    background: rgba(20, 30, 20, 0.85);
-    border: 1px solid var(--color-border);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
     border-radius: 40px;
     padding: 0 16px 0 20px;
     height: 40px;
@@ -214,6 +294,7 @@
     transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     z-index: 1;
     pointer-events: none;
+    box-shadow: 0 10px 26px rgba(20, 32, 38, 0.18);
 }
 
 .bgm-control:hover .bgm-volume-slider {
@@ -228,7 +309,7 @@
     appearance: none;
     width: 80px;
     height: 4px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(53, 63, 65, 0.18);
     border-radius: 2px;
     outline: none;
     cursor: pointer;
@@ -240,9 +321,9 @@
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: var(--color-accent);
+    background: #3D6B22;
     cursor: pointer;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 10px rgba(61, 107, 34, 0.5);
     transition: transform 0.2s;
 }
 
@@ -250,7 +331,40 @@
     transform: scale(1.3);
 }
 
-.topbar-actions {
-    display: flex;
-    align-items: center;
+/* 窄螢幕微調 */
+@media (max-width: 1500px) {
+    .topbar {
+        padding: 8px 14px;
+        top: 12px;
+    }
+
+    .topbar-nav {
+        gap: 0;
+        margin-right: 8px;
+        padding-right: 8px;
+    }
+
+    .nav-link {
+        padding: 6px 10px 10px;
+    }
+
+    .nav-zh {
+        font-size: 18px;
+        letter-spacing: 2px;
+        text-indent: 2px;
+    }
+
+    .nav-en {
+        font-size: 12px;
+    }
+
+    .topbar-brand {
+        top: 12px;
+        left: 14px;
+        padding: 7px 14px;
+    }
+
+    .topbar-brand img {
+        height: 32px;
+    }
 }

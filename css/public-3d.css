@@ -152,7 +152,7 @@
 /* ===== 頁面標題浮層 ===== */
 .pub3d-title-overlay {
     position: absolute;
-    top: calc(var(--topbar-height, 80px) + 20px);
+    top: 90px; /* 避開左上角 Logo 玻璃小卡（約 y 0–74px） */
     left: 40px;
     z-index: 10;
     pointer-events: none;

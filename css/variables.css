@@ -18,12 +18,14 @@
   --font-sans: 'Noto Sans TC', sans-serif;
   --font-english-serif: 'Playfair Display', serif;
   --font-english-sans: 'Inter', sans-serif;
+  --font-script: 'Parisienne', 'Playfair Display', cursive;
 
   /* Spacing */
   --content-max-width: 1920px;
   --section-spacing: 120px;
   --card-radius: 12px;
-  --topbar-height: 80px;
+  /* Topbar 已改為頂部懸浮 Dock（預設收起、hover logo 顯示），不佔版面空間；各頁面沿用此變數計算頂部留白 */
+  --topbar-height: 0px;
 
   /* Animations */
   --transition-standard: 0.3s ease;

@@ -23,25 +23,25 @@
 
   // 統一維護的全域 Topbar HTML 模板
   const topbarHTML = `
+    <div class="topbar-brand">
+        <a href="index.html">
+            <img src="assets/images/xuesen_logo.webp" alt="富宇學森" class="topbar-brand-img">
+        </a>
+    </div>
     <header class="topbar">
-        <div class="topbar-logo">
-            <a href="index.html">
-                <img src="assets/images/xuesen_logo.webp" alt="富宇學森" class="topbar-logo-img">
-            </a>
-        </div>
         <nav class="topbar-nav">
             <div class="nav-item">
-                <a href="brand-fuyu.html" class="nav-link">品牌介紹</a>
+                <a href="brand-fuyu.html" class="nav-link"><span class="nav-en">Brand</span><span class="nav-zh">品牌介紹</span></a>
                 <div class="submenu">
                     <div class="submenu-item"><a href="brand-fuyu.html">富宇機構</a></div>
                     <div class="submenu-item"><a href="brand-team.html">建築團隊</a></div>
                 </div>
             </div>
             <div class="nav-item">
-                <a href="#basic-info" class="nav-link tb-basicinfo-link">基本資料</a>
+                <a href="#basic-info" class="nav-link tb-basicinfo-link"><span class="nav-en">Information</span><span class="nav-zh">基本資料</span></a>
             </div>
             <div class="nav-item">
-                <a href="panorama.html" class="nav-link">地段環境</a>
+                <a href="panorama.html" class="nav-link"><span class="nav-en">Location</span><span class="nav-zh">地段環境</span></a>
                 <div class="submenu">
                     <div class="submenu-item"><a href="panorama.html">全景</a></div>
                     <div class="submenu-item"><a href="location.html">360°環景</a></div>
@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div class="nav-item">
-                <a href="exterior-3d.html" class="nav-link">建築規劃</a>
+                <a href="exterior-3d.html" class="nav-link"><span class="nav-en">Architecture</span><span class="nav-zh">建築規劃</span></a>
                 <div class="submenu">
                     <div class="submenu-item"><a href="exterior-3d.html">外觀3D</a></div>
                     <div class="submenu-item"><a href="public-3d.html">公設3D</a></div>
@@ -57,10 +57,10 @@
                 </div>
             </div>
             <div class="nav-item">
-                <a href="materials.html" class="nav-link">建材設備</a>
+                <a href="materials.html" class="nav-link"><span class="nav-en">Materials</span><span class="nav-zh">建材設備</span></a>
             </div>
             <div class="nav-item">
-                <a href="construction.html" class="nav-link">工法介紹</a>
+                <a href="construction.html" class="nav-link"><span class="nav-en">Craftsmanship</span><span class="nav-zh">工法介紹</span></a>
             </div>
         </nav>
         <div class="topbar-actions">
@@ -93,6 +93,38 @@
 
   const topbar = document.querySelector('.topbar');
   if (!topbar) return;
+
+  // ===== 自動隱藏：首頁常駐（pinned），其他頁面 hover 左上角 logo 才顯示 =====
+  {
+    const path = (window.location.pathname.split('/').pop() || 'index.html').split('#')[0] || 'index.html';
+    if (path === 'index.html') {
+      topbar.classList.add('pinned');
+    }
+  }
+  // 顯示觸發由 CSS 處理（hover logo 或 topbar 本身）。
+  // 以下為觸控裝置支援：無 hover 可用時，點 logo 第一下先展開選單（不導頁），點頁面其他處收合。
+  if (!window._topbarBrandTapSetup) {
+    window._topbarBrandTapSetup = true;
+    document.addEventListener('click', (e) => {
+      const tb = document.querySelector('.topbar');
+      if (!tb || tb.classList.contains('pinned')) return;
+
+      const onBrand = e.target.closest('.topbar-brand a');
+      if (onBrand) {
+        // 若 topbar 仍收在畫面外（觸控點擊時不會先有 hover），先展開而不導頁
+        if (tb.getBoundingClientRect().top < 0) {
+          e.preventDefault();
+          e.stopPropagation();
+          tb.classList.add('revealed');
+        }
+        return;
+      }
+
+      if (!e.target.closest('.topbar')) {
+        tb.classList.remove('revealed');
+      }
+    }, true);
+  }
 
   // ===== 全螢幕按鈕邏輯 =====
   const fullscreenBtn = topbar.querySelector('.fullscreen-btn');
@@ -526,7 +558,7 @@
 
     document.addEventListener('click', (e) => {
       // 檢查是否點擊了導航鏈接（在 topbar 中的 nav-item 或 submenu-item）
-      const navLink = e.target.closest('.topbar a[href]');
+      const navLink = e.target.closest('.topbar a[href], .topbar-brand a[href]');
 
       if (navLink && !navLink.href.includes('http')) {
         // 防止默認頁面加載
