@@ -1,7 +1,7 @@
 {
-  "version": "1.0.114",
-  "timestamp": 1787299172151,
-  "generatedAt": "2026-08-21T07:59:32.151Z",
+  "version": "1.0.115",
+  "timestamp": 1787658418635,
+  "generatedAt": "2026-08-25T11:46:58.635Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "c6c3785fd4e1",
@@ -798,6 +798,11 @@
       "size": 1072,
       "mtime": 1787298448068.173
     },
+    "css/vr-house.css": {
+      "hash": "42c8a0fd17a1",
+      "size": 1172,
+      "mtime": 1787658382197.0237
+    },
     "js/animations.js": {
       "hash": "3b61b715eddc",
       "size": 1105,
@@ -829,14 +834,14 @@
       "mtime": 1776234442471.6812
     },
     "js/spa-router.js": {
-      "hash": "f9447121ce0f",
-      "size": 14842,
-      "mtime": 1776240343939.2778
+      "hash": "3bd02197ad09",
+      "size": 14858,
+      "mtime": 1787658408568.0425
     },
     "js/topbar.js": {
-      "hash": "df56bbb2bd19",
-      "size": 28018,
-      "mtime": 1787298472919.794
+      "hash": "2e94546cd546",
+      "size": 28110,
+      "mtime": 1787658407346.9556
     }
   }
 }

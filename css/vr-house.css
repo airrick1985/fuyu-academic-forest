@@ -1,0 +1,63 @@
+/* css/vr-house.css — VR樣品屋（外部 360 網站嵌入頁） */
+
+body.vr-house-page {
+    overflow: hidden;
+}
+
+/* 全視窗 iframe 容器 */
+.vrh-wrapper {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background: linear-gradient(135deg, #0A1F0A 0%, #1a3a1a 100%);
+    z-index: 1;
+}
+
+.vrh-frame {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.vrh-frame.loaded {
+    opacity: 1;
+}
+
+/* iframe 載入前的提示 */
+.vrh-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    color: #ccc;
+    font-size: 15px;
+    letter-spacing: 2px;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.vrh-loading.hidden {
+    opacity: 0;
+}
+
+.vrh-loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #6fae46;
+    border-radius: 50%;
+    animation: vrh-spin 1s linear infinite;
+}
+
+@keyframes vrh-spin {
+    to { transform: rotate(360deg); }
+}

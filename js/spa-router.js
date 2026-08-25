@@ -63,7 +63,7 @@ if (!window._spaRouterInitialized) {
 
             // Merge Stylesheets
             // 頁面特定的 CSS 文件總是需要重新加載（即使已存在）
-            const pageSpecificCSSPatterns = ['brand.css', 'location.css', 'google-map.css', 'floor-plan.css', 'exterior-3d.css', 'public-3d.css', 'panorama.css', 'coming-soon.css', 'materials.css', 'construction.css'];
+            const pageSpecificCSSPatterns = ['brand.css', 'location.css', 'google-map.css', 'floor-plan.css', 'exterior-3d.css', 'public-3d.css', 'panorama.css', 'coming-soon.css', 'materials.css', 'construction.css', 'vr-house.css'];
 
             const existingLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l => l.getAttribute('href'));
             const newLinks = doc.querySelectorAll('link[rel="stylesheet"]');

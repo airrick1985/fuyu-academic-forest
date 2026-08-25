@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="app-version" content="1.0.115">
+    <script>
+      if (!window.location.hostname.includes('localhost') && window.location.hostname !== '127.0.0.1' && !window.location.hostname.includes('pages.dev')) {
+        document.write('<base href="/fuyu-academic-forest/">');
+      }
+    </script>
+    <title>VR樣品屋 - 富宇學森 The Academic Forest</title>
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2D5016">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="富宇學森">
+    <link rel="apple-touch-icon" href="assets/images/fuyu-logo.webp">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css?v=1.0.7">
+    <link rel="stylesheet" href="css/global.css?v=1.0.7">
+    <link rel="stylesheet" href="css/topbar.css?v=1.0.7">
+
+    <link rel="stylesheet" href="css/vr-house.css?v=1.0.115">
+    <!-- PWA Update Loading Screen -->
+    <style id="pwa-loading-style">
+      #pwa-loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #0A1F0A 0%, #1a3a1a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        opacity: 1;
+        transition: opacity 0.5s ease-out;
+      }
+      #pwa-loading-overlay.hidden {
+        pointer-events: none;
+        opacity: 0;
+      }
+      .pwa-loading-content {
+        text-align: center;
+        color: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      .pwa-loading-spinner {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 20px;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        border-top-color: #2D5016;
+        border-radius: 50%;
+        animation: pwa-spin 1s linear infinite;
+      }
+      @keyframes pwa-spin {
+        to { transform: rotate(360deg); }
+      }
+      .pwa-loading-text {
+        font-size: 16px;
+        font-weight: 500;
+        color: #ccc;
+      }
+    </style>
+</head>
+
+<body class="vr-house-page">
+    <!-- PWA Loading Overlay -->
+    <div id="pwa-loading-overlay">
+      <div class="pwa-loading-content">
+        <div class="pwa-loading-spinner"></div>
+        <div class="pwa-loading-text">正在檢查更新...</div>
+      </div>
+    </div>
+    <!-- Top Bar (由 topbar.js 統一注入) -->
+    <div id="topbar-root"></div>
+
+    <!-- VR樣品屋（外部 360 導覽網站） -->
+    <div class="vrh-wrapper">
+        <div class="vrh-loading" id="vrhLoading">
+            <div class="vrh-loading-spinner"></div>
+            <div>VR樣品屋 載入中…</div>
+        </div>
+        <iframe class="vrh-frame" id="vrhFrame"
+            src="https://chihle.vip/Fuyu_forest/"
+            title="VR樣品屋"
+            allow="fullscreen; gyroscope; accelerometer; magnetometer; xr-spatial-tracking"
+            allowfullscreen
+            loading="eager"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+
+    <!-- JS -->
+    <script src="js/topbar.js"></script>
+    <script>
+        (() => {
+            const frame = document.getElementById('vrhFrame');
+            const loading = document.getElementById('vrhLoading');
+            if (!frame) return;
+
+            frame.addEventListener('load', () => {
+                frame.classList.add('loaded');
+                if (loading) loading.classList.add('hidden');
+            });
+
+            // 外部網站異常時的保底：8 秒後仍未觸發 load 也淡入 iframe，避免整頁卡在載入畫面
+            setTimeout(() => {
+                frame.classList.add('loaded');
+                if (loading) loading.classList.add('hidden');
+            }, 8000);
+        })();
+    </script>
+    <!-- Asset Update Manager -->
+    <script src="js/asset-update-manager.js"></script>
+    <script src="js/pwa-register.js?v=1.0.6" defer></script>
+    <script src="js/spa-router.js?v=1.0.6"></script>
+</body>
+
+</html>
