@@ -1,7 +1,7 @@
 {
-  "version": "1.0.115",
-  "timestamp": 1787658418635,
-  "generatedAt": "2026-08-25T11:46:58.635Z",
+  "version": "1.0.116",
+  "timestamp": 1788336198649,
+  "generatedAt": "2026-09-02T08:03:18.649Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "c6c3785fd4e1",
@@ -19,29 +19,29 @@
       "mtime": 1780724548367.3154
     },
     "assets/images/3D-03.webp": {
-      "hash": "ef4d3a6a319a",
-      "size": 1026768,
-      "mtime": 1782902902806.7683
+      "hash": "31d5f8c53c8c",
+      "size": 913408,
+      "mtime": 1788336091189.753
     },
     "assets/images/3D-04.webp": {
-      "hash": "0e9270833fa7",
-      "size": 1005276,
-      "mtime": 1782902913564.4458
+      "hash": "5af8e7efcaea",
+      "size": 808574,
+      "mtime": 1788335853660.4167
     },
     "assets/images/3D-05.webp": {
-      "hash": "5c6cdced84a0",
-      "size": 993730,
-      "mtime": 1782902926806.6128
+      "hash": "fcd1719c5791",
+      "size": 888264,
+      "mtime": 1788335870364.8828
     },
     "assets/images/3D-06.webp": {
-      "hash": "f561997a3c65",
-      "size": 967594,
-      "mtime": 1782902937383.8584
+      "hash": "bf0730ef8266",
+      "size": 510098,
+      "mtime": 1788335831712.8545
     },
     "assets/images/3D-07.webp": {
-      "hash": "1ab1294caeec",
-      "size": 988446,
-      "mtime": 1782902949763.8557
+      "hash": "3167214bdf8a",
+      "size": 727770,
+      "mtime": 1788335795543.1394
     },
     "assets/images/3D-08.webp": {
       "hash": "426bc4dd0aff",
