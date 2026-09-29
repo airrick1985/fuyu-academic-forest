@@ -1,7 +1,7 @@
 {
-  "version": "1.0.116",
-  "timestamp": 1788336198649,
-  "generatedAt": "2026-09-02T08:03:18.649Z",
+  "version": "1.0.117",
+  "timestamp": 1790661444084,
+  "generatedAt": "2026-09-29T05:57:24.084Z",
   "assets": {
     "assets/images/360pano.webp": {
       "hash": "c6c3785fd4e1",
@@ -11,7 +11,7 @@
     "assets/images/3D-01.webp": {
       "hash": "51e5c54337b1",
       "size": 759538,
-      "mtime": 1778482727110.8484
+      "mtime": 1778482727110.8486
     },
     "assets/images/3D-02.webp": {
       "hash": "26ec6dfdd7d1",
@@ -19,34 +19,104 @@
       "mtime": 1780724548367.3154
     },
     "assets/images/3D-03.webp": {
-      "hash": "31d5f8c53c8c",
-      "size": 913408,
-      "mtime": 1788336091189.753
+      "hash": "edd3927e0791",
+      "size": 919232,
+      "mtime": 1790660988344.5454
     },
     "assets/images/3D-04.webp": {
       "hash": "5af8e7efcaea",
       "size": 808574,
-      "mtime": 1788335853660.4167
+      "mtime": 1790661054757.6926
     },
     "assets/images/3D-05.webp": {
       "hash": "fcd1719c5791",
       "size": 888264,
-      "mtime": 1788335870364.8828
+      "mtime": 1790661071766.83
     },
     "assets/images/3D-06.webp": {
-      "hash": "bf0730ef8266",
-      "size": 510098,
-      "mtime": 1788335831712.8545
+      "hash": "e07d3e9e7586",
+      "size": 511308,
+      "mtime": 1790661094132.4583
     },
     "assets/images/3D-07.webp": {
       "hash": "3167214bdf8a",
       "size": 727770,
-      "mtime": 1788335795543.1394
+      "mtime": 1790661085250.401
     },
     "assets/images/3D-08.webp": {
       "hash": "426bc4dd0aff",
       "size": 1829236,
       "mtime": 1780724533567.4329
+    },
+    "assets/images/CCPark.webp": {
+      "hash": "e3aee98db72e",
+      "size": 415208,
+      "mtime": 1774585197565.1072
+    },
+    "assets/images/COSTCO.webp": {
+      "hash": "1baade8a7c32",
+      "size": 408100,
+      "mtime": 1774585214859.1597
+    },
+    "assets/images/DECATHLON.webp": {
+      "hash": "c615f5b11015",
+      "size": 614536,
+      "mtime": 1774585228041.6074
+    },
+    "assets/images/GPES.webp": {
+      "hash": "533956ecda43",
+      "size": 307860,
+      "mtime": 1774585296811.4082
+    },
+    "assets/images/GWJH.webp": {
+      "hash": "470cf1afb5d0",
+      "size": 477886,
+      "mtime": 1774585311693.741
+    },
+    "assets/images/HSP.webp": {
+      "hash": "3e5176799f43",
+      "size": 464522,
+      "mtime": 1774585326087.21
+    },
+    "assets/images/KHPark.webp": {
+      "hash": "b25dffd97ca7",
+      "size": 461934,
+      "mtime": 1774585340922.8955
+    },
+    "assets/images/Lake-Placid.webp": {
+      "hash": "cb930418f1c1",
+      "size": 755096,
+      "mtime": 1780810598374.345
+    },
+    "assets/images/NEHS.webp": {
+      "hash": "7e1f55d0308b",
+      "size": 498690,
+      "mtime": 1780804549278.467
+    },
+    "assets/images/NYIO.webp": {
+      "hash": "f3160fc9a337",
+      "size": 402846,
+      "mtime": 1774585354143.3706
+    },
+    "assets/images/Starbucks.webp": {
+      "hash": "801d950eadf8",
+      "size": 326052,
+      "mtime": 1774585366677.1792
+    },
+    "assets/images/Sun Yat-sen Freeway.webp": {
+      "hash": "492135d02c88",
+      "size": 275778,
+      "mtime": 1774585383550.6426
+    },
+    "assets/images/TSMC.webp": {
+      "hash": "4603118399fa",
+      "size": 463814,
+      "mtime": 1774585409411.2683
+    },
+    "assets/images/amenities-collage-16x9.png": {
+      "hash": "288e079613c2",
+      "size": 2909871,
+      "mtime": 1789032419214.5015
     },
     "assets/images/architect-01.webp": {
       "hash": "d80fea55c444",
@@ -57,11 +127,6 @@
       "hash": "32926f79b17b",
       "size": 292480,
       "mtime": 1778482670980.3508
-    },
-    "assets/images/CCPark.webp": {
-      "hash": "e3aee98db72e",
-      "size": 415208,
-      "mtime": 1774585197565.1072
     },
     "assets/images/coming-soon-bg.webp": {
       "hash": "f71df34ff23d",
@@ -111,7 +176,7 @@
     "assets/images/construction method/匯流排EMS.webp": {
       "hash": "853e0e067a6e",
       "size": 106080,
-      "mtime": 1774699308338.5276
+      "mtime": 1774699308338.5273
     },
     "assets/images/construction method/樑柱綁筋.md": {
       "hash": "de7487f8c09e",
@@ -193,16 +258,6 @@
       "size": 390114,
       "mtime": 1781414738225.0962
     },
-    "assets/images/COSTCO.webp": {
-      "hash": "1baade8a7c32",
-      "size": 408100,
-      "mtime": 1774585214859.1597
-    },
-    "assets/images/DECATHLON.webp": {
-      "hash": "c615f5b11015",
-      "size": 614536,
-      "mtime": 1774585228041.6074
-    },
     "assets/images/equipment/ES41890.md": {
       "hash": "88b71586e5f0",
       "size": 152,
@@ -218,11 +273,6 @@
       "size": 422430,
       "mtime": 1774607672422.7808
     },
-    "assets/images/equipment/Gemini_Generated_Image_3lfaxp3lfaxp3lfa.jpg": {
-      "hash": "fe4da5e09c0f",
-      "size": 1821271,
-      "mtime": 1774635009276.0056
-    },
     "assets/images/equipment/GRASS.md": {
       "hash": "1d91735640b7",
       "size": 592,
@@ -233,30 +283,10 @@
       "size": 168782,
       "mtime": 1774676867211.8809
     },
-    "assets/images/equipment/kronotex-2.md": {
-      "hash": "1055a11d257f",
-      "size": 338,
-      "mtime": 1774749163512.8274
-    },
-    "assets/images/equipment/kronotex-2.webp": {
-      "hash": "7c2d694c0d15",
-      "size": 492092,
-      "mtime": 1774630956483.289
-    },
-    "assets/images/equipment/kronotex-3.webp": {
-      "hash": "7bfd43ae7e6a",
-      "size": 407228,
-      "mtime": 1774588031140.6777
-    },
-    "assets/images/equipment/kronotex.md": {
-      "hash": "e3b0c44298fc",
-      "size": 0,
-      "mtime": 1774588187045.9165
-    },
-    "assets/images/equipment/kronotex.webp": {
-      "hash": "5477bcc1b851",
-      "size": 162634,
-      "mtime": 1774604436563.246
+    "assets/images/equipment/Gemini_Generated_Image_3lfaxp3lfaxp3lfa.jpg": {
+      "hash": "fe4da5e09c0f",
+      "size": 1821271,
+      "mtime": 1774635009276.0059
     },
     "assets/images/equipment/LEICHT-2.md": {
       "hash": "a19f339a5a5c",
@@ -293,31 +323,6 @@
       "size": 614150,
       "mtime": 1774605618792.261
     },
-    "assets/images/equipment/panasonic-door.md": {
-      "hash": "f92705dbc608",
-      "size": 3152,
-      "mtime": 1774749163500.0168
-    },
-    "assets/images/equipment/panasonic室內門-2.webp": {
-      "hash": "9077c0e5156a",
-      "size": 102450,
-      "mtime": 1774681442071.0618
-    },
-    "assets/images/equipment/panasonic室內門-3.webp": {
-      "hash": "311e2ddd0072",
-      "size": 144512,
-      "mtime": 1774682214383.9102
-    },
-    "assets/images/equipment/panasonic室內門-4.webp": {
-      "hash": "e7cb00c83e3b",
-      "size": 136276,
-      "mtime": 1774682435710.206
-    },
-    "assets/images/equipment/panasonic室內門.webp": {
-      "hash": "b86309a6e8da",
-      "size": 432030,
-      "mtime": 1774587923170.7102
-    },
     "assets/images/equipment/TOTO-1.webp": {
       "hash": "08f154efc365",
       "size": 199160,
@@ -346,7 +351,7 @@
     "assets/images/equipment/YKK-3.webp": {
       "hash": "0812945b4c78",
       "size": 121234,
-      "mtime": 1774684527536.3518
+      "mtime": 1774684527536.3516
     },
     "assets/images/equipment/YKK-4.webp": {
       "hash": "6f461d9ac9c9",
@@ -356,7 +361,57 @@
     "assets/images/equipment/YKK-5.webp": {
       "hash": "40f654cb5062",
       "size": 307770,
-      "mtime": 1774685566515.3352
+      "mtime": 1774685566515.335
+    },
+    "assets/images/equipment/kronotex-2.md": {
+      "hash": "1055a11d257f",
+      "size": 338,
+      "mtime": 1774749163512.8276
+    },
+    "assets/images/equipment/kronotex-2.webp": {
+      "hash": "7c2d694c0d15",
+      "size": 492092,
+      "mtime": 1774630956483.289
+    },
+    "assets/images/equipment/kronotex-3.webp": {
+      "hash": "7bfd43ae7e6a",
+      "size": 407228,
+      "mtime": 1774588031140.6777
+    },
+    "assets/images/equipment/kronotex.md": {
+      "hash": "e3b0c44298fc",
+      "size": 0,
+      "mtime": 1774588187045.9165
+    },
+    "assets/images/equipment/kronotex.webp": {
+      "hash": "5477bcc1b851",
+      "size": 162634,
+      "mtime": 1774604436563.2463
+    },
+    "assets/images/equipment/panasonic-door.md": {
+      "hash": "f92705dbc608",
+      "size": 3152,
+      "mtime": 1774749163500.0168
+    },
+    "assets/images/equipment/panasonic室內門-2.webp": {
+      "hash": "9077c0e5156a",
+      "size": 102450,
+      "mtime": 1774681442071.0618
+    },
+    "assets/images/equipment/panasonic室內門-3.webp": {
+      "hash": "311e2ddd0072",
+      "size": 144512,
+      "mtime": 1774682214383.9102
+    },
+    "assets/images/equipment/panasonic室內門-4.webp": {
+      "hash": "e7cb00c83e3b",
+      "size": 136276,
+      "mtime": 1774682435710.206
+    },
+    "assets/images/equipment/panasonic室內門.webp": {
+      "hash": "b86309a6e8da",
+      "size": 432030,
+      "mtime": 1774587923170.7102
     },
     "assets/images/equipment/主浴地磚.webp": {
       "hash": "adbf6fecf6c9",
@@ -406,7 +461,7 @@
     "assets/images/equipment/次浴地磚.webp": {
       "hash": "69725ef31d80",
       "size": 338072,
-      "mtime": 1775888429681.813
+      "mtime": 1775888429681.8132
     },
     "assets/images/equipment/次浴壁磚.webp": {
       "hash": "4b5ece2e0008",
@@ -426,12 +481,12 @@
     "assets/images/equipment/水槽.webp": {
       "hash": "f2a781920446",
       "size": 205270,
-      "mtime": 1774635070544.652
+      "mtime": 1774635070544.6523
     },
     "assets/images/equipment/水龍頭.webp": {
       "hash": "8cd79a1acc94",
       "size": 42820,
-      "mtime": 1774634252395.882
+      "mtime": 1774634252395.8823
     },
     "assets/images/equipment/洗碗機.webp": {
       "hash": "c203fde68cbb",
@@ -541,42 +596,17 @@
     "assets/images/geology/無其他地質疑慮.webp": {
       "hash": "52d63c85ef37",
       "size": 786214,
-      "mtime": 1785932966087.7715
+      "mtime": 1785932966087.7717
     },
     "assets/images/geology/非地質敏感區.webp": {
       "hash": "78f91d40b159",
       "size": 648170,
       "mtime": 1785932931383.4468
     },
-    "assets/images/GPES.webp": {
-      "hash": "533956ecda43",
-      "size": 307860,
-      "mtime": 1774585296811.4082
-    },
-    "assets/images/GWJH.webp": {
-      "hash": "470cf1afb5d0",
-      "size": 477886,
-      "mtime": 1774585311693.7412
-    },
     "assets/images/hero-forest.webp": {
       "hash": "4fe5bb0ba7fd",
       "size": 2208592,
       "mtime": 1774543339148.1106
-    },
-    "assets/images/HSP.webp": {
-      "hash": "3e5176799f43",
-      "size": 464522,
-      "mtime": 1774585326087.21
-    },
-    "assets/images/KHPark.webp": {
-      "hash": "b25dffd97ca7",
-      "size": 461934,
-      "mtime": 1774585340922.8955
-    },
-    "assets/images/Lake-Placid.webp": {
-      "hash": "cb930418f1c1",
-      "size": 755096,
-      "mtime": 1780810598374.345
     },
     "assets/images/layout/1F.webp": {
       "hash": "d79d4f1032bd",
@@ -601,7 +631,7 @@
     "assets/images/layout/A1.webp": {
       "hash": "c3e28b06e5f0",
       "size": 440466,
-      "mtime": 1775735956274.785
+      "mtime": 1775735956274.7852
     },
     "assets/images/layout/A2.webp": {
       "hash": "a5a167a5adf3",
@@ -648,6 +678,11 @@
       "size": 426210,
       "mtime": 1776423447076.1995
     },
+    "assets/images/layout/RF.webp": {
+      "hash": "7981afb353ee",
+      "size": 595342,
+      "mtime": 1780219611810.0027
+    },
     "assets/images/layout/background.webp": {
       "hash": "15a9db011b4e",
       "size": 476652,
@@ -668,45 +703,15 @@
       "size": 1141304,
       "mtime": 1774542180142.7144
     },
-    "assets/images/layout/RF.webp": {
-      "hash": "7981afb353ee",
-      "size": 595342,
-      "mtime": 1780219611810.0027
-    },
     "assets/images/location.webp": {
       "hash": "c5d4deb44551",
       "size": 3029596,
       "mtime": 1780807544326.363
     },
-    "assets/images/NEHS.webp": {
-      "hash": "7e1f55d0308b",
-      "size": 498690,
-      "mtime": 1780804549278.4668
-    },
-    "assets/images/NYIO.webp": {
-      "hash": "f3160fc9a337",
-      "size": 402846,
-      "mtime": 1774585354143.3706
-    },
-    "assets/images/Starbucks.webp": {
-      "hash": "801d950eadf8",
-      "size": 326052,
-      "mtime": 1774585366677.1792
-    },
-    "assets/images/Sun Yat-sen Freeway.webp": {
-      "hash": "492135d02c88",
-      "size": 275778,
-      "mtime": 1774585383550.6426
-    },
     "assets/images/train-station.webp": {
       "hash": "8a7d036c3c90",
       "size": 402604,
       "mtime": 1774585394650.641
-    },
-    "assets/images/TSMC.webp": {
-      "hash": "4603118399fa",
-      "size": 463814,
-      "mtime": 1774585409411.2683
     },
     "assets/images/xuesen_logo.webp": {
       "hash": "fab186b97e0f",
@@ -836,7 +841,7 @@
     "js/spa-router.js": {
       "hash": "3bd02197ad09",
       "size": 14858,
-      "mtime": 1787658408568.0425
+      "mtime": 1787658408568.0427
     },
     "js/topbar.js": {
       "hash": "2e94546cd546",
