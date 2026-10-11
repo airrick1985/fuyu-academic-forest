@@ -1,7 +1,7 @@
 {
-  "version": "1.0.119",
-  "timestamp": 1791704022840,
-  "generatedAt": "2026-10-11T07:33:42.840Z",
+  "version": "1.0.120",
+  "timestamp": 1791705035271,
+  "generatedAt": "2026-10-11T07:50:35.271Z",
   "assets": {
     "assets/.DS_Store": {
       "hash": "df3df3017445",
@@ -397,6 +397,11 @@
       "hash": "7bfd43ae7e6a",
       "size": 407228,
       "mtime": 1774588031140.6777
+    },
+    "assets/images/equipment/kronotex-list.jpg": {
+      "hash": "2e2063225d4c",
+      "size": 344276,
+      "mtime": 1791705001788.5693
     },
     "assets/images/equipment/kronotex.md": {
       "hash": "e3b0c44298fc",
