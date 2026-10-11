@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="css/variables.css?v=1.0.7">
     <link rel="stylesheet" href="css/global.css?v=1.0.7">
     <link rel="stylesheet" href="css/topbar.css?v=1.0.7">
-    <link rel="stylesheet" href="css/public-3d.css?v=1.0.7">
+    <link rel="stylesheet" href="css/public-3d.css?v=1.0.8">
     <!-- PWA Update Loading Screen -->
     <style id="pwa-loading-style">
       #pwa-loading-overlay {
@@ -170,6 +170,7 @@
         <div class="pub3d-title-overlay">
             <h2>公設3D</h2>
             <p>PUBLIC FACILITIES 3D</p>
+            <button class="pub3d-list-btn pub3d-list-open-btn" id="pubListOpen">▶ 公設列表</button>
         </div>
 
         <!-- 計數器 -->
@@ -184,6 +185,23 @@
             <span>左右箭頭切換</span>
         </div>
 
+    </div>
+
+    <!-- 公設列表 覆蓋層 (A3 橫式列表；預覽 / 列印 / 下載圖片共用同一份 iframe 版面) -->
+    <div class="pub3d-list-overlay" id="pubListOverlay">
+        <div class="pub3d-list-toolbar">
+            <div class="pub3d-list-toolbar-title">公設列表<span>A3 橫式</span></div>
+            <div class="pub3d-list-toolbar-actions">
+                <button class="pub3d-list-btn" id="pubListPrint">🖨️ 列印</button>
+                <button class="pub3d-list-btn" id="pubListDownload">⬇ 下載圖片</button>
+                <button class="pub3d-list-close" id="pubListClose" title="關閉">✕</button>
+            </div>
+        </div>
+        <div class="pub3d-list-stage" id="pubListStage">
+            <div class="pub3d-list-paper" id="pubListPaper">
+                <iframe id="pubListFrame" title="公設列表 A3 預覽"></iframe>
+            </div>
+        </div>
     </div>
 
     <!-- JS -->
@@ -254,10 +272,302 @@
             prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
             nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
 
-            // ===== 鍵盤左右箭頭 =====
+            // ===== 鍵盤左右箭頭（公設列表開啟時改為 ESC 關閉）=====
             document.addEventListener('keydown', (e) => {
+                if (listOverlay.classList.contains('active')) {
+                    if (e.key === 'Escape') closePublicList();
+                    return;
+                }
                 if (e.key === 'ArrowLeft') goToSlide(currentIndex - 1);
                 if (e.key === 'ArrowRight') goToSlide(currentIndex + 1);
+            });
+
+            // ===== 公設列表（A3 橫式圖卡；預覽 / 列印 / 下載圖片共用）=====
+            // 左欄外觀 2 張大圖、右欄公設 2×3；公設的名稱、英文、介紹與圖片直接取自上方輪播的 data-*，改輪播即同步
+            const EXTERIOR_LIST = [
+                {
+                    name: '建築外觀', en: 'ARCHITECTURE', img: 'assets/images/3D-01.webp',
+                    desc: '地上 14 層、地下 3 層，規劃住家 89 戶。立面以白色框架搭配溫潤木紋金屬格柵，垂直線條挺拔俐落，於綠意街廓中展現沉穩大器的建築表情，與周邊林蔭相映成景。'
+                },
+                {
+                    name: '迎賓門廳', en: 'ENTRANCE', img: 'assets/images/3D-02.webp',
+                    desc: '林蔭與花草夾道的入口步道引領歸途，石材門框搭配古銅色藝術門扇，以森林枝葉為紋飾意象；層層綠籬圍塑私密靜謐的歸家動線，展現第一眼的精緻與尊榮。'
+                }
+            ];
+            const amenityList = Array.from(slides, s => ({
+                no: s.dataset.tag, name: s.dataset.title, en: s.dataset.subtitle,
+                img: s.querySelector('img').src, desc: s.dataset.desc
+            }));
+
+            // A3 橫式版面樣式（420×297mm 固定實體尺寸；字型只用系統字，確保預覽、列印、圖片三者一致）
+            const LIST_SHEET_CSS = `
+                @page { size: A3 landscape; margin: 0; }
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                html, body { background: #fff; overflow: hidden; }
+                .ml-sheet {
+                    width: 420mm; height: 297mm; padding: 8mm 12mm 5mm;
+                    display: flex; flex-direction: column; overflow: hidden; background: #fff;
+                    font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', 'Heiti TC', sans-serif;
+                    color: #3d3628;
+                    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+                }
+                .ml-header {
+                    flex: 0 0 auto; position: relative; display: flex; align-items: flex-end;
+                    justify-content: space-between; padding: 0 2px 8px; border-bottom: 2.5px solid #8b6914;
+                }
+                .ml-brand { display: flex; align-items: baseline; gap: 12px; }
+                .ml-brand .zh { font-size: 24px; font-weight: 700; letter-spacing: 8px; color: #4A5759; }
+                .ml-brand .en { font-size: 11px; font-weight: 600; letter-spacing: 4px; color: #8b6914; }
+                .ml-title {
+                    position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%);
+                    padding-left: 14px; font-size: 30px; font-weight: 700; letter-spacing: 14px;
+                    color: #8b6914; white-space: nowrap;
+                }
+                .ml-en { font-size: 11px; font-weight: 600; letter-spacing: 4px; color: #9a8e7a; }
+
+                .pf-body {
+                    flex: 1 1 auto; min-height: 0; display: grid;
+                    grid-template-columns: minmax(0, 0.87fr) minmax(0, 1fr); gap: 0 5mm; padding: 4mm 0 3mm;
+                }
+                .pf-sec { min-height: 0; display: flex; flex-direction: column; gap: 1.2mm; }
+                .pf-strip {
+                    flex: 0 0 6mm; display: flex; align-items: center; gap: 8px; padding: 0 10px;
+                    background: #4A5759; border-left: 3px solid #c8a05a; color: #fff;
+                }
+                .pf-strip .zh { font-size: 13px; font-weight: 700; letter-spacing: 4px; }
+                .pf-strip .en { font-size: 9px; font-weight: 600; letter-spacing: 2px; color: #d9c79a; }
+                .pf-grid { flex: 1 1 auto; min-height: 0; display: grid; gap: 3.6mm; }
+                .pf-ext .pf-grid { grid-template-rows: repeat(2, minmax(0, 1fr)); }
+                .pf-amen .pf-grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    grid-template-rows: repeat(3, minmax(0, 1fr));
+                }
+
+                .pf-card {
+                    min-height: 0; display: flex; flex-direction: column;
+                    background: #fff; border: 1px solid #e3d9c3; overflow: hidden;
+                }
+                .pf-photo { position: relative; flex: 1 1 auto; min-height: 0; background: #eee5d3; }
+                .pf-photo > img {
+                    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+                }
+                .pf-text { flex: 0 0 auto; height: 20mm; padding: 2.2mm 3mm 0; border-top: 1px solid #eee5d3; }
+                .pf-text h3 {
+                    display: flex; align-items: baseline; gap: 0.5em; margin-bottom: 1.2mm;
+                    font-size: 15px; font-weight: 700; letter-spacing: 1px; color: #3d3628;
+                    white-space: nowrap; overflow: hidden;
+                }
+                .pf-text h3 b { color: #8b6914; letter-spacing: 0.5px; }
+                .pf-text h3 small { font-size: 9px; font-weight: 600; letter-spacing: 2px; color: #9a8e7a; }
+                .pf-text p {
+                    font-size: 11px; line-height: 1.6; color: #5f5646;
+                    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+                }
+                .pf-ext .pf-text { height: 21mm; padding: 2.4mm 3.6mm 0; }
+                .pf-ext .pf-text h3 { font-size: 17px; letter-spacing: 2px; }
+                .pf-ext .pf-text h3 small { font-size: 10px; }
+                .pf-ext .pf-text p { font-size: 12px; }
+
+                .ml-footer {
+                    flex: 0 0 auto; padding-top: 4px; border-top: 1px solid #d8cfba;
+                    text-align: center; font-size: 10px; line-height: 1.6; color: rgba(100, 90, 70, 0.8);
+                }
+                .ml-footer .agent { font-weight: 600; }
+            `;
+
+            // 圖片轉絕對網址（iframe srcdoc 內也能正確載入）
+            function listAssetUrl(src) {
+                return new URL(src, document.baseURI).href;
+            }
+
+            // 單張圖卡 HTML
+            function buildListCardHtml(it) {
+                return `<article class="pf-card">
+                    <div class="pf-photo"><img src="${listAssetUrl(it.img)}" alt="${it.name}"></div>
+                    <div class="pf-text">
+                        <h3>${it.no ? `<b>${it.no}</b>` : ''}<span>${it.name}</span><small>${it.en}</small></h3>
+                        <p>${it.desc}</p>
+                    </div>
+                </article>`;
+            }
+
+            function buildListSectionHtml(cls, zh, en, items) {
+                return `<section class="pf-sec ${cls}">
+                    <div class="pf-strip"><span class="zh">${zh}</span><span class="en">${en}</span></div>
+                    <div class="pf-grid">${items.map(buildListCardHtml).join('')}</div>
+                </section>`;
+            }
+
+            // 完整 A3 頁面 HTML（放進預覽 iframe；列印與下載圖片皆取自該 iframe）
+            function buildListSheetDocHtml() {
+                return `<!DOCTYPE html>
+                    <html lang="zh-Hant">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>富宇學森 公設列表</title>
+                        <style id="ml-style">${LIST_SHEET_CSS}</style>
+                    </head>
+                    <body>
+                    <div class="ml-sheet">
+                        <header class="ml-header">
+                            <div class="ml-brand"><span class="zh">富宇學森</span><span class="en">THE ACADEMIC FOREST</span></div>
+                            <div class="ml-title">公設列表</div>
+                            <div class="ml-en">EXTERIOR &amp; PUBLIC FACILITIES</div>
+                        </header>
+                        <main class="pf-body">
+                            ${buildListSectionHtml('pf-ext', '外觀', 'EXTERIOR', EXTERIOR_LIST)}
+                            ${buildListSectionHtml('pf-amen', '公設', 'PUBLIC FACILITIES', amenityList)}
+                        </main>
+                        <footer class="ml-footer">
+                            <div>※ 本3D透視圖僅供參考，實際以建造變更核准圖面為準。</div>
+                            <div class="agent">不動產經紀業：一研九鼎廣告策劃有限公司</div>
+                        </footer>
+                    </div>
+                    </body>
+                    </html>`;
+            }
+
+            // ===== 公設列表 覆蓋層：預覽 / 列印 / 下載圖片 =====
+            const listOverlay = document.getElementById('pubListOverlay');
+            const listStage = document.getElementById('pubListStage');
+            const listPaper = document.getElementById('pubListPaper');
+            const listFrame = document.getElementById('pubListFrame');
+            const listDownloadBtn = document.getElementById('pubListDownload');
+            const LIST_IMG_SCALE = 3; // 下載圖片倍率：A3 約 4760×3370px（≈ 288dpi）
+            let listFrameReady = null; // 首次開啟才產生版面，iframe 載入完成的 Promise
+            let listImagesReady = null; // 版面圖片換成內嵌 JPEG data URL 完成的 Promise（列印與下載圖片共用）
+
+            // A3 紙張等比縮放置中於畫面
+            function fitListPaper() {
+                const s = Math.min(
+                    (listStage.clientWidth - 48) / listPaper.offsetWidth,
+                    (listStage.clientHeight - 48) / listPaper.offsetHeight,
+                    1
+                );
+                listPaper.style.setProperty('--fit', Math.max(s, 0.1));
+            }
+
+            function openPublicList() {
+                if (!listFrameReady) {
+                    listFrameReady = new Promise(resolve => {
+                        listFrame.addEventListener('load', () => {
+                            // 焦點在 iframe 內時 ESC 仍可關閉
+                            listFrame.contentDocument.addEventListener('keydown', (e) => {
+                                if (e.key === 'Escape') closePublicList();
+                            });
+                            resolve();
+                        }, { once: true });
+                    });
+                    listFrame.srcdoc = buildListSheetDocHtml();
+                    // 載入後於背景把 3000px 原圖換成 2000px JPEG：列印另存 PDF 由約 75MB 降至約 6MB，下載圖片也免再轉檔
+                    listImagesReady = listFrameReady.then(() => Promise.all(
+                        [...listFrame.contentDocument.querySelectorAll('img')].map(async img => {
+                            img.src = await listImageToDataUrl(img.currentSrc || img.src);
+                            await img.decode();
+                        })
+                    ));
+                }
+                listOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                fitListPaper();
+            }
+
+            function closePublicList() {
+                listOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            document.getElementById('pubListOpen').addEventListener('click', openPublicList);
+            document.getElementById('pubListClose').addEventListener('click', closePublicList);
+            listStage.addEventListener('click', (e) => {
+                if (e.target === listStage) closePublicList();
+            });
+            window.addEventListener('resize', () => {
+                if (listOverlay.classList.contains('active')) fitListPaper();
+            });
+
+            // 列印：直接列印 iframe 內的 A3 版面（@page A3 橫式、無邊界）；圖片轉檔失敗時仍以原圖列印
+            document.getElementById('pubListPrint').addEventListener('click', async () => {
+                await listFrameReady;
+                await listImagesReady.catch(err => console.warn('[公設列表] 圖片轉檔失敗，改以原圖列印', err));
+                listFrame.contentWindow.focus();
+                listFrame.contentWindow.print();
+            });
+
+            // 圖片轉成內嵌 data URL（SVG 圖片無法載入外部資源）；外觀大圖在 A3 上約 2000px 寬，縮至 2000px 內控制檔案大小
+            async function listImageToDataUrl(src) {
+                const img = new Image();
+                img.src = src;
+                await img.decode();
+                const r = Math.min(1, 2000 / Math.max(img.naturalWidth, img.naturalHeight));
+                const c = document.createElement('canvas');
+                c.width = Math.max(1, Math.round(img.naturalWidth * r));
+                c.height = Math.max(1, Math.round(img.naturalHeight * r));
+                const ctx = c.getContext('2d');
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(0, 0, c.width, c.height);
+                ctx.drawImage(img, 0, 0, c.width, c.height);
+                return c.toDataURL('image/jpeg', 0.88);
+            }
+
+            // 將 iframe 內的 A3 版面以 SVG foreignObject 畫到 Canvas，輸出 JPEG
+            async function renderListSheetImage() {
+                await listImagesReady;
+                const doc = listFrame.contentDocument;
+                const sheet = doc.querySelector('.ml-sheet');
+                const rect = sheet.getBoundingClientRect();
+                const w = Math.ceil(rect.width);
+                const h = Math.ceil(rect.height);
+
+                const clone = sheet.cloneNode(true); // 圖片已是內嵌 data URL
+
+                const css = doc.getElementById('ml-style').textContent
+                    .replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+                const xhtml = new XMLSerializer().serializeToString(clone);
+                const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w * LIST_IMG_SCALE}" height="${h * LIST_IMG_SCALE}" viewBox="0 0 ${w} ${h}">`
+                    + `<foreignObject x="0" y="0" width="${w}" height="${h}">`
+                    + `<div xmlns="http://www.w3.org/1999/xhtml"><style>${css}</style>${xhtml}</div>`
+                    + `</foreignObject></svg>`;
+
+                const img = new Image();
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+                });
+
+                const canvas = document.createElement('canvas');
+                canvas.width = w * LIST_IMG_SCALE;
+                canvas.height = h * LIST_IMG_SCALE;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                return new Promise((resolve, reject) => {
+                    canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('toBlob 失敗')), 'image/jpeg', 0.92);
+                });
+            }
+
+            listDownloadBtn.addEventListener('click', async () => {
+                if (listDownloadBtn.disabled) return;
+                const btnText = listDownloadBtn.textContent;
+                listDownloadBtn.disabled = true;
+                listDownloadBtn.textContent = '圖片產生中…';
+                try {
+                    const blob = await renderListSheetImage();
+                    // 連結不放進 DOM：blob: 屬同源，若冒泡到 document 會被 spa-router 當成換頁攔截
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = '富宇學森_公設列表_A3.jpg';
+                    a.click();
+                    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+                } catch (err) {
+                    console.error('[公設列表] 圖片產生失敗', err);
+                    alert('此瀏覽器無法直接產生圖片，請改用「列印」並選擇「另存為 PDF」。');
+                } finally {
+                    listDownloadBtn.disabled = false;
+                    listDownloadBtn.textContent = btnText;
+                }
             });
 
             // ===== 初始化第一張的文字卡片 =====

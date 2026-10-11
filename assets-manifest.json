@@ -1,7 +1,7 @@
 {
-  "version": "1.0.118",
-  "timestamp": 1791702358789,
-  "generatedAt": "2026-10-11T07:05:58.789Z",
+  "version": "1.0.119",
+  "timestamp": 1791704022840,
+  "generatedAt": "2026-10-11T07:33:42.840Z",
   "assets": {
     "assets/.DS_Store": {
       "hash": "df3df3017445",
@@ -317,6 +317,11 @@
       "hash": "4f3f1586699c",
       "size": 616646,
       "mtime": 1774606374953.4504
+    },
+    "assets/images/equipment/LEICHT-list.jpg": {
+      "hash": "38fd0dade279",
+      "size": 40959,
+      "mtime": 1791703978872.4612
     },
     "assets/images/equipment/LEICHT.md": {
       "hash": "6e35171941f6",
@@ -804,9 +809,9 @@
       "mtime": 1774942235948.653
     },
     "css/public-3d.css": {
-      "hash": "f68c101fb347",
-      "size": 8130,
-      "mtime": 1787298524152.896
+      "hash": "85eaa18b3231",
+      "size": 11448,
+      "mtime": 1791703735044.8474
     },
     "css/topbar.css": {
       "hash": "f4c9c7e51a24",
