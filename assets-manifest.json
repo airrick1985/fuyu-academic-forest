@@ -1,8 +1,18 @@
 {
-  "version": "1.0.117",
-  "timestamp": 1790661444084,
-  "generatedAt": "2026-09-29T05:57:24.084Z",
+  "version": "1.0.118",
+  "timestamp": 1791702358789,
+  "generatedAt": "2026-10-11T07:05:58.789Z",
   "assets": {
+    "assets/.DS_Store": {
+      "hash": "df3df3017445",
+      "size": 10244,
+      "mtime": 1790661641653.3442
+    },
+    "assets/images/.DS_Store": {
+      "hash": "20fc6ae2b6a0",
+      "size": 8196,
+      "mtime": 1789034854144.3494
+    },
     "assets/images/360pano.webp": {
       "hash": "c6c3785fd4e1",
       "size": 23399190,
@@ -257,6 +267,11 @@
       "hash": "3d981f0c604c",
       "size": 390114,
       "mtime": 1781414738225.0962
+    },
+    "assets/images/equipment/.DS_Store": {
+      "hash": "d65165279105",
+      "size": 6148,
+      "mtime": 1789034854140.662
     },
     "assets/images/equipment/ES41890.md": {
       "hash": "88b71586e5f0",
@@ -779,9 +794,9 @@
       "mtime": 1774942208796.6353
     },
     "css/materials.css": {
-      "hash": "26c3a4426108",
-      "size": 23511,
-      "mtime": 1775975267274.4373
+      "hash": "9a832a4d4931",
+      "size": 25283,
+      "mtime": 1791702160732.2458
     },
     "css/panorama.css": {
       "hash": "c3a27e744779",

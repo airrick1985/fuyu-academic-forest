@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="css/variables.css?v=1.0.7">
     <link rel="stylesheet" href="css/global.css?v=1.0.7">
     <link rel="stylesheet" href="css/topbar.css?v=1.0.7">
-    <link rel="stylesheet" href="css/materials.css?v=1.0.6">
+    <link rel="stylesheet" href="css/materials.css?v=1.0.8">
     <!-- PWA Update Loading Screen -->
     <style id="pwa-loading-style">
       #pwa-loading-overlay {
@@ -92,6 +92,7 @@
         <div class="mat-page-header">
             <h1>建材設備</h1>
             <p class="mat-page-subtitle">BUILDING MATERIALS</p>
+            <button class="equip-grid-btn equip-grid-btn-header mat-list-open-btn" id="matListOpen">▶ 建材設備表</button>
         </div>
 
         <!-- 平面圖 + Hotspot 區域 -->
@@ -185,6 +186,23 @@
             <div class="equip-lightbox-info">
                 <h3 id="equipLightboxName"></h3>
                 <div class="equip-lightbox-desc" id="equipLightboxDesc"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 建材設備表 覆蓋層 (A3 橫式列表；預覽 / 列印 / 下載圖片共用同一份 iframe 版面) -->
+    <div class="mat-list-overlay" id="matListOverlay">
+        <div class="mat-list-toolbar">
+            <div class="mat-list-toolbar-title">建材設備表<span>A3 橫式</span></div>
+            <div class="mat-list-toolbar-actions">
+                <button class="equip-grid-btn equip-grid-btn-header" id="matListPrint">🖨️ 列印</button>
+                <button class="equip-grid-btn equip-grid-btn-header" id="matListDownload">⬇ 下載圖片</button>
+                <button class="equip-grid-overlay-close mat-list-close" id="matListClose" title="關閉">✕</button>
+            </div>
+        </div>
+        <div class="mat-list-stage" id="matListStage">
+            <div class="mat-list-paper" id="matListPaper">
+                <iframe id="matListFrame" title="建材設備表 A3 預覽"></iframe>
             </div>
         </div>
     </div>
@@ -841,6 +859,470 @@
                 }
             ];
 
+            // ===== 建材設備表（A3 橫式圖卡；預覽 / 列印 / 下載圖片共用，改這裡即可）=====
+            // 依序排入 6 欄網格，每列上方的區域色帶自動依區域分段；最後一格為備註
+            // brand：品牌（可省略）｜name：設備項目名稱｜img：圖片｜fit：'cover' 滿版裁切（預設完整顯示）
+            // pos：滿版裁切的對齊位置｜bg：圖框底色｜tags：適用空間｜note：例外備註｜swatches：多張磚材小圖｜desc：介紹文字（約 3 行）
+            const EQ = 'assets/images/equipment/';
+            const materialsList = [
+                {
+                    area: '玄關', en: 'ENTRANCE', items: [
+                        {
+                            name: '精銳甲種鑄鋁鋼木防暴防火門', img: EQ + '玄關門.webp', fit: 'cover',
+                            desc: '室外側鑄鋁板、室內側木飾板，通過 CNS11227-1 60A 防火認證；德式三度空間重力鉸鍊與上中下三支牛角栓，防撬更安心。'
+                        },
+                        {
+                            brand: 'Waferlock', name: '維夫拉克電子鎖', img: EQ + '維夫拉克電子鎖.webp', fit: 'cover',
+                            desc: '指紋、密碼、卡片、App 與機械鑰匙五種開鎖方式；隱藏式把手設計，具自動上鎖與防窺密碼功能。'
+                        }
+                    ]
+                },
+                {
+                    area: '全室', en: 'INTERIOR', items: [
+                        {
+                            brand: 'KRONOTEX', name: '德國耐磨木地板', img: EQ + 'kronotex.webp', fit: 'cover',
+                            desc: '德國原裝進口，符合歐洲 E1 級環保標準；表面耐磨塗層防刮抗污，搭配靜音墊與專利扣型，降低室內回音。'
+                        },
+                        {
+                            brand: 'Panasonic', name: '室內門', img: EQ + 'panasonic室內門.webp',
+                            desc: '日本原裝門扇，EB 塗裝耐污耐刮；LVL 合板芯不易變形，消音鎖舌搭配門擋緩衝條，開關門更安靜。'
+                        },
+                        {
+                            brand: 'YKK AP', name: '超高水密窗', img: EQ + 'YKK-1.webp', fit: 'cover', tags: '6+6 膠合玻璃',
+                            desc: '獨家等壓水密結構，通過 1500Pa 水密、3600Pa 耐風壓測試；搭配 6+6 膠合玻璃，隔音性能可達 35 等級。'
+                        }
+                    ]
+                },
+                {
+                    area: '陽台', en: 'BALCONY', items: [
+                        {
+                            name: '電動曬衣架', img: EQ + '電動曬衣架.webp', fit: 'cover', pos: 'center 20%',
+                            desc: '鋁合金機身耐磨防鏽，無線遙控電動升降，LED 三段調光照明；下降遇障礙物自動停止，承載約 35 公斤。'
+                        }
+                    ]
+                },
+                {
+                    area: '廚房', en: 'KITCHEN', items: [
+                        {
+                            brand: 'LEICHT', name: '德國頂級廚具', img: EQ + 'LEICHT.webp', fit: 'cover',
+                            desc: '近 90 年歷史的德國廚具品牌，高精密設備製造結合職人手工研磨；搭配 GRASS 緩衝鉸鍊與自動定位抽軌。'
+                        },
+                        {
+                            brand: 'BOSCH', name: '全嵌式洗碗機', img: EQ + '洗碗機.webp',
+                            desc: 'Load sensor 自動偵測洗滌水量，BLDC 無碳刷靜音馬達；內建加熱元件免接熱水，InfoLight 投影燈顯示洗程。'
+                        },
+                        {
+                            brand: 'BOSCH', name: '嵌入式微波燒烤爐', img: EQ + '微波烤箱.webp', note: 'A3、A6 無此配備',
+                            desc: '快速解凍與加熱，內建 8 種自動烹調程式與燒烤功能；不鏽鋼內腔表面光滑，清潔容易。'
+                        },
+                        {
+                            brand: 'Rinnai', name: '玻璃雙口爐', img: EQ + '瓦斯爐.webp',
+                            desc: '日本專利內焰爐頭火焰集中，一級能效省能高熱效；不鏽鋼雙層湯盤方便清潔，並附熄火安全裝置。'
+                        },
+                        {
+                            brand: 'Rinnai', name: '懸掛式臭氧殺菌烘碗機', img: EQ + '烘碗機.webp',
+                            desc: '一鍵啟動烘乾與臭氧抑菌，SUS#304 加粗碗架；鏡面玻璃面板、快拆門板，開門即斷電，下方附 LED 照明。'
+                        },
+                        {
+                            brand: 'BEST', name: '隱藏式抽油煙機', img: EQ + '排油煙機.webp',
+                            desc: '排風降噪靜音技術，高亮度 LED 照明；可拆式高吸附濾網搭配不鏽鋼油杯，清潔保養更輕鬆。'
+                        },
+                        {
+                            brand: 'BEST', name: '電器收納櫃', img: EQ + '電器收納櫃.webp', note: 'A3、A6 無此配備',
+                            desc: '可同時收納電鍋與電子鍋，強力抽風扇排除蒸氣；抽盤式設計方便使用，上掀門省空間又安全。'
+                        },
+                        {
+                            brand: 'Hansgrohe', name: '廚房伸縮花灑龍頭', img: EQ + '水龍頭.webp',
+                            desc: '150mm 龍頭空間洗滌不侷促，氣泡／花灑雙段出水；50cm 抽拉長度，sBox lite 軟管收納順暢不糾結。'
+                        },
+                        {
+                            brand: 'PRIMY', name: '不鏽鋼水槽', img: EQ + '水槽.webp',
+                            desc: '不鏽鋼毛絲面大單槽設計，槽體寬敞，大型鍋具清洗更從容。'
+                        }
+                    ]
+                },
+                {
+                    area: '衛浴', en: 'BATHROOM', items: [
+                        {
+                            brand: 'TOTO', name: '全自動馬桶', img: EQ + 'TOTO馬桶.webp', tags: '主浴、次浴',
+                            desc: '自動掀蓋與洗淨、溫熱便座、暖風烘乾及除臭；前噴霧搭配喜貼心抗污釉，水龍捲洗淨強勁又靜音。'
+                        },
+                        {
+                            brand: 'TOTO', name: '下嵌式臉盆', img: EQ + '主浴面盆.webp', bg: '#050303', tags: '主浴',
+                            desc: '方形下嵌式臉盆，檯面線條俐落；喜貼心抗污釉超平滑表面，讓污垢難以附著，清潔更輕鬆。'
+                        },
+                        {
+                            brand: 'TOTO', name: '下嵌式臉盆', img: EQ + '次浴面盆.webp', bg: '#000', tags: '次浴',
+                            desc: '橢圓下嵌式臉盆，造型柔和簡約；喜貼心抗污釉超平滑表面，讓污垢難以附著，清潔更輕鬆。'
+                        },
+                        {
+                            brand: 'TOTO', name: '淋浴用控溫龍頭', img: EQ + 'TOTO蓮蓬頭.webp', tags: '主浴、次浴',
+                            desc: '安心觸技術讓龍頭表面維持低溫，有效預防燙傷；SMA 記憶合金控溫，水溫反應約為一般蠟製線圈 6 倍。'
+                        },
+                        {
+                            brand: 'TOTO', name: '臉盆用單槍龍頭', img: EQ + '面盆龍頭.webp', tags: '主浴、次浴',
+                            desc: '高耐久陶瓷心，開關觸感輕鬆流暢；方正俐落的造型，為衛浴空間增添精緻質感。'
+                        },
+                        {
+                            brand: '台達', name: '浴室暖風機', img: EQ + '浴室暖風機.webp',
+                            desc: '暖房、涼風、乾燥、換氣四合一，PTC 陶瓷加熱器高效供暖；省電 DC 直流馬達，八重安全防護，附感應小夜燈。'
+                        }
+                    ]
+                },
+                {
+                    area: '衛浴地壁磚', en: 'BATHROOM TILES', items: [
+                        {
+                            name: '主浴地壁磚',
+                            swatches: [
+                                { label: '壁磚', img: EQ + '主浴壁磚.webp' },
+                                { label: '淋浴區花磚', img: EQ + '主浴花磚.webp' },
+                                { label: '地磚', img: EQ + '主浴地磚.webp' }
+                            ],
+                            desc: '壁面與地坪採用木紋質感磚，淋浴區搭配六角花磚，沉穩大地色系，打造耐用美觀的衛浴空間。'
+                        },
+                        {
+                            name: '次浴地壁磚',
+                            swatches: [
+                                { label: '壁磚', img: EQ + '次浴壁磚.webp' },
+                                { label: '淋浴區花磚', img: EQ + '次浴花磚.webp' },
+                                { label: '地磚', img: EQ + '次浴地磚.webp' }
+                            ],
+                            desc: '壁面採用淺色紋理磚，淋浴區搭配白色六角花磚，地坪為木紋質感磚，整體明亮清爽。'
+                        }
+                    ]
+                }
+            ];
+
+            // 備註（排在最後一格）
+            const LIST_NOTES = [
+                'A3、A6 兩間套房衛浴皆採用主浴建材。',
+                '標示「A3、A6 無此配備」之項目，A3、A6 戶型未配置該項設備。'
+            ];
+            const LIST_COLS = 6;
+
+            // A3 橫式版面樣式（420×297mm 固定實體尺寸；字型只用系統字，確保預覽、列印、圖片三者一致）
+            const LIST_SHEET_CSS = `
+                @page { size: A3 landscape; margin: 0; }
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                html, body { background: #fff; overflow: hidden; }
+                .ml-sheet {
+                    width: 420mm; height: 297mm; padding: 8mm 12mm 5mm;
+                    display: flex; flex-direction: column; overflow: hidden; background: #fff;
+                    font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', 'Heiti TC', sans-serif;
+                    color: #3d3628;
+                    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+                }
+                .ml-header {
+                    flex: 0 0 auto; position: relative; display: flex; align-items: flex-end;
+                    justify-content: space-between; padding: 0 2px 8px; border-bottom: 2.5px solid #8b6914;
+                }
+                .ml-brand { display: flex; align-items: baseline; gap: 12px; }
+                .ml-brand .zh { font-size: 24px; font-weight: 700; letter-spacing: 8px; color: #4A5759; }
+                .ml-brand .en { font-size: 11px; font-weight: 600; letter-spacing: 4px; color: #8b6914; }
+                .ml-title {
+                    position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%);
+                    padding-left: 14px; font-size: 30px; font-weight: 700; letter-spacing: 14px;
+                    color: #8b6914; white-space: nowrap;
+                }
+                .ml-en { font-size: 11px; font-weight: 600; letter-spacing: 4px; color: #9a8e7a; }
+
+                .mc-body {
+                    flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
+                    gap: 3.2mm; padding: 4mm 0 3mm;
+                }
+                .mc-row {
+                    flex: 1 1 0; min-height: 0; display: grid;
+                    grid-template-columns: repeat(${LIST_COLS}, minmax(0, 1fr));
+                    grid-template-rows: 6mm minmax(0, 1fr); gap: 1.2mm 3.6mm;
+                }
+                .mc-strip {
+                    grid-row: 1; display: flex; align-items: center; gap: 8px; padding: 0 10px;
+                    background: #4A5759; border-left: 3px solid #c8a05a; color: #fff;
+                }
+                .mc-strip .zh { font-size: 13px; font-weight: 700; letter-spacing: 4px; }
+                .mc-strip .en { font-size: 9px; font-weight: 600; letter-spacing: 2px; color: #d9c79a; }
+
+                .mc-card {
+                    grid-row: 2; min-height: 0; display: flex; flex-direction: column;
+                    background: #fff; border: 1px solid #e3d9c3; overflow: hidden;
+                }
+                .mc-img {
+                    position: relative; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
+                    background: #fff; border-bottom: 1px solid #eee5d3;
+                }
+                .mc-photo { position: relative; flex: 1 1 auto; min-height: 0; }
+                .mc-photo > img {
+                    position: absolute; inset: 0; width: 100%; height: 100%;
+                    object-fit: contain; padding: 6px;
+                }
+                .mc-photo.cover > img { object-fit: cover; padding: 0; }
+                .mc-swatches { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; }
+                .mc-swatches figure { position: relative; min-height: 0; overflow: hidden; }
+                .mc-swatches img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+                .mc-swatches figcaption {
+                    position: absolute; left: 0; right: 0; bottom: 0; padding: 2px 0 3px;
+                    background: rgba(255, 255, 255, 0.9); color: #5f5646;
+                    font-size: 10px; letter-spacing: 1px; text-align: center;
+                }
+                /* 標註列：排在圖片下方（不覆蓋圖片），有標註的圖卡圖片區相對縮小 */
+                .mc-tags { flex: 0 0 auto; display: flex; gap: 4px; padding: 4px 8px; background: #fff; }
+                .mc-tags .tag {
+                    padding: 1px 8px; border: 1px solid #d8cba8; border-radius: 999px;
+                    background: #f7f2e6; color: #6f6450;
+                    font-size: 10px; letter-spacing: 0.5px; white-space: nowrap;
+                }
+                .mc-tags .tag-note { border-color: #c8a05a; background: #fff; color: #8b6914; }
+
+                .mc-text { flex: 0 0 auto; height: 23mm; padding: 2.2mm 2.6mm 0; }
+                .mc-text h3 {
+                    margin-bottom: 1.2mm; font-size: 14px; font-weight: 700; letter-spacing: 0.5px; color: #3d3628;
+                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                }
+                .mc-text h3 b { margin-right: 0.35em; color: #8b6914; }
+                .mc-text p {
+                    font-size: 10.5px; line-height: 1.55; color: #5f5646;
+                    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+                }
+
+                .mc-notes { justify-content: space-between; padding: 4mm; background: #f7f2e6; border-color: #e3d4b0; }
+                .mc-notes ul { list-style: none; }
+                .mc-notes li {
+                    margin-bottom: 2mm; padding-left: 1.2em; text-indent: -1.2em;
+                    font-size: 11.5px; line-height: 1.6; color: #5f5646;
+                }
+                .mc-notes li::before { content: '※ '; color: #8b6914; }
+                .mc-notes-brand {
+                    display: flex; flex-direction: column; align-items: center; gap: 2px;
+                    padding-top: 3mm; border-top: 1px solid #d9c9a3;
+                }
+                .mc-notes-brand .zh { font-size: 18px; font-weight: 700; letter-spacing: 8px; color: #4A5759; }
+                .mc-notes-brand .en { font-size: 9px; font-weight: 600; letter-spacing: 3px; color: #8b6914; }
+
+                .ml-footer {
+                    flex: 0 0 auto; padding-top: 4px; border-top: 1px solid #d8cfba;
+                    text-align: center; font-size: 10px; line-height: 1.6; color: rgba(100, 90, 70, 0.8);
+                }
+                .ml-footer .agent { font-weight: 600; }
+            `;
+
+            // 圖片轉絕對網址（iframe srcdoc 內也能正確載入）
+            function listAssetUrl(src) {
+                return new URL(src, document.baseURI).href;
+            }
+
+            // 單張圖卡 HTML
+            function buildListCardHtml(it) {
+                if (it.notes) {
+                    return `<article class="mc-card mc-notes">
+                        <ul>${it.notes.map(n => `<li>${n}</li>`).join('')}</ul>
+                        <div class="mc-notes-brand"><span class="zh">富宇學森</span><span class="en">THE ACADEMIC FOREST</span></div>
+                    </article>`;
+                }
+                const tags = (it.tags ? `<span class="tag">${it.tags}</span>` : '')
+                    + (it.note ? `<span class="tag tag-note">※ ${it.note}</span>` : '');
+                const media = it.swatches
+                    ? `<div class="mc-img mc-swatches">${it.swatches.map(s =>
+                        `<figure><img src="${listAssetUrl(s.img)}" alt="${s.label}"><figcaption>${s.label}</figcaption></figure>`).join('')}</div>`
+                    : `<div class="mc-img">
+                        <div class="mc-photo${it.fit === 'cover' ? ' cover' : ''}"${it.bg ? ` style="background: ${it.bg};"` : ''}>
+                            <img src="${listAssetUrl(it.img)}" alt="${it.name}"${it.pos ? ` style="object-position: ${it.pos};"` : ''}>
+                        </div>
+                        ${tags ? `<div class="mc-tags">${tags}</div>` : ''}
+                    </div>`;
+                return `<article class="mc-card">
+                    ${media}
+                    <div class="mc-text">
+                        <h3>${it.brand ? `<b>${it.brand}</b>` : ''}${it.name}</h3>
+                        <p>${it.desc}</p>
+                    </div>
+                </article>`;
+            }
+
+            // 依 LIST_COLS 逐列排版；同一列中連續同區域的圖卡共用一條區域色帶
+            function buildListRowsHtml() {
+                const cells = [];
+                materialsList.forEach(a => a.items.forEach(it => cells.push({ area: a.area, en: a.en, it })));
+                cells.push({ area: '備註', en: 'NOTES', it: { notes: LIST_NOTES } });
+
+                let html = '';
+                for (let r = 0; r < cells.length; r += LIST_COLS) {
+                    const row = cells.slice(r, r + LIST_COLS);
+                    let strips = '';
+                    row.forEach((c, i) => {
+                        if (i > 0 && row[i - 1].area === c.area) return;
+                        let span = 1;
+                        while (i + span < row.length && row[i + span].area === c.area) span++;
+                        strips += `<div class="mc-strip" style="grid-column: ${i + 1} / span ${span};"><span class="zh">${c.area}</span><span class="en">${c.en}</span></div>`;
+                    });
+                    html += `<div class="mc-row">${strips}${row.map(c => buildListCardHtml(c.it)).join('')}</div>`;
+                }
+                return html;
+            }
+
+            // 完整 A3 頁面 HTML（放進預覽 iframe；列印與下載圖片皆取自該 iframe）
+            function buildListSheetDocHtml() {
+                return `<!DOCTYPE html>
+                    <html lang="zh-Hant">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>富宇學森 建材設備表</title>
+                        <style id="ml-style">${LIST_SHEET_CSS}</style>
+                    </head>
+                    <body>
+                    <div class="ml-sheet">
+                        <header class="ml-header">
+                            <div class="ml-brand"><span class="zh">富宇學森</span><span class="en">THE ACADEMIC FOREST</span></div>
+                            <div class="ml-title">建材設備表</div>
+                            <div class="ml-en">BUILDING MATERIALS &amp; EQUIPMENT</div>
+                        </header>
+                        <main class="mc-body">${buildListRowsHtml()}</main>
+                        <footer class="ml-footer">
+                            <div>※ 以上建材設備圖文皆為示意，以實際交屋為準。賣方保留建材設備品牌規格變更之權利。</div>
+                            <div class="agent">不動產經紀業：一研九鼎廣告策劃有限公司</div>
+                        </footer>
+                    </div>
+                    </body>
+                    </html>`;
+            }
+
+            // ===== 建材設備表 覆蓋層：預覽 / 列印 / 下載圖片 =====
+            const listOverlay = document.getElementById('matListOverlay');
+            const listStage = document.getElementById('matListStage');
+            const listPaper = document.getElementById('matListPaper');
+            const listFrame = document.getElementById('matListFrame');
+            const listDownloadBtn = document.getElementById('matListDownload');
+            const LIST_IMG_SCALE = 3; // 下載圖片倍率：A3 約 4760×3370px（≈ 288dpi）
+            let listFrameReady = null; // 首次開啟才產生版面，iframe 載入完成的 Promise
+
+            // A3 紙張等比縮放置中於畫面
+            function fitListPaper() {
+                const s = Math.min(
+                    (listStage.clientWidth - 48) / listPaper.offsetWidth,
+                    (listStage.clientHeight - 48) / listPaper.offsetHeight,
+                    1
+                );
+                listPaper.style.setProperty('--fit', Math.max(s, 0.1));
+            }
+
+            function openMaterialsList() {
+                if (!listFrameReady) {
+                    listFrameReady = new Promise(resolve => {
+                        listFrame.addEventListener('load', () => {
+                            // 焦點在 iframe 內時 ESC 仍可關閉
+                            listFrame.contentDocument.addEventListener('keydown', (e) => {
+                                if (e.key === 'Escape') closeMaterialsList();
+                            });
+                            resolve();
+                        }, { once: true });
+                    });
+                    listFrame.srcdoc = buildListSheetDocHtml();
+                }
+                listOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                fitListPaper();
+            }
+
+            function closeMaterialsList() {
+                listOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            document.getElementById('matListOpen').addEventListener('click', openMaterialsList);
+            document.getElementById('matListClose').addEventListener('click', closeMaterialsList);
+            listStage.addEventListener('click', (e) => {
+                if (e.target === listStage) closeMaterialsList();
+            });
+            window.addEventListener('resize', () => {
+                if (listOverlay.classList.contains('active')) fitListPaper();
+            });
+
+            // 列印：直接列印 iframe 內的 A3 版面（@page A3 橫式、無邊界）
+            document.getElementById('matListPrint').addEventListener('click', async () => {
+                await listFrameReady;
+                listFrame.contentWindow.focus();
+                listFrame.contentWindow.print();
+            });
+
+            // 圖片轉成內嵌 data URL（SVG 圖片無法載入外部資源）；先縮圖以控制檔案大小
+            async function listImageToDataUrl(src) {
+                const img = new Image();
+                img.src = src;
+                await img.decode();
+                const r = Math.min(1, 1000 / Math.max(img.naturalWidth, img.naturalHeight));
+                const c = document.createElement('canvas');
+                c.width = Math.max(1, Math.round(img.naturalWidth * r));
+                c.height = Math.max(1, Math.round(img.naturalHeight * r));
+                const ctx = c.getContext('2d');
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(0, 0, c.width, c.height);
+                ctx.drawImage(img, 0, 0, c.width, c.height);
+                return c.toDataURL('image/jpeg', 0.9);
+            }
+
+            // 將 iframe 內的 A3 版面以 SVG foreignObject 畫到 Canvas，輸出 JPEG
+            async function renderListSheetImage() {
+                const doc = listFrame.contentDocument;
+                const sheet = doc.querySelector('.ml-sheet');
+                const rect = sheet.getBoundingClientRect();
+                const w = Math.ceil(rect.width);
+                const h = Math.ceil(rect.height);
+
+                const clone = sheet.cloneNode(true);
+                const dataUrls = await Promise.all(
+                    [...sheet.querySelectorAll('img')].map(img => listImageToDataUrl(img.currentSrc || img.src))
+                );
+                clone.querySelectorAll('img').forEach((img, i) => img.setAttribute('src', dataUrls[i]));
+
+                const css = doc.getElementById('ml-style').textContent
+                    .replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+                const xhtml = new XMLSerializer().serializeToString(clone);
+                const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w * LIST_IMG_SCALE}" height="${h * LIST_IMG_SCALE}" viewBox="0 0 ${w} ${h}">`
+                    + `<foreignObject x="0" y="0" width="${w}" height="${h}">`
+                    + `<div xmlns="http://www.w3.org/1999/xhtml"><style>${css}</style>${xhtml}</div>`
+                    + `</foreignObject></svg>`;
+
+                const img = new Image();
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+                });
+
+                const canvas = document.createElement('canvas');
+                canvas.width = w * LIST_IMG_SCALE;
+                canvas.height = h * LIST_IMG_SCALE;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                return new Promise((resolve, reject) => {
+                    canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('toBlob 失敗')), 'image/jpeg', 0.92);
+                });
+            }
+
+            listDownloadBtn.addEventListener('click', async () => {
+                if (listDownloadBtn.disabled) return;
+                const btnText = listDownloadBtn.textContent;
+                listDownloadBtn.disabled = true;
+                listDownloadBtn.textContent = '圖片產生中…';
+                try {
+                    await listFrameReady;
+                    const blob = await renderListSheetImage();
+                    // 連結不放進 DOM：blob: 屬同源，若冒泡到 document 會被 spa-router 當成換頁攔截
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = '富宇學森_建材設備表_A3.jpg';
+                    a.click();
+                    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+                } catch (err) {
+                    console.error('[建材設備表] 圖片產生失敗', err);
+                    alert('此瀏覽器無法直接產生圖片，請改用「列印」並選擇「另存為 PDF」。');
+                } finally {
+                    listDownloadBtn.disabled = false;
+                    listDownloadBtn.textContent = btnText;
+                }
+            });
+
             // ===== 建材 Modal =====
             function openMaterialModal(hs) {
                 modalTitle.textContent = hs.label;
@@ -1078,7 +1560,9 @@
             });
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
-                    if (equipOverlay.classList.contains('active')) {
+                    if (listOverlay.classList.contains('active')) {
+                        closeMaterialsList();
+                    } else if (equipOverlay.classList.contains('active')) {
                         closeEquipLightbox();
                     } else if (bathTilesGridOverlay.classList.contains('active')) {
                         bathTilesGridOverlay.classList.remove('active');
